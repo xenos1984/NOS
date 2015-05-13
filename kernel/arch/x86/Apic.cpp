@@ -16,7 +16,7 @@ SECTION(".init.text") Apic::Apic(unsigned long phys)
 	base[REG_SIVR] |= (1 << 8); // enable
 	base[REG_LDR] = 0xff000000;
 	base[REG_DFR] = 0xffffffff;
-	console().WriteMessage(Console::MSG_INFO, "APIC:", "at 0x%8x, Version 0x%2x, mapped to 0x%8x", phys, GetVersion(), base);
+	console().WriteMessage(Console::MSG_INFO, "APIC:", "at 0x%8x, Version 0x%2x, mapped to 0x%p", phys, GetVersion(), base);
 }
 
 unsigned char Apic::GetPhysID(void) const

@@ -486,10 +486,7 @@ void X86Pager::CleanInit(void)
 	n = (Memory::InitEnd - Memory::InitStart) >> PAGE_SIZE_SHIFT;
 	virt = (void*)Memory::InitStart;
 
-	if(sizeof(long) == 4)
-		console().WriteFormat("Free %d blocks at 0x%8x\n", n, virt);
-	else if(sizeof(long) == 8)
-		console().WriteFormat("Free %d blocks at 0x%16lx\n", n, virt);
+	console().WriteFormat("Free %d blocks at 0x%p\n", n, virt);
 	FreeBlocks(virt, n);
 
 	console().WriteMessage(Console::MSG_INFO, "Total memory:", "%u MB", memtotal >> 20);
