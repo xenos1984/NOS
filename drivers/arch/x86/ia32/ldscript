@@ -1,0 +1,49 @@
+OUTPUT_FORMAT(elf32-i386)
+OUTPUT_ARCH(i386)
+
+INPUT(../../arch/x86/ia32/libia32.a)
+INPUT(../../../kernel/arch/x86/Kernel.elf)
+STARTUP(../../arch/x86/ia32/Stub.o)
+
+ENTRY(_start)
+
+SECTIONS {
+	.text 0x00001000 :
+	{
+		textStart = .;
+		*(.text)
+		*(.text.*)
+		*(.stub)
+		*(.rodata*)
+		*(.gnu.linkonce.t.*)
+		*(.gnu.linkonce.r.*)
+		. = ALIGN(4K);
+	}
+	textEnd = .;
+
+	.data :
+	{
+		Constructor = .;
+		*(.ctors)
+		*(.data*)
+		*(.gnu.linkonce.d.*)
+		. = ALIGN(4K);
+	}
+	dataEnd = .;
+
+	.bss :
+	{
+		*(.common)
+		*(.bss*)
+		*(.gnu.linkonce.b.*)
+	}
+	bssEnd = .;
+
+	/DISCARD/ :
+	{
+		*(.gcc_except_table)
+		*(.eh_frame)
+		*(.note)
+		*(.comment)
+	}
+}

@@ -1,0 +1,25 @@
+SECTIONS {
+  .text 0x00000000 :{
+    *(.text)
+    *(.text.*)
+		*(.stub)
+    *(.rodata*)
+    *(.gnu.linkonce.t.*)
+		*(.gnu.linkonce.r.*)
+		*(.gcc_except_table)
+		*(.eh_frame)
+  }
+
+  .data :{
+  	Constructor = .;
+  	*(.ctors)
+    *(.data*)
+	 *(.gnu.linkonce.d.*)
+  }
+
+  .bss :{
+    *(.common)
+    *(.bss*)
+	 *(.gnu.linkonce.b.*)
+  }
+}

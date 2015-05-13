@@ -1,0 +1,27 @@
+// Core.cpp - Core kernel implementation
+
+#include <new>
+#include <Core.h>
+#include INC_ARCH(CPU.h)
+#include INC_SUBARCH(SysVars.h)
+#include INC_SUBARCH(Video.h)
+#include INC_SUBARCH(AtariConsole.h)
+#include INC_SUBARCH(Interrupt.h)
+
+using namespace Kernel;
+
+extern "C" void SECTION(".init.text") KernelEntry(void)
+{
+	Video::Init();
+	new (console_space) AtariConsole;
+	Core::Welcome();
+
+	intvects[0x02] = BusErrorWrapper;
+	intvects[0x03] = AddressErrorWrapper;
+	intvects[0x04] = IllegalInstrWrapper;
+	intvects[0x05] = DivByZeroWrapper;
+
+	console().WriteMessage(Console::MSG_INFO, "Total memory:", "%d kB", (sysvars.MemTop >> 10) + 32);
+
+	*(unsigned long*)0xfa1234 = 1234;
+}

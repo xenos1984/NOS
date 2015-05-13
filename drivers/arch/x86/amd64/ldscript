@@ -1,0 +1,53 @@
+OUTPUT_FORMAT(elf64-x86-64)
+OUTPUT_ARCH(i386:x86-64)
+
+INPUT(../../arch/x86/amd64/libamd64.a)
+INPUT(../../../kernel/arch/x86/Kernel.elf)
+STARTUP(../../arch/x86/amd64/Stub.o)
+
+ENTRY(_start)
+
+PHDRS {
+	content PT_LOAD;
+}
+
+SECTIONS {
+	.text 0x00001000 :
+	{
+		textStart = .;
+		*(.text)
+		*(.text.*)
+		*(.stub)
+		*(.rodata*)
+		*(.gnu.linkonce.t.*)
+		*(.gnu.linkonce.r.*)
+		. = ALIGN(4K);
+	} :content
+	textEnd = .;
+
+	.data :
+	{
+		Constructor = .;
+		*(.ctors)
+		*(.data*)
+		*(.gnu.linkonce.d.*)
+		. = ALIGN(4K);
+	}
+	dataEnd = .;
+
+	.bss :
+	{
+		*(.common)
+		*(.bss*)
+		*(.gnu.linkonce.b.*)
+	}
+	bssEnd = .;
+
+	/DISCARD/ :
+	{
+		*(.gcc_except_table)
+		*(.eh_frame)
+		*(.note)
+		*(.comment)
+	}
+}
