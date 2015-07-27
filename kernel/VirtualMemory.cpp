@@ -232,3 +232,13 @@ void operator delete[](void* pointer)
 {
 	virtmem().Free(pointer);
 }
+
+void operator delete(void* pointer, size_t size)
+{
+	virtmem().Free(pointer);
+}
+
+void operator delete[](void* pointer, size_t size)
+{
+	virtmem().Free(pointer);
+}
