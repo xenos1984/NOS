@@ -7,7 +7,19 @@ namespace Kernel
 {
 	namespace Memory
 	{
-		class Symbol;
+		class Symbol
+		{
+		public:
+			inline constexpr uintptr_t Addr(void) const
+			{
+				return (uintptr_t)this;
+			}
+
+			inline const void* Pointer(void) const
+			{
+				return this;
+			}
+		};
 
 		extern "C" const Symbol textStart;
 		extern "C" const Symbol textEnd;
@@ -22,18 +34,18 @@ namespace Kernel
 		extern "C" const Symbol kernelStart;
 		extern "C" const Symbol kernelEnd;
 
-		static const uintptr_t TextStart = (uintptr_t)&textStart;
-		static const uintptr_t TextEnd = (uintptr_t)&textEnd;
-		static const uintptr_t DataStart = (uintptr_t)&dataStart;
-		static const uintptr_t DataEnd = (uintptr_t)&dataEnd;
-		static const uintptr_t BssStart = (uintptr_t)&bssStart;
-		static const uintptr_t BssEnd = (uintptr_t)&bssEnd;
-		static const uintptr_t InitStart = (uintptr_t)&initStart;
-		static const uintptr_t InitEnd = (uintptr_t)&initEnd;
-		static const uintptr_t UserStart = (uintptr_t)&userStart;
-		static const uintptr_t UserEnd = (uintptr_t)&userEnd;
-		static const uintptr_t KernelStart = (uintptr_t)&kernelStart;
-		static const uintptr_t KernelEnd = (uintptr_t)&kernelEnd;
+		static const uintptr_t TextStart = textStart.Addr();
+		static const uintptr_t TextEnd = textEnd.Addr();
+		static const uintptr_t DataStart = dataStart.Addr();
+		static const uintptr_t DataEnd = dataEnd.Addr();
+		static const uintptr_t BssStart = bssStart.Addr();
+		static const uintptr_t BssEnd = bssEnd.Addr();
+		static const uintptr_t InitStart = initStart.Addr();
+		static const uintptr_t InitEnd = initEnd.Addr();
+		static const uintptr_t UserStart = userStart.Addr();
+		static const uintptr_t UserEnd = userEnd.Addr();
+		static const uintptr_t KernelStart = kernelStart.Addr();
+		static const uintptr_t KernelEnd = kernelEnd.Addr();
 	}
 }
 
