@@ -1,7 +1,7 @@
 // VGAConsole.cpp - VGA console driver for the kernel.
 
 #include INC_ARCH(VGAConsole.h)
-#include <Memory.h>
+#include <Symbol.h>
 #include INC_ARCH(Port.h)
 
 using namespace Kernel;
@@ -13,7 +13,7 @@ SECTION(".init.text") VGAConsole::VGAConsole(void)
 	numColumns = 80;
 	xPos = yPos = 0;
 
-	videoMemory = (volatile unsigned char*)(COLOR_VIDEO + Memory::kernelOffset.Addr());
+	videoMemory = (volatile unsigned char*)(COLOR_VIDEO + Symbol::kernelOffset.Addr());
 	bytesPerLine = numColumns * 2;
 	totalBytes = 4000;
 }

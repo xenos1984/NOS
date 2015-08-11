@@ -3,7 +3,7 @@
 #include INC_SUBARCH(Pager.h)
 #include INC_SUBARCH(PMode.h)
 #include <Console.h>
-#include <Memory.h>
+#include <Symbol.h>
 #include <VirtualMemory.h>
 #include INC_ARCH(ControlRegisters.h)
 #include INC_ARCH(Multiboot.h)

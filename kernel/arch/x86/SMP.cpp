@@ -4,7 +4,7 @@
 #include INC_ARCH(SMP.h)
 #include INC_ARCH(Apic.h)
 #include <Console.h>
-#include <Memory.h>
+#include <Symbol.h>
 
 using namespace Kernel;
 
@@ -67,7 +67,7 @@ SECTION(".init.text") SMP::SMP(FloatingPointer* sfp)
 	if(pointer->Table) // config table present?
 	{
 		console().WriteMessage(Console::MSG_OK, "SMP:", "individual config found at 0x%8x", pointer->Table);
-		table = (ConfigTable*)(pointer->Table + Memory::kernelOffset.Addr());
+		table = (ConfigTable*)(pointer->Table + Symbol::kernelOffset.Addr());
 	}
 	else // default config?
 	{
@@ -195,7 +195,7 @@ bool SECTION(".init.text") SMP::Init(unsigned long first, unsigned long last)
 
 	for(phys = first; phys < last; phys += 16) // 16 byte aligned
 	{
-		pointer = (FloatingPointer*)(phys + Memory::kernelOffset.Addr());
+		pointer = (FloatingPointer*)(phys + Symbol::kernelOffset.Addr());
 		if(pointer->Magic == POINTER_MAGIC) // valid floating pointer
 		{
 			checksum = 0;

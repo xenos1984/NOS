@@ -8,7 +8,7 @@
 #include INC_ARCH(IOApic.h)
 #include INC_ARCH(HPET.h)
 #include <Console.h>
-#include <Memory.h>
+#include <Symbol.h>
 
 using namespace Kernel;
 
@@ -236,7 +236,7 @@ bool SECTION(".init.text") ACPI::Init(unsigned long first, unsigned long last)
 
 	for(phys = first; phys < last; phys += 16) // 16 byte aligned
 	{
-		pointer = (RsdPtr*)(phys + Memory::kernelOffset.Addr());
+		pointer = (RsdPtr*)(phys + Symbol::kernelOffset.Addr());
 		if((pointer->Signature[0] == 'R') && (pointer->Signature[1] == 'S') && (pointer->Signature[2] == 'D') && (pointer->Signature[3] == ' ') &&
 			(pointer->Signature[4] == 'P') && (pointer->Signature[5] == 'T') && (pointer->Signature[6] == 'R') && (pointer->Signature[7] == ' '))
 		{

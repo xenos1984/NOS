@@ -34,6 +34,7 @@ libx86_a_SOURCES = \
 	Process.h \
 	Processor.h \
 	SMP.h \
+	Symbol.h \
 	SysCall.h \
 	Thread.h \
 	VGAConsole.h \

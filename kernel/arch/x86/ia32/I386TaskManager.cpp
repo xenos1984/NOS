@@ -22,7 +22,7 @@
 #include INC_ARCH(PICManager.h)
 #include INC_ARCH(IOApicManager.h)
 #include <VirtualMemory.h>
-#include <Memory.h>
+#include <Symbol.h>
 #include <TaskScheduler.h>
 #include <Console.h>
 
@@ -61,7 +61,7 @@ void SECTION(".init.text") I386TaskManager::Init(void)
 	new (i386taskman().cpu) Processor;
 	i386taskman().bsp = i386taskman().cpu;
 	SetTaskReg(FIRST_TSS << 3);
-	physmem().MapToLinear((void*)((unsigned long)&bspStack - Memory::kernelOffset.Addr() - STACK_SIZE), (void*)STACK_LIN_ADDR, STACK_SIZE / 0x1000);
+	physmem().MapToLinear((void*)((unsigned long)&bspStack - Symbol::kernelOffset.Addr() - STACK_SIZE), (void*)STACK_LIN_ADDR, STACK_SIZE / 0x1000);
 	asm volatile("addl %0, %%esp" : : "r"(STACK_LIN_ADDR + STACK_SIZE - (unsigned long)&bspStack));
 
 	if(bspcpu().HasAPIC())
@@ -104,7 +104,7 @@ void SECTION(".init.text") I386TaskManager::InitAcpi(void)
 		{
 			i386taskman().bsp = pr;
 			SetTaskReg((FIRST_TSS + i) << 3);
-			physmem().MapToLinear((void*)((unsigned long)&bspStack - Memory::kernelOffset.Addr() - STACK_SIZE), (void*)STACK_LIN_ADDR, STACK_SIZE / 0x1000);
+			physmem().MapToLinear((void*)((unsigned long)&bspStack - Symbol::kernelOffset.Addr() - STACK_SIZE), (void*)STACK_LIN_ADDR, STACK_SIZE / 0x1000);
 			asm volatile("addl %0, %%esp" : : "r"(STACK_LIN_ADDR + STACK_SIZE - (unsigned long)&bspStack));
 		}
 		else if(ala->Flags & ACPI::CPU_ENABLED)
@@ -136,7 +136,7 @@ void SECTION(".init.text") I386TaskManager::InitSmp(void)
 		{
 			i386taskman().bsp = pr;
 			SetTaskReg((FIRST_TSS + i) << 3);
-			physmem().MapToLinear((void*)((unsigned long)&bspStack - Memory::kernelOffset.Addr() - STACK_SIZE), (void*)(STACK_LIN_ADDR + i * STACK_SIZE), STACK_SIZE / 0x1000);
+			physmem().MapToLinear((void*)((unsigned long)&bspStack - Symbol::kernelOffset.Addr() - STACK_SIZE), (void*)(STACK_LIN_ADDR + i * STACK_SIZE), STACK_SIZE / 0x1000);
 			asm volatile("addl %0, %%esp" : : "r"(STACK_LIN_ADDR + (i + 1) * STACK_SIZE - (unsigned long)&bspStack));
 		}
 		else if(sc->Flags & SMP::CPU_ENABLED)

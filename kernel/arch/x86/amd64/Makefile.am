@@ -11,6 +11,7 @@ libamd64_a_SOURCES = \
 	PMode.h \
 	Process.h \
 	Registers.h \
+	Symbol.h \
 	SysCall.h \
 	Thread.h \
 	X86_64TaskManager.h \

@@ -4,7 +4,7 @@
 #include <Core.h>
 #include <VirtualMemory.h>
 #include <TaskScheduler.h>
-#include <Memory.h>
+#include <Symbol.h>
 #include <Process.h>
 #include INC_ARCH(VGAConsole.h)
 #include INC_ARCH(X86Pager.h)
@@ -57,9 +57,9 @@ extern "C" void SECTION(".init.text") KernelEntry(unsigned long magic, Multiboot
 	CR4::Write(cr4);
 
 #if defined CONFIG_SMP || defined CONFIG_ACPI
-	unsigned short segaddr = *(unsigned short*)(0x0000040e + Memory::kernelOffset.Addr()); // EBDA
+	unsigned short segaddr = *(unsigned short*)(0x0000040e + Symbol::kernelOffset.Addr()); // EBDA
 	if(!segaddr)
-		segaddr = ((*(unsigned short*)(0x00000413 + Memory::kernelOffset.Addr())) - 1) << 6; // last k of lower memory
+		segaddr = ((*(unsigned short*)(0x00000413 + Symbol::kernelOffset.Addr())) - 1) << 6; // last k of lower memory
 	unsigned long physaddr = ((unsigned long)segaddr) << 4;
 #endif
 

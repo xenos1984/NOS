@@ -2,7 +2,7 @@
 
 #include <cstddef>
 #include <Console.h>
-#include <Memory.h>
+#include <Symbol.h>
 #include INC_ARCH(Cmos.h)
 #include INC_ARCH(PIT.h)
 #include INC_ARCH(ACPI.h)
@@ -48,11 +48,11 @@ void SECTION(".init.text") Processor::Startup(unsigned long stack)
 	apstack = stack;
 
 	for(i = 0; i < 4096; i++)
-		((unsigned char*)(AP_INIT_ADDR + Memory::kernelOffset.Addr()))[i] = apentry[i];
+		((unsigned char*)(AP_INIT_ADDR + Symbol::kernelOffset.Addr()))[i] = apentry[i];
 
 	apflag = false;
 	cmos().SetShutdownStatus(Cmos::SH_JMP467);
-	*(unsigned int *)(0x00000467 + Memory::kernelOffset.Addr()) = (AP_INIT_ADDR >> 12);
+	*(unsigned int *)(0x00000467 + Symbol::kernelOffset.Addr()) = (AP_INIT_ADDR >> 12);
 	apic().ClearError();
 	apic().SendIPI(physID, 0, Apic::DEST_FIELD | Apic::INT_ASSERT | Apic::DM_INIT); // assert INIT IPI
 	while(apic().SendPending()) ;

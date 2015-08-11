@@ -4,7 +4,7 @@
 #include <new>
 #include <VirtualMemory.h>
 #include <Console.h>
-#include <Memory.h>
+#include <Symbol.h>
 
 #define ROUND_UP(ADDR,ALIGN) ((((unsigned long)(ADDR) - 1) & (-(ALIGN))) + (ALIGN))
 #define ROUND_DOWN(ADDR,ALIGN) ((unsigned long)(ADDR) & (-(ALIGN)))
@@ -22,10 +22,10 @@ SECTION(".init.text") VirtualMemory::VirtualMemory(void)
 
 	blocksize = physmem().GetBlockSize();
 	countperblock = blocksize / sizeof(MemoryPointer);
-	heapaddr = (void*)Memory::heapStart.Addr();
-	tabaddr = (void*)Memory::heapTab.Addr();
-	heaplen = Memory::heapTab.Addr() - Memory::heapStart.Addr();
-	tablen = Memory::heapEnd.Addr() - Memory::heapTab.Addr();
+	heapaddr = (void*)Symbol::heapStart.Addr();
+	tabaddr = (void*)Symbol::heapTab.Addr();
+	heaplen = Symbol::heapTab.Addr() - Symbol::heapStart.Addr();
+	tablen = Symbol::heapEnd.Addr() - Symbol::heapTab.Addr();
 	physmem().AllocBlocks(tabaddr, 1);
 	base = (MemoryPointer*)tabaddr;
 	counttotal = tablen / sizeof(MemoryPointer);

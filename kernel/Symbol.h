@@ -1,11 +1,11 @@
-// Memory.h - Memory addresses defined in linker scripts or as constants.
+// Symbol.h - Memory addresses defined in linker scripts or as constants.
 
-#ifndef __MEMORY_H__
-#define __MEMORY_H__
+#ifndef __SYMBOL_H__
+#define __SYMBOL_H__
 
 namespace Kernel
 {
-	namespace Memory
+	namespace Symbol
 	{
 		class ExtSymbol
 		{

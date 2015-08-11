@@ -13,6 +13,7 @@ libia32_a_SOURCES = \
 	Thread.h \
 	PMode.h \
 	Registers.h \
+	Symbol.h \
 	SysCall.h \
 	\
 	Core.cpp \
