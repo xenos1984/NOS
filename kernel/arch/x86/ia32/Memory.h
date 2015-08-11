@@ -7,18 +7,18 @@ namespace Kernel
 {
 	namespace Memory
 	{
-		static const uintptr_t ProgramStart = 0x00000000UL;
-		static const uintptr_t ProgramEnd = 0x7fffffffUL;
-		static const uintptr_t LibraryStart = 0x80000000UL;
-		static const uintptr_t LibraryEnd = 0xbfffffffUL;
-		static const uintptr_t SupervisorStart = 0xc0000000UL;
-		static const uintptr_t SupervisorEnd = 0xffffffffUL;
+		static const ConstSymbol& programStart    = ConstSymbol(0x00000000UL);
+		static const ConstSymbol& programEnd      = ConstSymbol(0x7fffffffUL);
+		static const ConstSymbol& libraryStart    = ConstSymbol(0x80000000UL);
+		static const ConstSymbol& libraryEnd      = ConstSymbol(0xbfffffffUL);
+		static const ConstSymbol& supervisorStart = ConstSymbol(0xc0000000UL);
+		static const ConstSymbol& supervisorEnd   = ConstSymbol(0xffffffffUL);
 
-		static const uintptr_t HeapStart       = 0xd0000000UL;
-		static const uintptr_t HeapTab         = 0xdf000000UL;
-		static const uintptr_t HeapEnd         = 0xdfffffffUL;
+		static const ConstSymbol& heapStart       = ConstSymbol(0xd0000000UL);
+		static const ConstSymbol& heapTab         = ConstSymbol(0xdf000000UL);
+		static const ConstSymbol& heapEnd         = ConstSymbol(0xdfffffffUL);
 
-		static const uintptr_t KernelOffset    = 0xc0000000UL;
+		static const ConstSymbol& kernelOffset    = ConstSymbol(0xc0000000UL);
 	}
 }
 

@@ -7,7 +7,7 @@ namespace Kernel
 {
 	namespace Memory
 	{
-		class Symbol
+		class ExtSymbol
 		{
 		public:
 			inline constexpr uintptr_t Addr(void) const
@@ -15,37 +15,43 @@ namespace Kernel
 				return (uintptr_t)this;
 			}
 
-			inline const void* Pointer(void) const
+			inline const void* Ptr(void) const
 			{
 				return this;
 			}
 		};
 
-		extern "C" const Symbol textStart;
-		extern "C" const Symbol textEnd;
-		extern "C" const Symbol dataStart;
-		extern "C" const Symbol dataEnd;
-		extern "C" const Symbol bssStart;
-		extern "C" const Symbol bssEnd;
-		extern "C" const Symbol initStart;
-		extern "C" const Symbol initEnd;
-		extern "C" const Symbol userStart;
-		extern "C" const Symbol userEnd;
-		extern "C" const Symbol kernelStart;
-		extern "C" const Symbol kernelEnd;
+		class ConstSymbol
+		{
+		private:
+			const uintptr_t addr;
 
-		static const uintptr_t TextStart = textStart.Addr();
-		static const uintptr_t TextEnd = textEnd.Addr();
-		static const uintptr_t DataStart = dataStart.Addr();
-		static const uintptr_t DataEnd = dataEnd.Addr();
-		static const uintptr_t BssStart = bssStart.Addr();
-		static const uintptr_t BssEnd = bssEnd.Addr();
-		static const uintptr_t InitStart = initStart.Addr();
-		static const uintptr_t InitEnd = initEnd.Addr();
-		static const uintptr_t UserStart = userStart.Addr();
-		static const uintptr_t UserEnd = userEnd.Addr();
-		static const uintptr_t KernelStart = kernelStart.Addr();
-		static const uintptr_t KernelEnd = kernelEnd.Addr();
+		public:
+			constexpr ConstSymbol(uintptr_t a) : addr(a) {}
+
+			inline constexpr uintptr_t Addr(void) const
+			{
+				return addr;
+			}
+
+			inline const void* Ptr(void) const
+			{
+				return (const void*)addr;
+			}
+		};
+
+		extern "C" const ExtSymbol textStart;
+		extern "C" const ExtSymbol textEnd;
+		extern "C" const ExtSymbol dataStart;
+		extern "C" const ExtSymbol dataEnd;
+		extern "C" const ExtSymbol bssStart;
+		extern "C" const ExtSymbol bssEnd;
+		extern "C" const ExtSymbol initStart;
+		extern "C" const ExtSymbol initEnd;
+		extern "C" const ExtSymbol userStart;
+		extern "C" const ExtSymbol userEnd;
+		extern "C" const ExtSymbol kernelStart;
+		extern "C" const ExtSymbol kernelEnd;
 	}
 }
 

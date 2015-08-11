@@ -57,9 +57,9 @@ extern "C" void SECTION(".init.text") KernelEntry(unsigned long magic, Multiboot
 	CR4::Write(cr4);
 
 #if defined CONFIG_SMP || defined CONFIG_ACPI
-	unsigned short segaddr = *(unsigned short*)(0x0000040e + Memory::KernelOffset); // EBDA
+	unsigned short segaddr = *(unsigned short*)(0x0000040e + Memory::kernelOffset.Addr()); // EBDA
 	if(!segaddr)
-		segaddr = ((*(unsigned short*)(0x00000413 + Memory::KernelOffset)) - 1) << 6; // last k of lower memory
+		segaddr = ((*(unsigned short*)(0x00000413 + Memory::kernelOffset.Addr())) - 1) << 6; // last k of lower memory
 	unsigned long physaddr = ((unsigned long)segaddr) << 4;
 #endif
 

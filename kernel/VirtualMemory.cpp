@@ -22,10 +22,10 @@ SECTION(".init.text") VirtualMemory::VirtualMemory(void)
 
 	blocksize = physmem().GetBlockSize();
 	countperblock = blocksize / sizeof(MemoryPointer);
-	heapaddr = (void*)Memory::HeapStart;
-	tabaddr = (void*)Memory::HeapTab;
-	heaplen = Memory::HeapTab - Memory::HeapStart;
-	tablen = Memory::HeapEnd - Memory::HeapTab;
+	heapaddr = (void*)Memory::heapStart.Addr();
+	tabaddr = (void*)Memory::heapTab.Addr();
+	heaplen = Memory::heapTab.Addr() - Memory::heapStart.Addr();
+	tablen = Memory::heapEnd.Addr() - Memory::heapTab.Addr();
 	physmem().AllocBlocks(tabaddr, 1);
 	base = (MemoryPointer*)tabaddr;
 	counttotal = tablen / sizeof(MemoryPointer);

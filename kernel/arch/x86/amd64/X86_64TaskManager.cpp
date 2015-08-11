@@ -59,7 +59,7 @@ void SECTION(".init.text") X86_64TaskManager::Init(void)
 	x86_64taskman().bsp = x86_64taskman().cpu;
 	SetTaskReg(FIRST_TSS << 4);
 	MSR::Write(MSR::KERNEL_GS_BASE, 0);
-	physmem().MapToLinear((void*)((unsigned long)&bspStack - Memory::KernelOffset - STACK_SIZE), (void*)STACK_LIN_ADDR, STACK_SIZE / 0x1000);
+	physmem().MapToLinear((void*)((unsigned long)&bspStack - Memory::kernelOffset.Addr() - STACK_SIZE), (void*)STACK_LIN_ADDR, STACK_SIZE / 0x1000);
 	asm volatile("addq %0, %%rsp" : : "r"(STACK_LIN_ADDR + STACK_SIZE - (unsigned long)&bspStack));
 
 	new (apic_space) Apic;
@@ -96,7 +96,7 @@ void SECTION(".init.text") X86_64TaskManager::InitAcpi(void)
 			x86_64taskman().bsp = pr;
 			SetTaskReg(FIRST_TSS << 4);
 			MSR::Write(MSR::KERNEL_GS_BASE, 0);
-			physmem().MapToLinear((void*)((unsigned long)&bspStack - Memory::KernelOffset - STACK_SIZE), (void*)STACK_LIN_ADDR, STACK_SIZE / 0x1000);
+			physmem().MapToLinear((void*)((unsigned long)&bspStack - Memory::kernelOffset.Addr() - STACK_SIZE), (void*)STACK_LIN_ADDR, STACK_SIZE / 0x1000);
 			asm volatile("addq %0, %%rsp" : : "r"(STACK_LIN_ADDR + STACK_SIZE - (unsigned long)&bspStack));
 		}
 		else if(ala->Flags & ACPI::CPU_ENABLED)
@@ -133,7 +133,7 @@ void SECTION(".init.text") X86_64TaskManager::InitSmp(void)
 			x86_64taskman().bsp = pr;
 			SetTaskReg((FIRST_TSS + i) << 4);
 			MSR::Write(MSR::KERNEL_GS_BASE, 0);
-			physmem().MapToLinear((void*)((unsigned long)&bspStack - Memory::KernelOffset - STACK_SIZE), (void*)(STACK_LIN_ADDR + i * STACK_SIZE), STACK_SIZE / 0x1000);
+			physmem().MapToLinear((void*)((unsigned long)&bspStack - Memory::kernelOffset.Addr() - STACK_SIZE), (void*)(STACK_LIN_ADDR + i * STACK_SIZE), STACK_SIZE / 0x1000);
 			asm volatile("addq %0, %%rsp" : : "r"(STACK_LIN_ADDR + (i + 1) * STACK_SIZE - (unsigned long)&bspStack));
 		}
 		else if(sc->Flags & SMP::CPU_ENABLED)

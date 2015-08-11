@@ -13,7 +13,7 @@ SECTION(".init.text") VGAConsole::VGAConsole(void)
 	numColumns = 80;
 	xPos = yPos = 0;
 
-	videoMemory = (volatile unsigned char*)(COLOR_VIDEO + Memory::KernelOffset);
+	videoMemory = (volatile unsigned char*)(COLOR_VIDEO + Memory::kernelOffset.Addr());
 	bytesPerLine = numColumns * 2;
 	totalBytes = 4000;
 }

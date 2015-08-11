@@ -127,7 +127,7 @@ unsigned long X86Pager::MemoryArea::AllocBlocks(unsigned long count, unsigned lo
 SECTION(".init.text") X86Pager::X86Pager(Multiboot::Info* mbi) : basemem(0, 0, nullptr)
 {
 	Multiboot::Module* mmod;
-	Multiboot::Info* info = (Multiboot::Info*)((unsigned long)mbi + Memory::KernelOffset);
+	Multiboot::Info* info = (Multiboot::Info*)((unsigned long)mbi + Memory::kernelOffset.Addr());
 /*
 	console().WriteFormat("pageTab = 0x%16lx\n", pageTab);
 	console().WriteFormat("pageDir = 0x%16lx\n", pageDir);
@@ -140,7 +140,7 @@ SECTION(".init.text") X86Pager::X86Pager(Multiboot::Info* mbi) : basemem(0, 0, n
 	memtotal = membelow4g = (info->UpperMemory + 1024) * 1024;
 	pagestotal = pagesbelow4g = membelow4g >> PAGE_SIZE_SHIFT;
 	allocendvirt = (unsigned long)tabBITS + (((pagesbelow4g >> 3) + PAGE_SIZE - 1) & (~PAGE_SIZE_MASK));
-	allocendphys = allocendvirt - Memory::KernelOffset;
+	allocendphys = allocendvirt - Memory::kernelOffset.Addr();
 
 	basemem.bitmap = tabBITS;
 	basemem.length = membelow4g;
@@ -183,7 +183,7 @@ SECTION(".init.text") X86Pager::X86Pager(Multiboot::Info* mbi) : basemem(0, 0, n
 	Unmap(info, 2);
 
 	// Map user trampoline.
-	MapToLinear((void*)(Memory::UserStart - Memory::KernelOffset), (void*)Memory::LibraryStart, (Memory::UserEnd - Memory::UserStart) / PAGE_SIZE);
+	MapToLinear((void*)(Memory::userStart.Addr() - Memory::kernelOffset.Addr()), (void*)Memory::libraryStart.Addr(), (Memory::userEnd.Addr() - Memory::userStart.Addr()) / PAGE_SIZE);
 
 	console().WriteMessage(Console::MSG_OK, "Pager:", "Enabled, %d kB RAM", membelow4g >> 10);
 }
@@ -279,7 +279,7 @@ void* X86Pager::MapToLinear(void* phys, void* virt, unsigned long n)
 		PageTableEntry& page = Pages(dst);
 		page.raw = src << PAGE_SIZE_SHIFT;
 		page.bits.present = 1;
-		page.bits.global = (v >= Memory::LibraryStart) && !IsTablePage(dst);
+		page.bits.global = (v >= Memory::libraryStart.Addr()) && !IsTablePage(dst);
 
 		if(dst != PAGE_TOP_REC)
 		{
@@ -287,11 +287,11 @@ void* X86Pager::MapToLinear(void* phys, void* virt, unsigned long n)
 			while(IsTablePage(ptr))
 				ptr = (ptr - (pageDir - pageTab) / sizeof(long)) << PAGE_BITS;
 
-			page.bits.user = (ptr < ((Memory::SupervisorStart >> PAGE_SIZE_SHIFT) & (PAGE_COUNT - 1)));
-			page.bits.writeable = (ptr < ((Memory::LibraryStart >> PAGE_SIZE_SHIFT) & (PAGE_COUNT - 1)));
+			page.bits.user = (ptr < ((Memory::supervisorStart.Addr() >> PAGE_SIZE_SHIFT) & (PAGE_COUNT - 1)));
+			page.bits.writeable = (ptr < ((Memory::libraryStart.Addr() >> PAGE_SIZE_SHIFT) & (PAGE_COUNT - 1)));
 		}
 
-		if(IsTopPage(dst) && ((dst - PAGE_TOP_LEVEL) * TABLE_COUNT >= ((Memory::LibraryStart >> PAGE_SIZE_SHIFT) & (PAGE_COUNT - 1))))
+		if(IsTopPage(dst) && ((dst - PAGE_TOP_LEVEL) * TABLE_COUNT >= ((Memory::libraryStart.Addr() >> PAGE_SIZE_SHIFT) & (PAGE_COUNT - 1))))
 		{
 			do
 			{
@@ -396,7 +396,7 @@ void X86Pager::Unmap(void* virt, unsigned long n)
 		if(TableExists(dst >> PAGE_BITS))
 		{
 			Pages(dst).raw = 0;
-			if(IsTopPage(dst) && ((dst - PAGE_TOP_LEVEL) * TABLE_COUNT >= ((Memory::LibraryStart >> PAGE_SIZE_SHIFT) & (PAGE_COUNT - 1))))
+			if(IsTopPage(dst) && ((dst - PAGE_TOP_LEVEL) * TABLE_COUNT >= ((Memory::libraryStart.Addr() >> PAGE_SIZE_SHIFT) & (PAGE_COUNT - 1))))
 			{
 				do
 				{
@@ -483,8 +483,8 @@ void X86Pager::CleanInit(void)
 	unsigned long n;
 	void* virt;
 
-	n = (Memory::InitEnd - Memory::InitStart) >> PAGE_SIZE_SHIFT;
-	virt = (void*)Memory::InitStart;
+	n = (Memory::initEnd.Addr() - Memory::initStart.Addr()) >> PAGE_SIZE_SHIFT;
+	virt = (void*)Memory::initStart.Addr();
 
 	console().WriteFormat("Free %d blocks at 0x%p\n", n, virt);
 	FreeBlocks(virt, n);
@@ -511,7 +511,7 @@ X86Pager::PageTable* X86Pager::CreateContext(void)
 
 	pg = (PageTable*)(virtmem().Alloc(PAGE_SIZE, PAGE_SIZE, true));
 
-	for(i = 0; i < ((Memory::LibraryStart >> PAGE_SIZE_SHIFT) & (PAGE_COUNT - 1)) / TABLE_COUNT; i++)
+	for(i = 0; i < ((Memory::libraryStart.Addr() >> PAGE_SIZE_SHIFT) & (PAGE_COUNT - 1)) / TABLE_COUNT; i++)
 		pg->page[i].raw = 0;
 
 	for(; i < PAGES_PER_TABLE; i++)
@@ -540,7 +540,7 @@ void X86Pager::DeleteContext(PageTable* pg)
 
 	cr3 = CR3::Read();
 	CR3::Write(VirtToPhys(pg));
-	for(i = 0; i < ((Memory::LibraryStart >> PAGE_SIZE_SHIFT) & (PAGE_COUNT - 1)) / TABLE_COUNT; i++)
+	for(i = 0; i < ((Memory::libraryStart.Addr() >> PAGE_SIZE_SHIFT) & (PAGE_COUNT - 1)) / TABLE_COUNT; i++)
 	{
 		if(TopPages(i).raw)
 		{

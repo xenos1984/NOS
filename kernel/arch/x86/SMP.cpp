@@ -67,7 +67,7 @@ SECTION(".init.text") SMP::SMP(FloatingPointer* sfp)
 	if(pointer->Table) // config table present?
 	{
 		console().WriteMessage(Console::MSG_OK, "SMP:", "individual config found at 0x%8x", pointer->Table);
-		table = (ConfigTable*)(pointer->Table + Memory::KernelOffset);
+		table = (ConfigTable*)(pointer->Table + Memory::kernelOffset.Addr());
 	}
 	else // default config?
 	{
@@ -195,7 +195,7 @@ bool SECTION(".init.text") SMP::Init(unsigned long first, unsigned long last)
 
 	for(phys = first; phys < last; phys += 16) // 16 byte aligned
 	{
-		pointer = (FloatingPointer*)(phys + Memory::KernelOffset);
+		pointer = (FloatingPointer*)(phys + Memory::kernelOffset.Addr());
 		if(pointer->Magic == POINTER_MAGIC) // valid floating pointer
 		{
 			checksum = 0;

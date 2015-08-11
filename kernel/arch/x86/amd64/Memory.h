@@ -9,18 +9,18 @@ namespace Kernel
 {
 	namespace Memory
 	{
-		static const uintptr_t ProgramStart    = 0x0000000000000000UL;
-		static const uintptr_t ProgramEnd      = 0x00007fffffffffffUL;
-		static const uintptr_t LibraryStart    = 0xffff800000000000UL;
-		static const uintptr_t LibraryEnd      = 0xfffffeffffffffffUL;
-		static const uintptr_t SupervisorStart = 0xffffff0000000000UL;
-		static const uintptr_t SupervisorEnd   = 0xffffffffffffffffUL;
+		static const ConstSymbol& programStart    = ConstSymbol(0x0000000000000000UL);
+		static const ConstSymbol& programEnd      = ConstSymbol(0x00007fffffffffffUL);
+		static const ConstSymbol& libraryStart    = ConstSymbol(0xffff800000000000UL);
+		static const ConstSymbol& libraryEnd      = ConstSymbol(0xfffffeffffffffffUL);
+		static const ConstSymbol& supervisorStart = ConstSymbol(0xffffff0000000000UL);
+		static const ConstSymbol& supervisorEnd   = ConstSymbol(0xffffffffffffffffUL);
 
-		static const uintptr_t HeapStart       = 0xfffffff000000000UL;
-		static const uintptr_t HeapTab         = 0xfffffffe00000000UL;
-		static const uintptr_t HeapEnd         = 0xfffffffeffffffffUL;
+		static const ConstSymbol& heapStart       = ConstSymbol(0xfffffff000000000UL);
+		static const ConstSymbol& heapTab         = ConstSymbol(0xfffffffe00000000UL);
+		static const ConstSymbol& heapEnd         = ConstSymbol(0xfffffffeffffffffUL);
 
-		static const uintptr_t KernelOffset    = 0xffffffff80000000UL;
+		static const ConstSymbol& kernelOffset    = ConstSymbol(0xffffffff80000000UL);
 	}
 }
 
