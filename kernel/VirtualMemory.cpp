@@ -22,8 +22,8 @@ SECTION(".init.text") VirtualMemory::VirtualMemory(void)
 
 	blocksize = physmem().GetBlockSize();
 	countperblock = blocksize / sizeof(MemoryPointer);
-	heapaddr = (void*)Symbol::heapStart.Addr();
-	tabaddr = (void*)Symbol::heapTab.Addr();
+	heapaddr = Symbol::heapStart.Ptr();
+	tabaddr = Symbol::heapTab.Ptr();
 	heaplen = Symbol::heapTab.Addr() - Symbol::heapStart.Addr();
 	tablen = Symbol::heapEnd.Addr() - Symbol::heapTab.Addr();
 	physmem().AllocBlocks(tabaddr, 1);

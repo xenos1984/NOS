@@ -183,7 +183,7 @@ SECTION(".init.text") X86Pager::X86Pager(Multiboot::Info* mbi) : basemem(0, 0, n
 	Unmap(info, 2);
 
 	// Map user trampoline.
-	MapToLinear((void*)(Symbol::userStart.Addr() - Symbol::kernelOffset.Addr()), (void*)Symbol::libraryStart.Addr(), (Symbol::userEnd.Addr() - Symbol::userStart.Addr()) / PAGE_SIZE);
+	MapToLinear((void*)(Symbol::userStart.Addr() - Symbol::kernelOffset.Addr()), Symbol::libraryStart.Ptr(), (Symbol::userEnd.Addr() - Symbol::userStart.Addr()) / PAGE_SIZE);
 
 	console().WriteMessage(Console::MSG_OK, "Pager:", "Enabled, %d kB RAM", membelow4g >> 10);
 }
@@ -484,7 +484,7 @@ void X86Pager::CleanInit(void)
 	void* virt;
 
 	n = (Symbol::initEnd.Addr() - Symbol::initStart.Addr()) >> PAGE_SIZE_SHIFT;
-	virt = (void*)Symbol::initStart.Addr();
+	virt = Symbol::initStart.Ptr();
 
 	console().WriteFormat("Free %d blocks at 0x%p\n", n, virt);
 	FreeBlocks(virt, n);
