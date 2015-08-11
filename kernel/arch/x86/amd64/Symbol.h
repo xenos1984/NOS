@@ -7,7 +7,7 @@
 
 namespace Kernel
 {
-	namespace Memory
+	namespace Symbol
 	{
 		static const ConstSymbol& programStart    = ConstSymbol(0x0000000000000000UL);
 		static const ConstSymbol& programEnd      = ConstSymbol(0x00007fffffffffffUL);

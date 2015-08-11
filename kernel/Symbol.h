@@ -15,9 +15,9 @@ namespace Kernel
 				return (uintptr_t)this;
 			}
 
-			inline const void* Ptr(void) const
+			inline void* Ptr(void) const
 			{
-				return this;
+				return const_cast<void*>((void*)this);
 			}
 		};
 
@@ -34,9 +34,9 @@ namespace Kernel
 				return addr;
 			}
 
-			inline const void* Ptr(void) const
+			inline void* Ptr(void) const
 			{
-				return (const void*)addr;
+				return (void*)addr;
 			}
 		};
 
@@ -55,6 +55,6 @@ namespace Kernel
 	}
 }
 
-#include INC_ARCH(Memory.h)
+#include INC_ARCH(Symbol.h)
 
 #endif
