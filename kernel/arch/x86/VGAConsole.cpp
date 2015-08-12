@@ -9,13 +9,11 @@ using namespace Kernel;
 SECTION(".init.text") VGAConsole::VGAConsole(void)
 {
 	attrib = 0x07;
-	numLines = 25;
-	numColumns = 80;
+	numLines = lines;
+	numColumns = columns;
 	xPos = yPos = 0;
 
 	videoMemory = (volatile unsigned char*)(COLOR_VIDEO + Symbol::kernelOffset.Addr());
-	bytesPerLine = numColumns * 2;
-	totalBytes = 4000;
 }
 
 VGAConsole::~VGAConsole(void)
@@ -24,7 +22,7 @@ VGAConsole::~VGAConsole(void)
 
 void VGAConsole::Clear(void)
 {
-	int lengthInDWords = totalBytes / 4;
+	int lengthInDWords = total / 4;
 	int pattern = (attrib << 24) | (attrib << 8);
 
 	while(lengthInDWords--)
@@ -65,38 +63,38 @@ void VGAConsole::putChar(unsigned char c)
 	if(c == '\t')
 	{
 		xPos += (8 - (xPos & 7));
-		if(xPos < numColumns)
+		if(xPos < columns)
 			return;
 	}
 	else if(c != '\n' && c != '\r')
 	{
-		*(videoMemory + (xPos + yPos * numColumns) * 2) = c;
-		*(videoMemory + (xPos + yPos * numColumns) * 2 + 1) = attrib;
+		*(videoMemory + (xPos + yPos * columns) * 2) = c;
+		*(videoMemory + (xPos + yPos * columns) * 2 + 1) = attrib;
 
 		xPos++;
-		if(xPos < numColumns)
+		if(xPos < columns)
 			return;
 	}
 
 	xPos = 0;
 	yPos++;
-	if(yPos >= numLines)
+	if(yPos >= lines)
 	{
-		yPos = numLines - 1;
+		yPos = lines - 1;
 		// Scroll up a line.
 		t = (char*)videoMemory;
-		f = (char*)(videoMemory + bytesPerLine);
-		for(i = 0; i < totalBytes - bytesPerLine; i++)
+		f = (char*)(videoMemory + bpl);
+		for(i = 0; i < total - bpl; i++)
 			t[i] = f[i];
 		// Clear the last line.
-		for(; i < totalBytes; i++)
+		for(; i < total; i++)
 			t[i] = 0;
 	}
 }
 
 void VGAConsole::moveCursor(void)
 {
-	uint16_t chrOffset = xPos + yPos * numColumns;
+	uint16_t chrOffset = xPos + yPos * columns;
 
 	Port::WriteU8(CrtcAddr, 14);
 	Port::WriteU8(CrtcData, chrOffset >> 8);

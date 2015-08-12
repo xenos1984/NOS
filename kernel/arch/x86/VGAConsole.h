@@ -14,14 +14,17 @@ namespace Kernel
 	class VGAConsole : public Console
 	{
 	private:
-		static const uint32_t COLOR_VIDEO = 0xB8000; /**< Physical address of color video memory. */
-		static const uint32_t MONO_VIDEO = 0xB0000; /**< Physical address of monochrome video memory. */
+		static const uintptr_t COLOR_VIDEO = 0xB8000; /**< Physical address of color video memory. */
+		static const uintptr_t MONO_VIDEO = 0xB0000; /**< Physical address of monochrome video memory. */
 		static const uint16_t CrtcAddr = 0x3d4;
 		static const uint16_t CrtcData = 0x3d5;
 		static const uint16_t DebugPort = 0xe9;
 
-		unsigned int bytesPerLine; /**< Bytes per line. */
-		unsigned int totalBytes; /**< Total length of video memory. */
+		static const int lines = 25;
+		static const int columns = 80;
+		static const int bpl = 2 * columns; /**< Bytes per line. */
+		static const int total = lines * bpl; /**< Total length of video memory. */
+
 		unsigned int xPos; /**< Cursor position (line). */
 		unsigned int yPos; /**< Cursor position (column). */
 		uint8_t attrib; /**< Text attribute byte. */
