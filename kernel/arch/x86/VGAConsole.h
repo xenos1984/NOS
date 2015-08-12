@@ -52,9 +52,15 @@ namespace Kernel
 		}
 
 		/** Pointer to video memory as Character. */
-		inline volatile Character * videoMemory(void)
+		inline volatile Character* videoMemoryCh(void)
 		{
 			return (volatile Character*)(COLOR_VIDEO + Symbol::kernelOffset.Addr());
+		}
+
+		/** Pointer to video memory as unsigned long. */
+		inline volatile unsigned long* videoMemoryLong(void)
+		{
+			return (volatile unsigned long*)(COLOR_VIDEO + Symbol::kernelOffset.Addr());
 		}
 
 	protected:

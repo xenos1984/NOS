@@ -24,7 +24,7 @@ void VGAConsole::Clear(void)
 	unsigned long pattern = clearpat();
 
 	while(length--)
-		((unsigned long*)(videoMemory()))[length] = pattern;
+		videoMemoryLong()[length] = pattern;
 	xPos = yPos = 0;
 }
 
@@ -53,7 +53,7 @@ void VGAConsole::SetForeground(uint8_t value)
 // Put the character C on the screen.
 void VGAConsole::putChar(unsigned char c)
 {
-	char *f, *t;
+	volatile unsigned long *f, *t;
 	unsigned int i;
 
 	Port::WriteU8(DEBUG_PORT, c); // Bochs debugger console
@@ -66,8 +66,8 @@ void VGAConsole::putChar(unsigned char c)
 	}
 	else if(c != '\n' && c != '\r')
 	{
-		videoMemory()[xPos + yPos * COLUMNS].ch_at.character = c;
-		videoMemory()[xPos + yPos * COLUMNS].ch_at.attribute = attrib;
+		videoMemoryCh()[xPos + yPos * COLUMNS].ch_at.character = c;
+		videoMemoryCh()[xPos + yPos * COLUMNS].ch_at.attribute = attrib;
 
 		xPos++;
 		if(xPos < COLUMNS)
@@ -80,12 +80,12 @@ void VGAConsole::putChar(unsigned char c)
 	{
 		yPos = LINES - 1;
 		// Scroll up a line.
-		t = (char*)videoMemory();
-		f = t + BYTES_PER_LINE;
-		for(i = 0; i < TOTAL_BYTES - BYTES_PER_LINE; i++)
+		t = videoMemoryLong();
+		f = t + BYTES_PER_LINE / sizeof(long);
+		for(i = 0; i < (TOTAL_BYTES - BYTES_PER_LINE) / sizeof(long); i++)
 			t[i] = f[i];
 		// Clear the last line.
-		for(; i < TOTAL_BYTES; i++)
+		for(; i < TOTAL_BYTES / sizeof(long); i++)
 			t[i] = 0;
 	}
 }
