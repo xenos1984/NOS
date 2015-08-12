@@ -37,7 +37,7 @@ namespace Kernel
 
 		inline unsigned long clearpat(void)
 		{
-			return mkpat(0, sizeof(long) / 2);
+			return mkpat(0, sizeof(long) / 2) << 8;
 		}
 
 	protected:
