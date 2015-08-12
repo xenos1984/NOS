@@ -54,7 +54,7 @@ void VGAConsole::SetForeground(uint8_t value)
 void VGAConsole::putChar(unsigned char c)
 {
 	volatile unsigned long *f, *t;
-	unsigned int i;
+	int i;
 
 	Port::WriteU8(DEBUG_PORT, c); // Bochs debugger console
 
@@ -78,6 +78,8 @@ void VGAConsole::putChar(unsigned char c)
 	yPos++;
 	if(yPos >= LINES)
 	{
+		unsigned long pattern = clearpat();
+
 		yPos = LINES - 1;
 		// Scroll up a line.
 		t = videoMemoryLong();
@@ -86,7 +88,7 @@ void VGAConsole::putChar(unsigned char c)
 			t[i] = f[i];
 		// Clear the last line.
 		for(; i < TOTAL_BYTES / sizeof(long); i++)
-			t[i] = 0;
+			t[i] = pattern;
 	}
 }
 
