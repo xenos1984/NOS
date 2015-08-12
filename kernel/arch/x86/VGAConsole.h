@@ -16,17 +16,17 @@ namespace Kernel
 	private:
 		static const uintptr_t COLOR_VIDEO = 0xB8000; /**< Physical address of color video memory. */
 		static const uintptr_t MONO_VIDEO = 0xB0000; /**< Physical address of monochrome video memory. */
-		static const uint16_t CrtcAddr = 0x3d4;
-		static const uint16_t CrtcData = 0x3d5;
-		static const uint16_t DebugPort = 0xe9;
+		static const uint16_t CRTC_ADDR = 0x3d4;
+		static const uint16_t CRTC_DATA = 0x3d5;
+		static const uint16_t DEBUG_PORT = 0xe9;
 
-		static const int lines = 25;
-		static const int columns = 80;
-		static const int bpl = 2 * columns; /**< Bytes per line. */
-		static const int total = lines * bpl; /**< Total length of video memory. */
+		static const int LINES = 25;
+		static const int COLUMNS = 80;
+		static const int BYTES_PER_LINE = 2 * COLUMNS; /**< Bytes per line. */
+		static const int TOTAL_BYTES = LINES * BYTES_PER_LINE; /**< Total length of video memory. */
 
-		unsigned int xPos; /**< Cursor position (line). */
-		unsigned int yPos; /**< Cursor position (column). */
+		int xPos; /**< Cursor position (line). */
+		int yPos; /**< Cursor position (column). */
 		uint8_t attrib; /**< Text attribute byte. */
 		volatile unsigned char *videoMemory; /**< Pointer to video memory. */
 

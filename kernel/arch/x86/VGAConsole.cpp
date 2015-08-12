@@ -9,8 +9,8 @@ using namespace Kernel;
 SECTION(".init.text") VGAConsole::VGAConsole(void)
 {
 	attrib = 0x07;
-	numLines = lines;
-	numColumns = columns;
+	numLines = LINES;
+	numColumns = COLUMNS;
 	xPos = yPos = 0;
 
 	videoMemory = (volatile unsigned char*)(COLOR_VIDEO + Symbol::kernelOffset.Addr());
@@ -22,7 +22,7 @@ VGAConsole::~VGAConsole(void)
 
 void VGAConsole::Clear(void)
 {
-	int length = total / sizeof(long);
+	int length = TOTAL_BYTES / sizeof(long);
 	unsigned long pattern = clearpat();
 
 	while(length--)
@@ -58,48 +58,48 @@ void VGAConsole::putChar(unsigned char c)
 	char *f, *t;
 	unsigned int i;
 
-	Port::WriteU8(DebugPort, c); // Bochs debugger console
+	Port::WriteU8(DEBUG_PORT, c); // Bochs debugger console
 
 	if(c == '\t')
 	{
 		xPos += (8 - (xPos & 7));
-		if(xPos < columns)
+		if(xPos < COLUMNS)
 			return;
 	}
 	else if(c != '\n' && c != '\r')
 	{
-		*(videoMemory + (xPos + yPos * columns) * 2) = c;
-		*(videoMemory + (xPos + yPos * columns) * 2 + 1) = attrib;
+		*(videoMemory + (xPos + yPos * COLUMNS) * 2) = c;
+		*(videoMemory + (xPos + yPos * COLUMNS) * 2 + 1) = attrib;
 
 		xPos++;
-		if(xPos < columns)
+		if(xPos < COLUMNS)
 			return;
 	}
 
 	xPos = 0;
 	yPos++;
-	if(yPos >= lines)
+	if(yPos >= LINES)
 	{
-		yPos = lines - 1;
+		yPos = LINES - 1;
 		// Scroll up a line.
 		t = (char*)videoMemory;
-		f = (char*)(videoMemory + bpl);
-		for(i = 0; i < total - bpl; i++)
+		f = (char*)(videoMemory + BYTES_PER_LINE);
+		for(i = 0; i < TOTAL_BYTES - BYTES_PER_LINE; i++)
 			t[i] = f[i];
 		// Clear the last line.
-		for(; i < total; i++)
+		for(; i < TOTAL_BYTES; i++)
 			t[i] = 0;
 	}
 }
 
 void VGAConsole::moveCursor(void)
 {
-	uint16_t chrOffset = xPos + yPos * columns;
+	uint16_t chrOffset = xPos + yPos * COLUMNS;
 
-	Port::WriteU8(CrtcAddr, 14);
-	Port::WriteU8(CrtcData, chrOffset >> 8);
-	Port::WriteU8(CrtcAddr, 15);
-	Port::WriteU8(CrtcData, chrOffset);
+	Port::WriteU8(CRTC_ADDR, 14);
+	Port::WriteU8(CRTC_DATA, chrOffset >> 8);
+	Port::WriteU8(CRTC_ADDR, 15);
+	Port::WriteU8(CRTC_DATA, chrOffset);
 }
 
 char console_space[sizeof(VGAConsole)];
