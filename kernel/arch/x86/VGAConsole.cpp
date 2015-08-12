@@ -12,8 +12,6 @@ SECTION(".init.text") VGAConsole::VGAConsole(void)
 	numLines = LINES;
 	numColumns = COLUMNS;
 	xPos = yPos = 0;
-
-	videoMemory = (volatile unsigned char*)(COLOR_VIDEO + Symbol::kernelOffset.Addr());
 }
 
 VGAConsole::~VGAConsole(void)
@@ -26,7 +24,7 @@ void VGAConsole::Clear(void)
 	unsigned long pattern = clearpat();
 
 	while(length--)
-		((unsigned long*)(videoMemory))[length] = pattern;
+		((unsigned long*)(videoMemory()))[length] = pattern;
 	xPos = yPos = 0;
 }
 
@@ -68,8 +66,8 @@ void VGAConsole::putChar(unsigned char c)
 	}
 	else if(c != '\n' && c != '\r')
 	{
-		*(videoMemory + (xPos + yPos * COLUMNS) * 2) = c;
-		*(videoMemory + (xPos + yPos * COLUMNS) * 2 + 1) = attrib;
+		videoMemory()[xPos + yPos * COLUMNS].ch_at.character = c;
+		videoMemory()[xPos + yPos * COLUMNS].ch_at.attribute = attrib;
 
 		xPos++;
 		if(xPos < COLUMNS)
@@ -82,8 +80,8 @@ void VGAConsole::putChar(unsigned char c)
 	{
 		yPos = LINES - 1;
 		// Scroll up a line.
-		t = (char*)videoMemory;
-		f = (char*)(videoMemory + BYTES_PER_LINE);
+		t = (char*)videoMemory();
+		f = t + BYTES_PER_LINE;
 		for(i = 0; i < TOTAL_BYTES - BYTES_PER_LINE; i++)
 			t[i] = f[i];
 		// Clear the last line.

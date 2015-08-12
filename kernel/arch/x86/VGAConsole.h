@@ -5,6 +5,7 @@
 
 #include <cstdint>
 #include <Console.h>
+#include <Symbol.h>
 
 namespace Kernel
 {
@@ -14,8 +15,19 @@ namespace Kernel
 	class VGAConsole : public Console
 	{
 	private:
+		union Character
+		{
+			struct
+			{
+				uint8_t character;
+				uint8_t attribute;
+			} ch_at;
+			uint16_t raw;
+		};
+
 		static const uintptr_t COLOR_VIDEO = 0xB8000; /**< Physical address of color video memory. */
 		static const uintptr_t MONO_VIDEO = 0xB0000; /**< Physical address of monochrome video memory. */
+
 		static const uint16_t CRTC_ADDR = 0x3d4;
 		static const uint16_t CRTC_DATA = 0x3d5;
 		static const uint16_t DEBUG_PORT = 0xe9;
@@ -28,7 +40,6 @@ namespace Kernel
 		int xPos; /**< Cursor position (line). */
 		int yPos; /**< Cursor position (column). */
 		uint8_t attrib; /**< Text attribute byte. */
-		volatile unsigned char *videoMemory; /**< Pointer to video memory. */
 
 		inline unsigned long mkpat(unsigned long pat, int len)
 		{
@@ -38,6 +49,12 @@ namespace Kernel
 		inline unsigned long clearpat(void)
 		{
 			return mkpat(0, sizeof(long) / 2) << 8;
+		}
+
+		/** Pointer to video memory as Character. */
+		inline volatile Character * videoMemory(void)
+		{
+			return (volatile Character*)(COLOR_VIDEO + Symbol::kernelOffset.Addr());
 		}
 
 	protected:
