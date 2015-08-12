@@ -22,11 +22,11 @@ VGAConsole::~VGAConsole(void)
 
 void VGAConsole::Clear(void)
 {
-	int lengthInDWords = total / 4;
-	int pattern = (attrib << 24) | (attrib << 8);
+	int length = total / sizeof(long);
+	unsigned long pattern = clearpat();
 
-	while(lengthInDWords--)
-		((int*)(videoMemory))[lengthInDWords] = pattern;
+	while(length--)
+		((unsigned long*)(videoMemory))[length] = pattern;
 	xPos = yPos = 0;
 }
 

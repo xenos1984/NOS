@@ -30,6 +30,16 @@ namespace Kernel
 		uint8_t attrib; /**< Text attribute byte. */
 		volatile unsigned char *videoMemory; /**< Pointer to video memory. */
 
+		inline unsigned long mkpat(unsigned long pat, int len)
+		{
+			return (len == 0 ? pat : mkpat((pat << 16) | attrib, len - 1));
+		}
+
+		inline unsigned long clearpat(void)
+		{
+			return mkpat(0, sizeof(long) / 2);
+		}
+
 	protected:
 		void putChar(unsigned char c); /**< Put character on the screen. */
 		void moveCursor(void); /**< Set cursor position. */
