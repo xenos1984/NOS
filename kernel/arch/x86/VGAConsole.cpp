@@ -6,12 +6,10 @@
 
 using namespace Kernel;
 
-SECTION(".init.text") VGAConsole::VGAConsole(void)
+SECTION(".init.text") VGAConsole::VGAConsole(void) : attrib(0x07), xPos(0), yPos(0), bufoffset(0)
 {
-	attrib = 0x07;
 	numLines = LINES;
 	numColumns = COLUMNS;
-	xPos = yPos = 0;
 }
 
 VGAConsole::~VGAConsole(void)
@@ -20,12 +18,17 @@ VGAConsole::~VGAConsole(void)
 
 void VGAConsole::Clear(void)
 {
-	int length = TOTAL_BYTES / sizeof(long);
+	unsigned int length = TOTAL_BYTES / sizeof(long);
 	unsigned long pattern = clearpat();
 
+	asm volatile ("xchgw %bx,%bx");
 	while(length--)
+	{
 		videoMemoryLong()[length] = pattern;
+		buffer.raw[length] = pattern;
+	}
 	xPos = yPos = 0;
+	bufoffset = 0;
 }
 
 uint8_t VGAConsole::GetBackground(void)
@@ -53,8 +56,8 @@ void VGAConsole::SetForeground(uint8_t value)
 // Put the character C on the screen.
 void VGAConsole::putChar(unsigned char c)
 {
-	volatile unsigned long *f, *t;
-	int i;
+	volatile unsigned long *t;
+	unsigned int i;
 
 	Port::WriteU8(DEBUG_PORT, c); // Bochs debugger console
 
@@ -68,6 +71,8 @@ void VGAConsole::putChar(unsigned char c)
 	{
 		videoMemoryCh()[xPos + yPos * COLUMNS].ch_at.character = c;
 		videoMemoryCh()[xPos + yPos * COLUMNS].ch_at.attribute = attrib;
+		buffer.ch_at[(bufoffset + xPos + yPos * COLUMNS) % TOTAL_CHARS].ch_at.character = c;
+		buffer.ch_at[(bufoffset + xPos + yPos * COLUMNS) % TOTAL_CHARS].ch_at.attribute = attrib;
 
 		xPos++;
 		if(xPos < COLUMNS)
@@ -78,17 +83,21 @@ void VGAConsole::putChar(unsigned char c)
 	yPos++;
 	if(yPos >= LINES)
 	{
+		// Scroll up a line.
+		bufoffset += COLUMNS;
+		unsigned int ofs = 2 * bufoffset / sizeof(long);
+		unsigned int total = TOTAL_BYTES / sizeof(long);
 		unsigned long pattern = clearpat();
 
 		yPos = LINES - 1;
-		// Scroll up a line.
 		t = videoMemoryLong();
-		f = t + BYTES_PER_LINE / sizeof(long);
 		for(i = 0; i < (TOTAL_BYTES - BYTES_PER_LINE) / sizeof(long); i++)
-			t[i] = f[i];
+			t[i] = buffer.raw[(i + ofs) % total];
 		// Clear the last line.
 		for(; i < TOTAL_BYTES / sizeof(long); i++)
-			t[i] = pattern;
+		{
+			t[i] = buffer.raw[(i + ofs) % total] = pattern;
+		}
 	}
 }
 

@@ -36,10 +36,17 @@ namespace Kernel
 		static const int COLUMNS = 80;
 		static const int BYTES_PER_LINE = 2 * COLUMNS; /**< Bytes per line. */
 		static const int TOTAL_BYTES = LINES * BYTES_PER_LINE; /**< Total length of video memory. */
+		static const int TOTAL_CHARS = LINES * COLUMNS; /**< Total number of characters. */
 
-		int xPos; /**< Cursor position (line). */
-		int yPos; /**< Cursor position (column). */
+		unsigned int xPos; /**< Cursor position (line). */
+		unsigned int yPos; /**< Cursor position (column). */
 		uint8_t attrib; /**< Text attribute byte. */
+		unsigned int bufoffset; /**< Current offset between video memory and cache. */
+		union
+		{
+			Character ch_at[TOTAL_CHARS];
+			unsigned long raw[TOTAL_BYTES / sizeof(long)];
+		} buffer; /**< Cache to avoid reading video memory when scrolling. */
 
 		inline unsigned long mkpat(unsigned long pat, int len)
 		{
