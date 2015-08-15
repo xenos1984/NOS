@@ -8,6 +8,7 @@ noinst_LIBRARIES = libamd64.a
 
 libamd64_a_SOURCES = \
 	Entry.h \
+	Memory.h \
 	PMode.h \
 	Process.h \
 	Registers.h \

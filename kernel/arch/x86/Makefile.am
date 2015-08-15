@@ -24,6 +24,7 @@ libx86_a_SOURCES = \
 	Interrupt.h \
 	IOApic.h \
 	IOApicManager.h \
+	Memory.h \
 	MSR.h \
 	Multiboot.h \
 	PIC.h \

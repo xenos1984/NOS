@@ -8,13 +8,14 @@ noinst_LIBRARIES = libia32.a
 
 libia32_a_SOURCES = \
 	Entry.h \
-	Process.h \
 	I386TaskManager.h \
-	Thread.h \
+	Memory.h \
 	PMode.h \
+	Process.h \
 	Registers.h \
 	Symbol.h \
 	SysCall.h \
+	Thread.h \
 	\
 	Core.cpp \
 	Entry.S \
