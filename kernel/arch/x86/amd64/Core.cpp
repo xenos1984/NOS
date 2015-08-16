@@ -1,11 +1,14 @@
 // Core.cpp - Core kernel implementation
 
+#include <cstdint>
 #include <new>
 #include <Core.h>
 #include <Clock.h>
 #include <VirtualMemory.h>
 #include <TaskScheduler.h>
 #include <Symbol.h>
+#include <Memory.h>
+#include <Chunker.h>
 #include INC_ARCH(X86Process.h)
 #include INC_ARCH(VGAConsole.h)
 #include INC_ARCH(X86Pager.h)
@@ -31,15 +34,27 @@ using namespace Kernel;
 
 extern "C" void SECTION(".init.text") KernelEntry(unsigned long magic, Multiboot::Info* mbi)
 {
+	// Init console and show message.
 	new (console_space) VGAConsole;
 	Core::Welcome();
+
+	// Get basic CPU info.
 	new (bspcpu_space) CPU;
+
+	// Init descriptor tables.
 	new (&tabIDT) DescriptorTable;
 	tabIDT.InitIDT();
 	new (&tabGDT) DescriptorTable;
+
+	// Fill kernel process structure with elementary data.
 	new (kprocess_space) Process;
 	kprocess().data.cr3 = CR3::Read();
 	kprocess().data.pgtab = (X86Pager::PageTable*)tabPML4T;
+
+	// Init physical memory manager.
+	uint32_t mem = ((Multiboot::Info*)(Symbol::kernelOffset.Addr() + (uintptr_t)mbi))->UpperMemory;
+	Chunker::Init(1UL << 20, (mem > (15UL << 10) ? 15UL << 20 : mem << 10), Memory::Zone::DMA24);
+
 	new (physmem_space) X86Pager(mbi);
 	new (virtmem_space) VirtualMemory();
 	new (multiboot_space) Multiboot(magic, mbi);

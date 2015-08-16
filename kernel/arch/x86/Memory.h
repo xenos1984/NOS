@@ -8,7 +8,7 @@ namespace Kernel
 	namespace Memory
 	{
 		static const unsigned int MinPageBits = 12; /**< Smallest page has 4kB = 12 bits. */
-		static const unsigned long MaxInitPages = 15 << (20 - MinPageBits); /**< Initially at most 15MB (from 1MB to 16MB) are used. */
+		static const unsigned long MaxInitPages = 15UL << (20 - MinPageBits); /**< Initially at most 15MB (from 1MB to 16MB) are used. */
 
 		enum class Zone
 		{
