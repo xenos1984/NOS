@@ -6,8 +6,6 @@
 #include <Memory.h>
 #include <AtomicOps.h>
 
-using namespace Kernel;
-
 namespace Kernel
 {
 	namespace Chunker
@@ -16,12 +14,41 @@ namespace Kernel
 		{
 			Region* prev;
 			Region* next;
-			Memory::PhysAddr start;
-			Memory::PhysAddr length;
-			unsigned long* bitmap;
-			Memory::Zone zone;
+			const Memory::PhysAddr start;
+			const Memory::PhysAddr length;
+			unsigned long* const bitmap;
+			const Memory::Zone zone;
 
 			constexpr Region(Memory::PhysAddr s, Memory::PhysAddr l, unsigned long* b, Memory::Zone z, Region* p = nullptr, Region* n = nullptr) : prev(p), next(n), start(s), length(l), bitmap(b), zone(z) {};
+
+			bool Contains(Memory::PhysAddr addr) const
+			{
+				return(addr >= start && addr - start < length);
+			}
+
+			void Free(Memory::PhysAddr addr)
+			{
+				unsigned long n = ((addr - start) >> Memory::MinPageBits) / std::numeric_limits<unsigned long>::digits;
+				unsigned long b = ((addr - start) >> Memory::MinPageBits) % std::numeric_limits<unsigned long>::digits;
+
+				bitmap[n] &= ~(1UL << b);
+			}
+
+			void Free(Memory::PhysAddr start, Memory::PhysAddr length)
+			{
+			}
+
+			void Reserve(Memory::PhysAddr addr)
+			{
+				unsigned long n = ((addr - start) >> Memory::MinPageBits) / std::numeric_limits<unsigned long>::digits;
+				unsigned long b = ((addr - start) >> Memory::MinPageBits) % std::numeric_limits<unsigned long>::digits;
+
+				bitmap[n] |= 1UL << b;
+			}
+
+			void Reserve(Memory::PhysAddr start, Memory::PhysAddr length)
+			{
+			}
 		};
 
 		static const unsigned int fbmlen = Memory::MaxInitPages / std::numeric_limits<unsigned long>::digits;
@@ -42,9 +69,7 @@ namespace Kernel
 			regions[static_cast<int>(zone)] = &firstregion;
 
 			// Enter first zone properties.
-			firstregion.start = start;
-			firstregion.length = length;
-			firstregion.zone = zone;
+			new (&firstregion) Region(start, length, firstbitmap, zone, &firstregion, &firstregion);
 
 			// Mark all memory as allocated / reserved and let kernel free unused memory.
 			for(i = 0; i < fbmlen; i++)
@@ -67,6 +92,64 @@ namespace Kernel
 				(*rz)->prev->next = r;
 				(*rz)->prev = r;
 			}
+		}
+
+		Memory::PhysAddr Alloc(Memory::Zone zone)
+		{
+		}
+
+		Region* FindRegion(Memory::PhysAddr addr)
+		{
+			unsigned int i;
+			Region* r;
+
+			for(i = 0; i <= static_cast<int>(Memory::Zone::MAX); i++)
+			{
+				if(regions[i] == nullptr)
+					continue;
+
+				r = regions[i];
+				do
+				{
+					if(r->Contains(addr))
+						return r;
+				}
+				while(r != regions[i]);
+			}
+
+			return nullptr;
+		}
+
+		void Free(Memory::PhysAddr addr)
+		{
+			Region* r = FindRegion(addr);
+
+			if(r != nullptr)
+				r->Free(addr);
+		}
+
+		void Free(Memory::PhysAddr start, Memory::PhysAddr length)
+		{
+			Region* r = FindRegion(start);
+
+			if(r != nullptr)
+				r->Free(start, length);
+		}
+
+		void Reserve(Memory::PhysAddr addr)
+		{
+			Region* r = FindRegion(addr);
+
+			if(r != nullptr)
+				r->Reserve(addr);
+		}
+
+		void Reserve(Memory::PhysAddr start, Memory::PhysAddr length)
+		{
+			Region* r = FindRegion(start);
+
+			if(r != nullptr)
+				r->Reserve(start, length);
 		}
 	}
 }
