@@ -115,6 +115,8 @@ SECTIONS
 
 	.tables : AT(ADDR(.tables) - kernelOffset)
 	{
+		apic_space = .;
+		. += 4K;
 		tabIDT = .;
 		. += 4K;
 		tabGDT = .;

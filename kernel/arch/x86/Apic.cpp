@@ -7,7 +7,7 @@
 
 using namespace Kernel;
 
-char apic_space[0x1000] __attribute__ ((aligned(0x1000)));
+//char apic_space[0x1000] __attribute__ ((aligned(0x1000)));
 
 SECTION(".init.text") Apic::Apic(unsigned long phys)
 {
