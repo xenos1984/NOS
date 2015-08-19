@@ -123,36 +123,56 @@ namespace Kernel
 			return nullptr;
 		}
 
-		void Free(Memory::PhysAddr addr)
+		bool Free(Memory::PhysAddr addr)
 		{
 			Region* r = FindRegion(addr);
 
 			if(r != nullptr)
+			{
 				r->Free(addr);
+				return true;
+			}
+			else
+				return false;
 		}
 
-		void Free(Memory::PhysAddr start, Memory::PhysAddr length)
+		bool Free(Memory::PhysAddr start, Memory::PhysAddr length)
 		{
 			Region* r = FindRegion(start);
 
 			if(r != nullptr)
+			{
 				r->Free(start, length);
+				return true;
+			}
+			else
+				return false;
 		}
 
-		void Reserve(Memory::PhysAddr addr)
+		bool Reserve(Memory::PhysAddr addr)
 		{
 			Region* r = FindRegion(addr);
 
 			if(r != nullptr)
+			{
 				r->Reserve(addr);
+				return true;
+			}
+			else
+				return false;
 		}
 
-		void Reserve(Memory::PhysAddr start, Memory::PhysAddr length)
+		bool Reserve(Memory::PhysAddr start, Memory::PhysAddr length)
 		{
 			Region* r = FindRegion(start);
 
 			if(r != nullptr)
+			{
 				r->Reserve(start, length);
+				return true;
+			}
+			else
+				return false;
 		}
 	}
 }
