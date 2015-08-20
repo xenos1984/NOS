@@ -53,26 +53,26 @@ void SECTION(".init.text") Processor::Startup(unsigned long stack)
 	apflag = false;
 	cmos().SetShutdownStatus(Cmos::SH_JMP467);
 	*(unsigned int *)(0x00000467 + Symbol::kernelOffset.Addr()) = (AP_INIT_ADDR >> 12);
-	apic().ClearError();
-	apic().SendIPI(physID, 0, Apic::DEST_FIELD | Apic::INT_ASSERT | Apic::DM_INIT); // assert INIT IPI
-	while(apic().SendPending()) ;
-	apic().ClearError();
-	apic().SendIPI(physID, 0, Apic::DEST_FIELD | Apic::DM_INIT); // deassert INIT IPI
-	while(apic().SendPending()) ;
+	Apic::ClearError();
+	Apic::SendIPI(physID, 0, Apic::DEST_FIELD | Apic::INT_ASSERT | Apic::DM_INIT); // assert INIT IPI
+	while(Apic::SendPending()) ;
+	Apic::ClearError();
+	Apic::SendIPI(physID, 0, Apic::DEST_FIELD | Apic::DM_INIT); // deassert INIT IPI
+	while(Apic::SendPending()) ;
 	pit().SetOneShot(0, 11932); // 10ms
 	while(pit().GetCurrent(0) <= 11932) ;
-	if(apic().GetVersion() >= 0x10)
+	if(Apic::GetVersion() >= 0x10)
 	{
-		apic().ClearError();
-		apic().SendIPI(physID, AP_INIT_ADDR >> 12, Apic::DEST_FIELD | Apic::DM_STARTUP);
-		while(apic().SendPending()) ;
+		Apic::ClearError();
+		Apic::SendIPI(physID, AP_INIT_ADDR >> 12, Apic::DEST_FIELD | Apic::DM_STARTUP);
+		while(Apic::SendPending()) ;
 		pit().SetOneShot(0, 239); // 200µs
 		while(pit().GetCurrent(0) <= 239) ;
 		if(!apflag)
 		{
-			apic().ClearError();
-			apic().SendIPI(physID, AP_INIT_ADDR >> 12, Apic::DEST_FIELD | Apic::DM_STARTUP);
-			while(apic().SendPending()) ;
+			Apic::ClearError();
+			Apic::SendIPI(physID, AP_INIT_ADDR >> 12, Apic::DEST_FIELD | Apic::DM_STARTUP);
+			while(Apic::SendPending()) ;
 			pit().SetOneShot(0, 239); // 200µs
 			while(pit().GetCurrent(0) <= 239) ;
 		}

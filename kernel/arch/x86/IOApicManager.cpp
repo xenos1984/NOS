@@ -102,5 +102,5 @@ void IOApicManager::Unmask(unsigned int irq)
 
 void IOApicManager::SendEOI(unsigned int irq __attribute__((unused)))
 {
-	apic().SignalEOI();
+	Apic::SignalEOI();
 }

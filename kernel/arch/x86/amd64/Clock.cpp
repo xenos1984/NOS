@@ -37,22 +37,22 @@ SECTION(".init.text") Clock::Clock(void)
 	console().WriteMessage(Console::MSG_INFO, "CPU speed:", "%lu Hz", speed);
 
 	if(speed < (1 << 24))
-		apic().SetTimerDiv(Apic::TDR_1);
+		Apic::SetTimerDiv(Apic::TDR_1);
 	else if(speed < (1 << 25))
-		apic().SetTimerDiv(Apic::TDR_2);
+		Apic::SetTimerDiv(Apic::TDR_2);
 	else if(speed < (1 << 26))
-		apic().SetTimerDiv(Apic::TDR_4);
+		Apic::SetTimerDiv(Apic::TDR_4);
 	else if(speed < (1 << 27))
-		apic().SetTimerDiv(Apic::TDR_8);
+		Apic::SetTimerDiv(Apic::TDR_8);
 	else if(speed < (1 << 28))
-		apic().SetTimerDiv(Apic::TDR_16);
+		Apic::SetTimerDiv(Apic::TDR_16);
 	else if(speed < (1 << 29))
-		apic().SetTimerDiv(Apic::TDR_32);
+		Apic::SetTimerDiv(Apic::TDR_32);
 	else if(speed < (1 << 30))
-		apic().SetTimerDiv(Apic::TDR_64);
+		Apic::SetTimerDiv(Apic::TDR_64);
 	else
-		apic().SetTimerDiv(Apic::TDR_128);
+		Apic::SetTimerDiv(Apic::TDR_128);
 
-	apic().SetTimerVector(0x40);
-	apic().TimerStart(0x10000);
+	Apic::SetTimerVector(0x40);
+	Apic::TimerStart(0x10000);
 }

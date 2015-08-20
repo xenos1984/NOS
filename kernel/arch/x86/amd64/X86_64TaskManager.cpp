@@ -62,10 +62,10 @@ void SECTION(".init.text") X86_64TaskManager::Init(void)
 	physmem().MapToLinear((void*)((unsigned long)&bspStack - Symbol::kernelOffset.Addr() - STACK_SIZE), (void*)STACK_LIN_ADDR, STACK_SIZE / 0x1000);
 	asm volatile("addq %0, %%rsp" : : "r"(STACK_LIN_ADDR + STACK_SIZE - (unsigned long)&bspStack));
 
-	new (apic_space) Apic;
-	apic().SetTimerVector(0x40);
-	apic().SetTimerDiv(Apic::TDR_64);
-	apic().TimerStart(0x10000);
+	Apic::Init();
+	Apic::SetTimerVector(0x40);
+	Apic::SetTimerDiv(Apic::TDR_64);
+	Apic::TimerStart(0x10000);
 }
 
 #ifdef CONFIG_ACPI
@@ -105,9 +105,9 @@ void SECTION(".init.text") X86_64TaskManager::InitAcpi(void)
 	*((unsigned long*)0xffffff7fbfc00000) = 0;
 	*((unsigned long*)0xffffff7fbfdfe000) = 0;
 
-	apic().SetTimerVector(0x40);
-	apic().SetTimerDiv(Apic::TDR_64);
-	apic().TimerStart(0x10000);
+	Apic::SetTimerVector(0x40);
+	Apic::SetTimerDiv(Apic::TDR_64);
+	Apic::TimerStart(0x10000);
 }
 #endif
 
@@ -142,9 +142,9 @@ void SECTION(".init.text") X86_64TaskManager::InitSmp(void)
 	*((unsigned long*)0xffffff7fbfc00000) = 0;
 	*((unsigned long*)0xffffff7fbfdfe000) = 0;
 
-	apic().SetTimerVector(0x40);
-	apic().SetTimerDiv(Apic::TDR_64);
-	apic().TimerStart(0x10000);
+	Apic::SetTimerVector(0x40);
+	Apic::SetTimerDiv(Apic::TDR_64);
+	Apic::TimerStart(0x10000);
 }
 #endif
 
@@ -165,7 +165,7 @@ void SECTION(".init.text") X86_64TaskManager::SetTSS(void)
 
 	if(numcpus == 1)
 		return;
-	id = apic().GetPhysID();
+	id = Apic::GetPhysID();
 	for(i = 0; i < numcpus; i++)
 	{
 		if(cpu[i].GetPhysID() == id)

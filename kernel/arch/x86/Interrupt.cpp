@@ -448,7 +448,7 @@ TIMER(CMOSTimerIRQ)
 TIMER(ApicTimerIRQ)
 {
 	tasksched().Schedule();
-	apic().SignalEOI();
+	Apic::SignalEOI();
 }
 
 extern "C" void HardwareHandler(int num)

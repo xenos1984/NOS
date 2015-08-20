@@ -109,7 +109,7 @@ SECTION(".init.text") SMP::SMP(FloatingPointer* sfp)
 	console().WriteMessage(Console::MSG_INFO, "CPU mode:", "multiple CPUs");
 	console().WriteMessage(Console::MSG_INFO, "SMP hardware:", "vendor: %8s, product: %12s", table->OemString, table->ProductString);
 	numcpus = numbuses = numioapics = numints = numlints = 0;
-	new (apic_space) Apic(table->LocalApic);
+	Apic::Init(table->LocalApic);
 
 	ptr = (unsigned char*)(sizeof(ConfigTable) + (unsigned long)table);
 

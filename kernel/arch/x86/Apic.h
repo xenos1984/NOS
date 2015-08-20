@@ -13,9 +13,12 @@ namespace Kernel
 	 * accessed through memory I/O. See the IA-32 Intel Architecture Software Developer's Manual, Volume 3: System
 	 * Programming Guide, order number 253668, chapter 8, for detailed information on using the local APIC.
 	 */
-	class Apic
+	namespace Apic
 	{
-	private:
+		// Set to the APIC base address to the value given by the linker.
+		extern "C" volatile uint32_t apic_base[];
+
+		// Apic registers
 		static const int REG_ID      = 0x0020/4; /**< Local APIC ID */
 		static const int REG_VERSION = 0x0030/4; /**< Local APIC version */
 		static const int REG_TPR     = 0x0080/4; /**< Task priority register */
@@ -40,9 +43,6 @@ namespace Kernel
 		static const int REG_TCC     = 0x0390/4; /**< Timer current count register */
 		static const int REG_TDCR    = 0x03e0/4; /**< Timer divide configuration register */
 
-		volatile uint32_t base[0x400];
-
-	public:
 		// Error status register
 		static const uint32_t ESR_SCS       = 0x01; /**< Send checksum error */
 		static const uint32_t ESR_RCS       = 0x02; /**< Receive checksum error */
@@ -88,17 +88,15 @@ namespace Kernel
 		static const uint32_t TDR_128       = 0x0a; /**< Divide by 128 */
 
 		/**
-		 * APIC at given location.
+		 * Initialize APIC at given location.
 		 */
-		Apic(unsigned long phys = 0xfee00000);
-
-		~Apic(void);
+		void Init(unsigned long phys = 0xfee00000);
 
 		/**
 		 * Get local APIC physical ID.
 		 * @return physical APIC ID of the processor this code is running at.
 		 */
-		unsigned char GetPhysID(void) const;
+		unsigned char GetPhysID(void);
 
 		/**
 		 * Set local APIC physical ID.
@@ -109,13 +107,13 @@ namespace Kernel
 		 * Get local APIC version.
 		 * @return local APIC version of the processor this code is running at.
 		 */
-		unsigned char GetVersion(void) const;
+		unsigned char GetVersion(void);
 
 		/**
 		 * Get local APIC logical ID.
 		 * @return logical APIC ID of the processor this code is running at.
 		 */
-		unsigned char GetLogID(void) const;
+		unsigned char GetLogID(void);
 
 		/**
 		 * Set local APIC logical ID.
@@ -141,29 +139,26 @@ namespace Kernel
 		void TimerStart(unsigned int s, bool interrupt = true); /**< Start periodic timer. */
 		void TimerStop(void); /**< Stop timer. */
 		void TimerShot(unsigned int s, bool interrupt = true); /**< Start one-shot timer. */
-		bool TimerPending(void) const; /**< Is timer interrupt pending? */
-		unsigned char GetTimerVector(void) const; /**< Get timer interrupt vector. */
+		bool TimerPending(void); /**< Is timer interrupt pending? */
+		unsigned char GetTimerVector(void); /**< Get timer interrupt vector. */
 		void SetTimerVector(unsigned char vector); /**< Set timer interrupt vector. */
-		unsigned char GetTimerDiv(void) const; /**< Get timer divisor. */
+		unsigned char GetTimerDiv(void); /**< Get timer divisor. */
 		void SetTimerDiv(unsigned char div); /**< Set timer divisor. */
-		unsigned int GetTimerStart(void) const; /**< Get timer reload value. */
-		unsigned int GetTimerCount(void) const; /**< Get current timer count. */
+		unsigned int GetTimerStart(void); /**< Get timer reload value. */
+		unsigned int GetTimerCount(void); /**< Get current timer count. */
 
 		// Error handling
-		unsigned char GetErrorVector(void) const; /**< Get local APIC error vector. */
+		unsigned char GetErrorVector(void); /**< Get local APIC error vector. */
 		void SetErrorVector(unsigned char vector); /**< Set local APIC error vector. */
 		void MaskError(void); /**< Mask error interrupt. */
 		void UnmaskError(void); /**< Unmask error interrupt. */
-		bool ErrorPending(void) const; /**< Is error interrupt pending? */
-		unsigned int GetErrorStatus(void) const; /**< Get type of error. */
+		bool ErrorPending(void); /**< Is error interrupt pending? */
+		unsigned int GetErrorStatus(void); /**< Get type of error. */
 		void ClearError(void); /**< Reset error state. */
 
 		void Enable(void);
 		void Disable(void);
-	};
+	}
 }
-
-extern char apic_space[];
-inline Kernel::Apic& apic(void) { return(reinterpret_cast<Kernel::Apic&>(apic_space)); }
 
 #endif

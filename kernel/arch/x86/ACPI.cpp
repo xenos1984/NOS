@@ -51,7 +51,7 @@ void SECTION(".init.text") ACPI::ParseMadt(MadTable* madt)
 
 	console().WriteMessage(Console::MSG_INFO, "CPU mode:", "ACPI detected");
 	console().WriteMessage(Console::MSG_INFO, "ACPI MADT:", "OEMID: %6s, OEM Table ID: %8s, OEM Rev.: %d", (madt->Header).OEMID, (madt->Header).OEMTabID, (madt->Header).OEMRev);
-	new (apic_space) Apic(madt->ApicAddress);
+	Apic::Init(madt->ApicAddress);
 
 	for(ptr = (unsigned char*)((unsigned long)madt + sizeof(MadTable)); (unsigned long)ptr < (unsigned long)madt + (madt->Header).Length; ptr += ptr[1])
 	{

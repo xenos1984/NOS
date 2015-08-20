@@ -109,11 +109,11 @@ extern "C" void SECTION(".init.text") ApplicationEntry(void)
 	}
 	CR4::Write(cr4);
 
-	apic().Enable();
+	Apic::Enable();
 	i386taskman().SetTSS();
-	apic().SetTimerVector(0x40);
-	apic().SetTimerDiv(Apic::TDR_64);
-	apic().TimerStart(0x10000);
+	Apic::SetTimerVector(0x40);
+	Apic::SetTimerDiv(Apic::TDR_64);
+	Apic::TimerStart(0x10000);
 	apflag = true;
 }
 #endif

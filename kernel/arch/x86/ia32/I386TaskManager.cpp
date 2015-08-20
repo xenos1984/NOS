@@ -66,10 +66,10 @@ void SECTION(".init.text") I386TaskManager::Init(void)
 
 	if(bspcpu().HasAPIC())
 	{
-		new (apic_space) Apic;
-		apic().SetTimerVector(0x40);
-		apic().SetTimerDiv(Apic::TDR_64);
-		apic().TimerStart(0x10000);
+		Apic::Init();
+		Apic::SetTimerVector(0x40);
+		Apic::SetTimerDiv(Apic::TDR_64);
+		Apic::TimerStart(0x10000);
 	}
 	else
 	{
@@ -111,9 +111,9 @@ void SECTION(".init.text") I386TaskManager::InitAcpi(void)
 			pr->Startup(STACK_SIZE + (unsigned long)(physmem().AllocBlocks((void*)(STACK_LIN_ADDR + i * STACK_SIZE), STACK_SIZE / 0x1000)));
 	}
 
-	apic().SetTimerVector(0x40);
-	apic().SetTimerDiv(Apic::TDR_64);
-	apic().TimerStart(0x10000);
+	Apic::SetTimerVector(0x40);
+	Apic::SetTimerDiv(Apic::TDR_64);
+	Apic::TimerStart(0x10000);
 }
 #endif
 
@@ -143,9 +143,9 @@ void SECTION(".init.text") I386TaskManager::InitSmp(void)
 			pr->Startup(STACK_SIZE + (unsigned long)(physmem().AllocBlocks((void*)(STACK_LIN_ADDR + i * STACK_SIZE), STACK_SIZE / 0x1000)));
 	}
 
-	apic().SetTimerVector(0x40);
-	apic().SetTimerDiv(Apic::TDR_64);
-	apic().TimerStart(0x10000);
+	Apic::SetTimerVector(0x40);
+	Apic::SetTimerDiv(Apic::TDR_64);
+	Apic::TimerStart(0x10000);
 }
 #endif
 
@@ -166,7 +166,7 @@ void SECTION(".init.text") I386TaskManager::SetTSS(void)
 
 	if(numcpus == 1)
 		return;
-	id = apic().GetPhysID();
+	id = Apic::GetPhysID();
 	for(i = 0; i < numcpus; i++)
 	{
 		if(cpu[i].GetPhysID() == id)

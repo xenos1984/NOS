@@ -9,7 +9,7 @@
 #include <Symbol.h>
 #include <Memory.h>
 #include <Chunker.h>
-#include INC_ARCH(X86Process.h)
+#include <Process.h>
 #include INC_ARCH(VGAConsole.h)
 #include INC_ARCH(X86Pager.h)
 #include INC_SUBARCH(Entry.h)
@@ -123,12 +123,12 @@ extern "C" void SECTION(".init.text") ApplicationEntry()
 	}
 	CR4::Write(cr4);
 
-	apic().Enable();
+	Apic::Enable();
 	x86_64taskman().SetTSS();
 	MSR::Write(MSR::KERNEL_GS_BASE, TSS_LIN_ADDR + taskman().GetCurrentCPU() * TSS_LENGTH);
-	apic().SetTimerVector(0x40);
-	apic().SetTimerDiv(Apic::TDR_64);
-	apic().TimerStart(0x10000);
+	Apic::SetTimerVector(0x40);
+	Apic::SetTimerDiv(Apic::TDR_64);
+	Apic::TimerStart(0x10000);
 	apflag = true;
 }
 #endif
