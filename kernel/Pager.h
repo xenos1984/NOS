@@ -1,7 +1,7 @@
 // Pager.h - Working with page tables.
 
-#ifndef __ARCH_X86_IA32_PAGER_H__
-#define __ARCH_X86_IA32_PAGER_H__
+#ifndef __PAGER_H__
+#define __PAGER_H__
 
 namespace Kernel
 {
@@ -9,5 +9,7 @@ namespace Kernel
 	{
 	}
 }
+
+#include INC_ARCH(Pager.h)
 
 #endif

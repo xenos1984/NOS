@@ -10,6 +10,7 @@ libia32_a_SOURCES = \
 	Entry.h \
 	I386TaskManager.h \
 	Memory.h \
+	Pager.h \
 	PMode.h \
 	Process.h \
 	Registers.h \
@@ -21,6 +22,7 @@ libia32_a_SOURCES = \
 	Entry.S \
 	I386TaskManager.cpp \
 	InterruptStub.S \
+	Pager.cpp \
 	Registers.cpp \
 	Thread.cpp \
 	User.cpp

@@ -9,6 +9,7 @@ noinst_LIBRARIES = libamd64.a
 libamd64_a_SOURCES = \
 	Entry.h \
 	Memory.h \
+	Pager.h \
 	PMode.h \
 	Process.h \
 	Registers.h \
@@ -20,6 +21,7 @@ libamd64_a_SOURCES = \
 	Core.cpp \
 	Entry.S \
 	InterruptStub.S \
+	Pager.cpp \
 	Registers.cpp \
 	Thread.cpp \
 	User.cpp \

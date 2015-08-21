@@ -19,6 +19,7 @@ libkernel_a_SOURCES = \
 	Elf.h \
 	IRQManager.h \
 	Memory.h \
+	Pager.h \
 	PhysicalMemory.h \
 	Process.h \
 	Symbol.h \

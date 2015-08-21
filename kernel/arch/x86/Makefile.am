@@ -27,6 +27,7 @@ libx86_a_SOURCES = \
 	Memory.h \
 	MSR.h \
 	Multiboot.h \
+	Pager.h \
 	PIC.h \
 	PICManager.h \
 	PIT.h \
