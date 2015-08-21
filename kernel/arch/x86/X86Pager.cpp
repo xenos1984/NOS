@@ -469,7 +469,7 @@ void X86Pager::AddMemoryArea(Multiboot::MemoryMap* mem)
 	else
 	{
 		ma = new MemoryArea(mem->BaseAddr, mem->Length, nullptr);
-		ma->offset = (unsigned long)MapTempRegion(mem->BaseAddr, mem->Length) - mem->BaseAddr;
+		ma->offset = (mem->Length < (16 * 1024 * 1024) ? (unsigned long)MapTempRegion(mem->BaseAddr, mem->Length) - mem->BaseAddr : 0);
 	}
 
 	ma->prev = basemem.prev;
