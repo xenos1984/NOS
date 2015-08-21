@@ -72,10 +72,10 @@ extern "C" void SECTION(".init.text") KernelEntry(unsigned long magic, Multiboot
 	CR4::Write(cr4);
 
 #if defined CONFIG_SMP || defined CONFIG_ACPI
-	unsigned short segaddr = *(unsigned short*)(0x0000040e + Symbol::kernelOffset.Addr()); // EBDA
+	uint16_t segaddr = *(uint16_t*)(0x0000040e + Symbol::kernelOffset.Addr()); // EBDA
 	if(!segaddr)
-		segaddr = ((*(unsigned short*)(0x00000413 + Symbol::kernelOffset.Addr())) - 1) << 6; // last k of lower memory
-	unsigned long physaddr = ((unsigned long)segaddr) << 4;
+		segaddr = ((*(uint16_t*)(0x00000413 + Symbol::kernelOffset.Addr())) - 1) << 6; // last k of lower memory
+	uint32_t physaddr = ((uint32_t)segaddr) << 4;
 #endif
 
 #ifdef CONFIG_ACPI
