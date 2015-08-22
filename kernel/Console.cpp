@@ -1,6 +1,7 @@
 // Console.cpp - Basic console driver for the kernel.
 
 #include <cstdarg>
+#include <cstdint>
 #include <Console.h>
 
 using namespace Kernel;

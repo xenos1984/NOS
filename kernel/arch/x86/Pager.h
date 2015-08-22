@@ -3,6 +3,9 @@
 #ifndef __ARCH_X86_PAGER_H__
 #define __ARCH_X86_PAGER_H__
 
+#include <limits>
+#include <Memory.h>
+
 namespace Kernel
 {
 	namespace Pager
