@@ -21,7 +21,7 @@ extern "C" void SECTION(".init.text") KernelEntry(void)
 	intvects[0x04] = IllegalInstrWrapper;
 	intvects[0x05] = DivByZeroWrapper;
 
-	console().WriteMessage(Console::MSG_INFO, "Total memory:", "%d kB", (sysvars.MemTop >> 10) + 32);
+	Console::WriteMessage(Console::Style::INFO, "Total memory:", "%d kB", (sysvars.MemTop >> 10) + 32);
 
 	*(unsigned long*)0xfa1234 = 1234;
 }

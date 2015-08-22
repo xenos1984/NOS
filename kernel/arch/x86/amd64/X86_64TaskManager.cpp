@@ -51,7 +51,7 @@ SECTION(".init.text") X86_64TaskManager::X86_64TaskManager(unsigned int nc)
 
 void SECTION(".init.text") X86_64TaskManager::Init(void)
 {
-	console().WriteMessage(Console::MSG_INFO, "CPU mode:", "single CPU");
+	Console::WriteMessage(Console::Style::INFO, "CPU mode:", "single CPU");
 
 	new (taskman_space) X86_64TaskManager(1);
 

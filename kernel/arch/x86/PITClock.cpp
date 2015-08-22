@@ -24,7 +24,7 @@ SECTION(".init.text") PITClock::PITClock(Time t0, int i) : Clock(t0, Time::Secon
 	tabIDT.CreateInterruptGate(FIRST_IRQ + irq, KERNEL_CODE, &PITIRQWrapper);
 	pit().SetPeriodic(0, 0);
 	irqman().Unmask(irq);
-	console().WriteMessage(Console::MSG_OK, "Clock:", "PIT at IRQ #%d, offset = %ld, tick = %ld", irq, offset.raw, tick.raw);
+	Console::WriteMessage(Console::Style::OK, "Clock:", "PIT at IRQ #%d, offset = %ld, tick = %ld", irq, offset.raw, tick.raw);
 }
 
 Time PITClock::GetTime(void)

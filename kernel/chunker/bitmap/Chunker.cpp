@@ -76,7 +76,7 @@ namespace Kernel
 			for(i = 0; i < fbmlen; i++)
 				firstbitmap[i] = ~0UL;
 
-			console().WriteMessage(Console::MSG_INFO, "Chunker:", "Started with %d MB starting at %d MB in zone %d.", length >> 20, start >> 20, zone);
+			Console::WriteMessage(Console::Style::INFO, "Chunker:", "Started with %d MB starting at %d MB in zone %d.", length >> 20, start >> 20, zone);
 		}
 
 		void AddRegion(Memory::PhysAddr start, Memory::PhysAddr length, Memory::Zone zone)

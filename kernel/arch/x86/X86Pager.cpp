@@ -47,7 +47,7 @@ void X86Pager::MemoryArea::Mark(unsigned long first, unsigned long last, bool al
 	if(last <= start)
 		return;
 
-//	console().WriteFormat("Mark(0x%16lx, 0x%16lx, %d)\n", first, last, alloc);
+//	Console::WriteFormat("Mark(0x%16lx, 0x%16lx, %d)\n", first, last, alloc);
 
 	if(first < start)
 		p1 = 0;
@@ -129,13 +129,13 @@ SECTION(".init.text") X86Pager::X86Pager(Multiboot::Info* mbi) : basemem(0, 0, n
 	Multiboot::Module* mmod;
 	Multiboot::Info* info = (Multiboot::Info*)((unsigned long)mbi + Symbol::kernelOffset.Addr());
 /*
-	console().WriteFormat("pageTab = 0x%16lx\n", pageTab);
-	console().WriteFormat("pageDir = 0x%16lx\n", pageDir);
-	console().WriteFormat("pageDip = 0x%16lx\n", pageDip);
-	console().WriteFormat("pageL4t = 0x%16lx\n", pageL4t);
-	console().WriteFormat("pageTop = 0x%16lx\n", pageTop);
-	console().WriteFormat("PAGE_TOP_LEVEL = 0x%16lx\n", PAGE_TOP_LEVEL);
-	console().WriteFormat("PAGE_TOP_REC = 0x%16lx\n", PAGE_TOP_REC);
+	Console::WriteFormat("pageTab = 0x%16lx\n", pageTab);
+	Console::WriteFormat("pageDir = 0x%16lx\n", pageDir);
+	Console::WriteFormat("pageDip = 0x%16lx\n", pageDip);
+	Console::WriteFormat("pageL4t = 0x%16lx\n", pageL4t);
+	Console::WriteFormat("pageTop = 0x%16lx\n", pageTop);
+	Console::WriteFormat("PAGE_TOP_LEVEL = 0x%16lx\n", PAGE_TOP_LEVEL);
+	Console::WriteFormat("PAGE_TOP_REC = 0x%16lx\n", PAGE_TOP_REC);
 */
 	memtotal = membelow4g = (info->UpperMemory + 1024) * 1024;
 	pagestotal = pagesbelow4g = membelow4g >> PAGE_SIZE_SHIFT;
@@ -185,7 +185,7 @@ SECTION(".init.text") X86Pager::X86Pager(Multiboot::Info* mbi) : basemem(0, 0, n
 	// Map user trampoline.
 	MapToLinear((void*)(Symbol::userStart.Addr() - Symbol::kernelOffset.Addr()), Symbol::libraryStart.Ptr(), (Symbol::userEnd.Addr() - Symbol::userStart.Addr()) / PAGE_SIZE);
 
-	console().WriteMessage(Console::MSG_OK, "Pager:", "Enabled, %d kB RAM", membelow4g >> 10);
+	Console::WriteMessage(Console::Style::OK, "Pager:", "Enabled, %d kB RAM", membelow4g >> 10);
 }
 
 unsigned long X86Pager::GetBlockSize(void)
@@ -195,7 +195,7 @@ unsigned long X86Pager::GetBlockSize(void)
 
 bool X86Pager::PageExists(unsigned long n)
 {
-//	console().WriteFormat("PageExists(0x%8x) - top: %s\n", n, (IsTopPage(n) ? "yes" : "no"));
+//	Console::WriteFormat("PageExists(0x%8x) - top: %s\n", n, (IsTopPage(n) ? "yes" : "no"));
 	return((IsTopPage(n) || PageExists((n >> PAGE_BITS) + ((unsigned long)PAGE_RECURSIVE << (PAGE_BITS * (TABLE_LEVELS - 1))))) && Pages(n).bits.present);
 }
 
@@ -243,7 +243,7 @@ void X86Pager::DestroyTable(unsigned long n)
 {
 	unsigned int i;
 
-//	console().WriteFormat("DestroyTable(0x%8x)\n", n);
+//	Console::WriteFormat("DestroyTable(0x%8x)\n", n);
 
 	if(!TableExists(n))
 		return;
@@ -265,7 +265,7 @@ void* X86Pager::MapToLinear(void* phys, void* virt, unsigned long n)
 	unsigned long i, src, dst, ptr, v;
 	Process* p = &kprocess();
 
-//	console().WriteFormat("MapToLinear(0x%16lx, 0x%16lx, 0x%16lx)\n", phys, virt, n);
+//	Console::WriteFormat("MapToLinear(0x%16lx, 0x%16lx, 0x%16lx)\n", phys, virt, n);
 
 	for(i = 0; i < n; i++)
 	{
@@ -353,7 +353,7 @@ void X86Pager::FreeBlocks(void* virt, unsigned long n)
 	unsigned long dst = ((unsigned long)virt >> PAGE_SIZE_SHIFT) & (PAGE_COUNT - 1);
 	unsigned long src;
 
-//	console().WriteFormat("FreeBlocks(0x%16lx, 0x%16lx)\n", virt, n);
+//	Console::WriteFormat("FreeBlocks(0x%16lx, 0x%16lx)\n", virt, n);
 
 	for(i = 0; i < n; i++)
 	{
@@ -387,7 +387,7 @@ void X86Pager::Unmap(void* virt, unsigned long n)
 	unsigned long dst, addr;
 	Process* p = &kprocess();
 
-//	console().WriteFormat("Unmap(0x%16lx, 0x%16lx)\n", virt, n);
+//	Console::WriteFormat("Unmap(0x%16lx, 0x%16lx)\n", virt, n);
 
 	for(i = 0; i < n; i++)
 	{
@@ -486,10 +486,10 @@ void X86Pager::CleanInit(void)
 	n = (Symbol::initEnd.Addr() - Symbol::initStart.Addr()) >> PAGE_SIZE_SHIFT;
 	virt = Symbol::initStart.Ptr();
 
-	console().WriteFormat("Free %d blocks at 0x%p\n", n, virt);
+	Console::WriteFormat("Free %d blocks at 0x%p\n", n, virt);
 	FreeBlocks(virt, n);
 
-	console().WriteMessage(Console::MSG_INFO, "Total memory:", "%u MB", memtotal >> 20);
+	Console::WriteMessage(Console::Style::INFO, "Total memory:", "%u MB", memtotal >> 20);
 }
 
 void* X86Pager::PhysToVirt(unsigned long addr)

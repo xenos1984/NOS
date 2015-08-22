@@ -16,6 +16,7 @@ libx86_a_SOURCES = \
 	Apic.h \
 	AtomicOps.h \
 	Cmos.h \
+	Console.h \
 	ControlRegisters.h \
 	CPU.h \
 	DescriptorTable.h \
@@ -39,13 +40,13 @@ libx86_a_SOURCES = \
 	Symbol.h \
 	SysCall.h \
 	Thread.h \
-	VGAConsole.h \
 	X86Pager.h \
 	\
 	ACPI.cpp \
 	AML.cpp \
 	Apic.cpp \
 	Cmos.cpp \
+	Console.cpp \
 	CPU.cpp \
 	DescriptorTable.cpp \
 	FPU.cpp \
@@ -60,7 +61,6 @@ libx86_a_SOURCES = \
 	PITClock.cpp \
 	Processor.cpp \
 	SMP.cpp \
-	VGAConsole.cpp \
 	X86Pager.cpp
 
 noinst_PROGRAMS = Kernel.elf ../../../Kernel.elf

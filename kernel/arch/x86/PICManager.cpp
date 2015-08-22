@@ -12,7 +12,7 @@ SECTION(".init.text") PICManager::PICManager(void) : IRQManager(16), master(0x20
 	master.SetMaster(0x20);
 	slave.SetSlave(0x28, &master);
 	master.UnmaskIRQ(2);
-	console().WriteMessage(Console::MSG_OK, "Interrupts:", "Enabled in PIC mode.");
+	Console::WriteMessage(Console::Style::OK, "Interrupts:", "Enabled in PIC mode.");
 }
 
 void PICManager::Mask(unsigned int irq)

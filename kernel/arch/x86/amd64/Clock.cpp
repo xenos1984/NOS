@@ -20,21 +20,21 @@ SECTION(".init.text") Clock::Clock(void)
 
 	if(cmos().GetDateTime(dt))
 	{
-		console().WriteMessage(Console::MSG_OK, "CMOS time:", "%4d/%2d/%2d, %2d:%2d:%2d", dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second);
+		Console::WriteMessage(Console::Style::OK, "CMOS time:", "%4d/%2d/%2d, %2d:%2d:%2d", dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second);
 		starttime = (((dt.Year - 1970) * 365 + (dt.Year - (dt.Month > 2 ? 1968 : 1972)) / 4 + dateoffs[dt.Month] + dt.Day - 1) * 86400 + dt.Hour * 3600 + dt.Minute * 60 + dt.Second);
 	}
 	else
 	{
-		console().WriteMessage(Console::MSG_WARNING, "CMOS time:", "invalid");
+		Console::WriteMessage(Console::Style::WARNING, "CMOS time:", "invalid");
 		starttime = (((30 * 365) + 7) * 86400) << 24;
 	}
 
-	console().WriteMessage(Console::MSG_INFO, "Timestamp:", "%lu", starttime);
+	Console::WriteMessage(Console::Style::INFO, "Timestamp:", "%lu", starttime);
 	starttime = starttime << 24;
 
 	cmos().WaitForSecond();
 	speed = ReadTimeStamp() - startticks;
-	console().WriteMessage(Console::MSG_INFO, "CPU speed:", "%lu Hz", speed);
+	Console::WriteMessage(Console::Style::INFO, "CPU speed:", "%lu Hz", speed);
 
 	if(speed < (1 << 24))
 		Apic::SetTimerDiv(Apic::TDR_1);

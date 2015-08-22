@@ -8,7 +8,7 @@
 #include <Memory.h>
 #include <Chunker.h>
 #include <Process.h>
-#include INC_ARCH(VGAConsole.h)
+#include <Console.h>
 #include INC_ARCH(X86Pager.h)
 #include INC_SUBARCH(Entry.h)
 #include INC_ARCH(DescriptorTable.h)
@@ -29,7 +29,6 @@ using namespace Kernel;
 extern "C" void SECTION(".init.text") KernelEntry(unsigned long magic, Multiboot::Info* mbi)
 {
 	// Init console and show message.
-	new (console_space) VGAConsole;
 	Core::Welcome();
 
 	// Get basic CPU info.
@@ -56,7 +55,7 @@ extern "C" void SECTION(".init.text") KernelEntry(unsigned long magic, Multiboot
 	new (pit_space) PIT;
 
 	if(bspcpu().HasLongMode())
-		console().WriteMessage(Console::MSG_WARNING, "64 Bit CPU detected, OS level:", "32 Bit");
+		Console::WriteMessage(Console::Style::WARNING, "64 Bit CPU detected, OS level:", "32 Bit");
 
 	unsigned long cr4 = CR4::Read();
 	if(bspcpu().HasPGE())

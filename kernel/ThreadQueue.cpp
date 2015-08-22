@@ -22,7 +22,7 @@ ThreadQueue::~ThreadQueue(void)
 
 void ThreadQueue::Store(Thread* t)
 {
-//	console().WriteFormat("[%d] Store(0x%16lx)\n", taskman().GetCurrentCPU(), t);
+//	Console::WriteFormat("[%d] Store(0x%16lx)\n", taskman().GetCurrentCPU(), t);
 	lock.Enter();
 	if(first[t->priority] == nullptr)
 	{
@@ -65,7 +65,7 @@ Thread* ThreadQueue::Retrieve(void)
 		t->prevQ = t->nextQ = nullptr;
 	}
 	lock.Exit();
-//	console().WriteFormat("[%d] Retrieve = 0x%16lx\n", taskman().GetCurrentCPU(), t);
+//	Console::WriteFormat("[%d] Retrieve = 0x%16lx\n", taskman().GetCurrentCPU(), t);
 	return(t);
 }
 
@@ -73,7 +73,7 @@ Thread* ThreadQueue::Exchange(Thread* from)
 {
 	Thread* to = from;
 
-//	console().WriteFormat("[%d] Exchange(0x%16lx)\n", taskman().GetCurrentCPU(), from);
+//	Console::WriteFormat("[%d] Exchange(0x%16lx)\n", taskman().GetCurrentCPU(), from);
 	lock.Enter();
 	if(priority == from->priority)
 	{
@@ -116,6 +116,6 @@ Thread* ThreadQueue::Exchange(Thread* from)
 	}
 	to->prevQ = to->nextQ = nullptr;
 	lock.Exit();
-//	console().WriteFormat("[%d] Exchange = 0x%16lx\n", taskman().GetCurrentCPU(), to);
+//	Console::WriteFormat("[%d] Exchange = 0x%16lx\n", taskman().GetCurrentCPU(), to);
 	return(to);
 }

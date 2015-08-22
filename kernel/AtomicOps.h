@@ -12,7 +12,8 @@ namespace Kernel
 
 	public:
 		AtomicLock(void);
-		~AtomicLock(void);
+
+		constexpr AtomicLock(unsigned int k) : key(k) {};
 
 		void Enter(void);
 		void Exit(void);

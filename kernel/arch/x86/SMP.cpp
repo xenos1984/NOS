@@ -66,12 +66,12 @@ SECTION(".init.text") SMP::SMP(FloatingPointer* sfp)
 	pointer = sfp;
 	if(pointer->Table) // config table present?
 	{
-		console().WriteMessage(Console::MSG_OK, "SMP:", "individual config found at 0x%8x", pointer->Table);
+		Console::WriteMessage(Console::Style::OK, "SMP:", "individual config found at 0x%8x", pointer->Table);
 		table = (ConfigTable*)(pointer->Table + Symbol::kernelOffset.Addr());
 	}
 	else // default config?
 	{
-		console().WriteMessage(Console::MSG_OK, "SMP:", "default config %d", pointer->Feature[0]);
+		Console::WriteMessage(Console::Style::OK, "SMP:", "default config %d", pointer->Feature[0]);
 		if(pointer->Feature[0] > 4)
 		{
 			smpdefconfig.bus[1].Type = ENTRY_BUS;
@@ -106,8 +106,8 @@ SECTION(".init.text") SMP::SMP(FloatingPointer* sfp)
 		table = (ConfigTable*)&smpdefconfig;
 	}
 
-	console().WriteMessage(Console::MSG_INFO, "CPU mode:", "multiple CPUs");
-	console().WriteMessage(Console::MSG_INFO, "SMP hardware:", "vendor: %8s, product: %12s", table->OemString, table->ProductString);
+	Console::WriteMessage(Console::Style::INFO, "CPU mode:", "multiple CPUs");
+	Console::WriteMessage(Console::Style::INFO, "SMP hardware:", "vendor: %8s, product: %12s", table->OemString, table->ProductString);
 	numcpus = numbuses = numioapics = numints = numlints = 0;
 	Apic::Init(table->LocalApic);
 
@@ -154,28 +154,28 @@ SECTION(".init.text") SMP::SMP(FloatingPointer* sfp)
 		{
 		case ENTRY_PROCESSOR:
 			cpus[numcpus] = (Cpu*)ptr;
-			console().WriteMessage(Console::MSG_INFO, "CPU:", "#%d = 0x%8x", cpus[numcpus]->LocalApicID, cpus[numcpus]->Signature);
+			Console::WriteMessage(Console::Style::INFO, "CPU:", "#%d = 0x%8x", cpus[numcpus]->LocalApicID, cpus[numcpus]->Signature);
 			numcpus++;
 			ptr += 12;
 			break;
 		case ENTRY_BUS:
 			buses[numbuses] = (Bus*)ptr;
-			console().WriteMessage(Console::MSG_INFO, "Bus:", "#%d = %6s", buses[numbuses]->ID, buses[numbuses]->TypeString);
+			Console::WriteMessage(Console::Style::INFO, "Bus:", "#%d = %6s", buses[numbuses]->ID, buses[numbuses]->TypeString);
 			numbuses++;
 			break;
 		case ENTRY_IO_APIC:
 			ioapics[numioapics] = (IOApic*)ptr;
-			console().WriteMessage(Console::MSG_INFO, "IO APIC:", "#%d @ 0x%8x", ioapics[numioapics]->ApicID, ioapics[numioapics]->Address);
+			Console::WriteMessage(Console::Style::INFO, "IO APIC:", "#%d @ 0x%8x", ioapics[numioapics]->ApicID, ioapics[numioapics]->Address);
 			numioapics++;
 			break;
 		case ENTRY_IO_IRQ:
 			ints[numints] = (Interrupt*)ptr;
-			console().WriteMessage(Console::MSG_INFO, "IO Interrupt:", "Bus #%d IRQ #%d => APIC #%d INT #%d", ints[numints]->SourceID, ints[numints]->SourceIRQ, ints[numints]->DestID, ints[numints]->DestIRQ);
+			Console::WriteMessage(Console::Style::INFO, "IO Interrupt:", "Bus #%d IRQ #%d => APIC #%d INT #%d", ints[numints]->SourceID, ints[numints]->SourceIRQ, ints[numints]->DestID, ints[numints]->DestIRQ);
 			numints++;
 			break;
 		case ENTRY_LOCAL_IRQ:
 			lints[numlints] = (Interrupt*)ptr;
-			console().WriteMessage(Console::MSG_INFO, "Local Interrupt:", "Bus #%d IRQ #%d => APIC #%d INT #%d", lints[numlints]->SourceID, lints[numlints]->SourceIRQ, lints[numlints]->DestID, lints[numlints]->DestIRQ);
+			Console::WriteMessage(Console::Style::INFO, "Local Interrupt:", "Bus #%d IRQ #%d => APIC #%d INT #%d", lints[numlints]->SourceID, lints[numlints]->SourceIRQ, lints[numlints]->DestID, lints[numlints]->DestIRQ);
 			numlints++;
 			break;
 		default:
@@ -204,18 +204,18 @@ bool SECTION(".init.text") SMP::Init(unsigned long first, unsigned long last)
 				checksum += csptr[i];
 			if((pointer->Table && pointer->Feature[0]) || (!pointer->Table && !pointer->Feature[0]) || (checksum > 0))
 			{
-				console().WriteMessage(Console::MSG_WARNING, "SMP floating pointer:", "invalid found at 0x%8x, ignored", phys);
+				Console::WriteMessage(Console::Style::WARNING, "SMP floating pointer:", "invalid found at 0x%8x, ignored", phys);
 			}
 			else
 			{
-				console().WriteMessage(Console::MSG_OK, "SMP floating pointer:", "found at 0x%8x", phys);
+				Console::WriteMessage(Console::Style::OK, "SMP floating pointer:", "found at 0x%8x", phys);
 				new (smp_space) SMP(pointer);
 				return(true); // floating pointer found
 			}
 		}
 	}
 
-	console().WriteMessage(Console::MSG_INFO, "SMP floating pointer:", "not found in range 0x%8x to 0x%8x", first, last);
+	Console::WriteMessage(Console::Style::INFO, "SMP floating pointer:", "not found in range 0x%8x to 0x%8x", first, last);
 	return(false); // floating pointer not found
 }
 int SECTION(".init.text") SMP::GetISAIRQ(int n)

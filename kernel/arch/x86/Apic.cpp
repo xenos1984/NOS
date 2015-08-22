@@ -15,7 +15,7 @@ namespace Kernel
 			apic_base[REG_SIVR] |= (1 << 8); // enable
 			apic_base[REG_LDR] = 0xff000000;
 			apic_base[REG_DFR] = 0xffffffff;
-			console().WriteMessage(Console::MSG_INFO, "APIC:", "at 0x%8x, Version 0x%2x, mapped to 0x%p", phys, GetVersion(), apic_base);
+			Console::WriteMessage(Console::Style::INFO, "APIC:", "at 0x%8x, Version 0x%2x, mapped to 0x%p", phys, GetVersion(), apic_base);
 		}
 
 		unsigned char GetPhysID(void)

@@ -35,15 +35,15 @@ int DriverThread::Main(void)
 	ph = (ElfProgramHeader*)((unsigned long)elf + elf->PHOffset);
 	sh = (ElfSectionHeader*)((unsigned long)elf + elf->SHOffset);
 
-//	console().WriteFormat("ph = 0x%16x, sh = 0x%16x, entry = 0x%16x\n", elf->PHOffset, elf->SHOffset, (unsigned long)entry);
+//	Console::WriteFormat("ph = 0x%16x, sh = 0x%16x, entry = 0x%16x\n", elf->PHOffset, elf->SHOffset, (unsigned long)entry);
 
 //	owner = new Process;
 //	tasksched().CreateProcess(owner);
 
 	for(j = 0; j < elf->PHNum; j++)
 	{
-//		console().WriteFormat("Virt = 0x%16x, Phys = 0x%16x\n, Size = 0x%16x\n", ph[j].VirtAddress, ph[j].PhysAddress, ph[j].MemSize);
-//		console().WriteFormat("Type = 0x%16x, Offs = 0x%16x\n, File = 0x%16x\n", ph[j].Type, ph[j].Offset, ph[j].FileSize);
+//		Console::WriteFormat("Virt = 0x%16x, Phys = 0x%16x\n, Size = 0x%16x\n", ph[j].VirtAddress, ph[j].PhysAddress, ph[j].MemSize);
+//		Console::WriteFormat("Type = 0x%16x, Offs = 0x%16x\n, File = 0x%16x\n", ph[j].Type, ph[j].Offset, ph[j].FileSize);
 
 		if(ph[j].Type != PT_LOAD)
 			continue;

@@ -10,7 +10,7 @@ using namespace Kernel;
 SECTION(".init.text") HPET::HPET(unsigned long phys)
 {
 	base = (_HPET*)physmem().MapToLinear((void*)phys, virtmem().Alloc(4096, 4096, false), 1);
-	console().WriteMessage(Console::MSG_INFO, "HPET:", "at 0x%8x, Rev. 0x%2x, %d counters of %d bits, %d fs", phys, GetRevision(), GetTimerCount() + 1, (Timer64Bit() ? 64 : 32), GetPeriod());
+	Console::WriteMessage(Console::Style::INFO, "HPET:", "at 0x%8x, Rev. 0x%2x, %d counters of %d bits, %d fs", phys, GetRevision(), GetTimerCount() + 1, (Timer64Bit() ? 64 : 32), GetPeriod());
 }
 
 unsigned char HPET::GetRevision(void) const

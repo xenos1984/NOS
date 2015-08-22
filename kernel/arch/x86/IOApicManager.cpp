@@ -16,7 +16,7 @@ SECTION(".init.text") IOApicManager::IOApicManager(IOApic* io, unsigned int n, u
 	ioapic = io;
 	numioapics = n;
 
-	console().WriteMessage(Console::MSG_OK, "Interrupts:", "Enabled %d IRQs on %d IOAPICs.", irq, n);
+	Console::WriteMessage(Console::Style::OK, "Interrupts:", "Enabled %d IRQs on %d IOAPICs.", irq, n);
 }
 
 #ifdef CONFIG_SMP

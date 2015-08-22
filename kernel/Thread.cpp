@@ -29,6 +29,6 @@ Thread::~Thread(void)
 
 void Thread::Dump(void)
 {
-	console().WriteFormat("Thread #%d @ 0x%p; Process #%d @ 0x%p\n", id, this, owner->id, owner);
+	Console::WriteFormat("Thread #%d @ 0x%p; Process #%d @ 0x%p\n", id, this, owner->id, owner);
 	data.Dump();
 }

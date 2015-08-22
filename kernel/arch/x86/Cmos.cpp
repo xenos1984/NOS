@@ -19,7 +19,7 @@ Cmos::Cmos(void)
 	if((Port::ReadU8(CMOS_DATA) & D_VALID) == 0)
 	{
 		lock.Exit();
-		console().WriteMessage(Console::MSG_WARNING, "CMOS time:", "Invalid");
+		Console::WriteMessage(Console::Style::WARNING, "CMOS time:", "Invalid");
 		return;
 	}
 
@@ -53,9 +53,9 @@ Cmos::Cmos(void)
 	lock.Exit();
 
 	if(mode & B_BCD)
-		console().WriteMessage(Console::MSG_OK, "CMOS time (Dec):", "%2d%2d/%2d/%2d, %2d:%2d:%2d", cent, year, mon, day, hour, min, sec);
+		Console::WriteMessage(Console::Style::OK, "CMOS time (Dec):", "%2d%2d/%2d/%2d, %2d:%2d:%2d", cent, year, mon, day, hour, min, sec);
 	else
-		console().WriteMessage(Console::MSG_OK, "CMOS time (BCD):", "%2x%2x/%2x/%2x, %2x:%2x:%2x", cent, year, mon, day, hour, min, sec);
+		Console::WriteMessage(Console::Style::OK, "CMOS time (BCD):", "%2x%2x/%2x/%2x, %2x:%2x:%2x", cent, year, mon, day, hour, min, sec);
 }
 
 uint8_t Cmos::ReadRegister(uint8_t reg)

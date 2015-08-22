@@ -201,12 +201,12 @@ void VirtualMemory::ShowMap(void)
 {
 	MemoryPointer* mp = base;
 
-	console().WriteFormat("count = 0x%8x, cpb = 0x%8x, size = 0x%8x, total = 0x%8x\n", count, countperblock, sizeof(MemoryPointer), counttotal);
-	console().WriteLine("Heap map:");
+	Console::WriteFormat("count = 0x%8x, cpb = 0x%8x, size = 0x%8x, total = 0x%8x\n", count, countperblock, sizeof(MemoryPointer), counttotal);
+	Console::WriteLine("Heap map:");
 	lock.Enter();
 	do
 	{
-		console().WriteFormat("Block 0x%8x of length 0x%8x at 0x%8x, %s\n", mp, mp->length, mp->mem, (mp->free ? "free" : "allocated"));
+		Console::WriteFormat("Block 0x%8x of length 0x%8x at 0x%8x, %s\n", mp, mp->length, mp->mem, (mp->free ? "free" : "allocated"));
 		mp = mp->next;
 	}
 	while(mp != base);

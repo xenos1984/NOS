@@ -32,56 +32,56 @@ using namespace Kernel;
 
 USERINT(DivideError)
 {
-	console().SetForeground(Console::FG_YELLOW);
-	console().WriteFormat("DivideError occured\n");
+	Console::SetStyle(Console::Style::WARNING);
+	Console::WriteFormat("DivideError occured\n");
 	tasksched().GetCurrent()->Dump();
 	Halt();
 }
 
 USERINT(DebugInterrupt)
 {
-	console().SetForeground(Console::FG_YELLOW);
-	console().WriteFormat("DebugInterrupt occured\n");
+	Console::SetStyle(Console::Style::WARNING);
+	Console::WriteFormat("DebugInterrupt occured\n");
 	tasksched().GetCurrent()->Dump();
 	Halt();
 }
 
 USERINT(NonMaskable)
 {
-	console().SetForeground(Console::FG_YELLOW);
-	console().WriteFormat("NonMaskable occured\n");
+	Console::SetStyle(Console::Style::WARNING);
+	Console::WriteFormat("NonMaskable occured\n");
 	tasksched().GetCurrent()->Dump();
 	Halt();
 }
 
 USERINT(BreakPoint)
 {
-	console().SetForeground(Console::FG_YELLOW);
-	console().WriteFormat("BreakPoint occured\n");
+	Console::SetStyle(Console::Style::WARNING);
+	Console::WriteFormat("BreakPoint occured\n");
 	tasksched().GetCurrent()->Dump();
 	Halt();
 }
 
 USERINT(Overflow)
 {
-	console().SetForeground(Console::FG_YELLOW);
-	console().WriteFormat("Overflow occured\n");
+	Console::SetStyle(Console::Style::WARNING);
+	Console::WriteFormat("Overflow occured\n");
 	tasksched().GetCurrent()->Dump();
 	Halt();
 }
 
 USERINT(Arraybounds)
 {
-	console().SetForeground(Console::FG_YELLOW);
-	console().WriteFormat("Arraybounds occured\n");
+	Console::SetStyle(Console::Style::WARNING);
+	Console::WriteFormat("Arraybounds occured\n");
 	tasksched().GetCurrent()->Dump();
 	Halt();
 }
 
 USERINT(InvalidOpcode)
 {
-	console().SetForeground(Console::FG_YELLOW);
-	console().WriteFormat("InvalidOpcode occured\n");
+	Console::SetStyle(Console::Style::WARNING);
+	Console::WriteFormat("InvalidOpcode occured\n");
 	tasksched().GetCurrent()->Dump();
 	Halt();
 }
@@ -105,8 +105,8 @@ USERINT(DeviceNotAvailable)
 
 USEREXC(DoubleFault)
 {
-	console().SetForeground(Console::FG_YELLOW);
-	console().WriteFormat("DoubleFault occured\n");
+	Console::SetStyle(Console::Style::WARNING);
+	Console::WriteFormat("DoubleFault occured\n");
 	error.Dump();
 	tasksched().GetCurrent()->Dump();
 	Halt();
@@ -114,16 +114,16 @@ USEREXC(DoubleFault)
 
 USERINT(CoprocSegOverrun)
 {
-	console().SetForeground(Console::FG_YELLOW);
-	console().WriteFormat("CoprocSegOverrun occured\n");
+	Console::SetStyle(Console::Style::WARNING);
+	Console::WriteFormat("CoprocSegOverrun occured\n");
 	tasksched().GetCurrent()->Dump();
 	Halt();
 }
 
 USEREXC(InvalidTSS)
 {
-	console().SetForeground(Console::FG_YELLOW);
-	console().WriteFormat("InvalidTSS occured\n");
+	Console::SetStyle(Console::Style::WARNING);
+	Console::WriteFormat("InvalidTSS occured\n");
 	error.Dump();
 	tasksched().GetCurrent()->Dump();
 	Halt();
@@ -131,8 +131,8 @@ USEREXC(InvalidTSS)
 
 USEREXC(SegmentNotPresent)
 {
-	console().SetForeground(Console::FG_YELLOW);
-	console().WriteFormat("SegmentNotPresent occured\n");
+	Console::SetStyle(Console::Style::WARNING);
+	Console::WriteFormat("SegmentNotPresent occured\n");
 	error.Dump();
 	tasksched().GetCurrent()->Dump();
 	Halt();
@@ -140,8 +140,8 @@ USEREXC(SegmentNotPresent)
 
 USEREXC(StackFault)
 {
-	console().SetForeground(Console::FG_YELLOW);
-	console().WriteFormat("StackFault occured\n");
+	Console::SetStyle(Console::Style::WARNING);
+	Console::WriteFormat("StackFault occured\n");
 	error.Dump();
 	tasksched().GetCurrent()->Dump();
 	Halt();
@@ -153,8 +153,8 @@ USEREXC(GeneralProtection)
 	Thread* t = tasksched().GetCurrent();
 	unsigned char* ip = (unsigned char*)t->data.eip;
 */
-	console().SetForeground(Console::FG_YELLOW);
-	console().WriteFormat("GeneralProtection occured\n");
+	Console::SetStyle(Console::Style::WARNING);
+	Console::WriteFormat("GeneralProtection occured\n");
 /*
 	reason:
 	switch(ip[0])
@@ -172,75 +172,75 @@ USEREXC(GeneralProtection)
 		break;
 
 	case 0xe4:
-		console().WriteFormat("Illegal I/O: inb $0x%2x, %%al\n", ip[1]);
+		Console::WriteFormat("Illegal I/O: inb $0x%2x, %%al\n", ip[1]);
 		break;
 
 	case 0xe5:
 		if(opsize)
-			console().WriteFormat("Illegal I/O: inw $0x%2x, %%ax\n", ip[1]);
+			Console::WriteFormat("Illegal I/O: inw $0x%2x, %%ax\n", ip[1]);
 		else
-			console().WriteFormat("Illegal I/O: inl $0x%2x, %%eax\n", ip[1]);
+			Console::WriteFormat("Illegal I/O: inl $0x%2x, %%eax\n", ip[1]);
 		break;
 
 	case 0xec:
-		console().WriteFormat("Illegal I/O: inb %%dx, %%al with %%dx = 0x%4x\n", t->data.edx & 0xffff);
+		Console::WriteFormat("Illegal I/O: inb %%dx, %%al with %%dx = 0x%4x\n", t->data.edx & 0xffff);
 		break;
 
 	case 0xed:
 		if(opsize)
-			console().WriteFormat("Illegal I/O: inw %%dx, %%ax with %%dx = 0x%4x\n", t->data.edx & 0xffff);
+			Console::WriteFormat("Illegal I/O: inw %%dx, %%ax with %%dx = 0x%4x\n", t->data.edx & 0xffff);
 		else
-			console().WriteFormat("Illegal I/O: inl %%dx, %%eax with %%dx = 0x%4x\n", t->data.edx & 0xffff);
+			Console::WriteFormat("Illegal I/O: inl %%dx, %%eax with %%dx = 0x%4x\n", t->data.edx & 0xffff);
 		break;
 
 	case 0xe6:
-		console().WriteFormat("Illegal I/O: outb %%al, $0x%2x\n", ip[1]);
+		Console::WriteFormat("Illegal I/O: outb %%al, $0x%2x\n", ip[1]);
 		break;
 
 	case 0xe7:
 		if(opsize)
-			console().WriteFormat("Illegal I/O: outw %%ax, $0x%2x\n", ip[1]);
+			Console::WriteFormat("Illegal I/O: outw %%ax, $0x%2x\n", ip[1]);
 		else
-			console().WriteFormat("Illegal I/O: outl %%eax, $0x%2x\n", ip[1]);
+			Console::WriteFormat("Illegal I/O: outl %%eax, $0x%2x\n", ip[1]);
 		break;
 
 	case 0xee:
-		console().WriteFormat("Illegal I/O: outb %%al, %%dx with %%dx = 0x%4x\n", t->data.edx & 0xffff);
+		Console::WriteFormat("Illegal I/O: outb %%al, %%dx with %%dx = 0x%4x\n", t->data.edx & 0xffff);
 		break;
 
 	case 0xef:
 		if(opsize)
-			console().WriteFormat("Illegal I/O: outw %%ax, %%dx with %%dx = 0x%4x\n", t->data.edx & 0xffff);
+			Console::WriteFormat("Illegal I/O: outw %%ax, %%dx with %%dx = 0x%4x\n", t->data.edx & 0xffff);
 		else
-			console().WriteFormat("Illegal I/O: outl %%eax, %%dx with %%dx = 0x%4x\n", t->data.edx & 0xffff);
+			Console::WriteFormat("Illegal I/O: outl %%eax, %%dx with %%dx = 0x%4x\n", t->data.edx & 0xffff);
 		break;
 
 	case 0x6c:
-		console().WriteFormat("Illegal I/O: insb with %%dx = 0x%4x\n", t->data.edx & 0xffff);
+		Console::WriteFormat("Illegal I/O: insb with %%dx = 0x%4x\n", t->data.edx & 0xffff);
 		break;
 
 	case 0x6d:
-		console().WriteFormat("Illegal I/O: %s with %%dx = 0x%4x\n", (opsize ? "insw" : "insl"), t->data.edx & 0xffff);
+		Console::WriteFormat("Illegal I/O: %s with %%dx = 0x%4x\n", (opsize ? "insw" : "insl"), t->data.edx & 0xffff);
 		break;
 
 	case 0x6e:
-		console().WriteFormat("Illegal I/O: outsb with %%dx = 0x%4x\n", t->data.edx & 0xffff);
+		Console::WriteFormat("Illegal I/O: outsb with %%dx = 0x%4x\n", t->data.edx & 0xffff);
 		break;
 
 	case 0x6f:
-		console().WriteFormat("Illegal I/O: %s with %%dx = 0x%4x\n", (opsize ? "outsw" : "outsl"), t->data.edx & 0xffff);
+		Console::WriteFormat("Illegal I/O: %s with %%dx = 0x%4x\n", (opsize ? "outsw" : "outsl"), t->data.edx & 0xffff);
 		break;
 
 	case 0xf4:
-		console().WriteFormat("Illegal instruction: hlt\n");
+		Console::WriteFormat("Illegal instruction: hlt\n");
 		break;
 
 	case 0xfa:
-		console().WriteFormat("Illegal instruction: cli\n");
+		Console::WriteFormat("Illegal instruction: cli\n");
 		break;
 
 	case 0xfb:
-		console().WriteFormat("Illegal instruction: sti\n");
+		Console::WriteFormat("Illegal instruction: sti\n");
 		break;
 
 	default:
@@ -254,8 +254,8 @@ USEREXC(GeneralProtection)
 
 USERPAG(PageFault)
 {
-	console().SetForeground(Console::FG_YELLOW);
-	console().WriteFormat("PageFault occured\n");
+	Console::SetStyle(Console::Style::WARNING);
+	Console::WriteFormat("PageFault occured\n");
 	error.Dump();
 	tasksched().GetCurrent()->Dump();
 	Halt();
@@ -263,16 +263,16 @@ USERPAG(PageFault)
 
 USERINT(CoprocError)
 {
-	console().SetForeground(Console::FG_YELLOW);
-	console().WriteFormat("CoprocError occured\n");
+	Console::SetStyle(Console::Style::WARNING);
+	Console::WriteFormat("CoprocError occured\n");
 	tasksched().GetCurrent()->Dump();
 	Halt();
 }
 
 USEREXC(AlignmentCheck)
 {
-	console().SetForeground(Console::FG_YELLOW);
-	console().WriteFormat("AlignmentCheck occured\n");
+	Console::SetStyle(Console::Style::WARNING);
+	Console::WriteFormat("AlignmentCheck occured\n");
 	error.Dump();
 	tasksched().GetCurrent()->Dump();
 	Halt();
@@ -280,16 +280,16 @@ USEREXC(AlignmentCheck)
 
 USERINT(MachineCheck)
 {
-	console().SetForeground(Console::FG_YELLOW);
-	console().WriteFormat("MachineCheck occured\n");
+	Console::SetStyle(Console::Style::WARNING);
+	Console::WriteFormat("MachineCheck occured\n");
 	tasksched().GetCurrent()->Dump();
 	Halt();
 }
 
 USERINT(SSEFault)
 {
-	console().SetForeground(Console::FG_YELLOW);
-	console().WriteFormat("SSEFault occured\n");
+	Console::SetStyle(Console::Style::WARNING);
+	Console::WriteFormat("SSEFault occured\n");
 	tasksched().GetCurrent()->Dump();
 	Halt();
 }
@@ -298,141 +298,141 @@ USERINT(SSEFault)
 
 KERNINT(DivideError)
 {
-	console().SetForeground(Console::FG_RED);
-	console().WriteFormat("DivideError occured\n");
+	Console::SetStyle(Console::Style::ERROR);
+	Console::WriteFormat("DivideError occured\n");
 	regs->Dump();
 }
 
 KERNINT(DebugInterrupt)
 {
-	console().SetForeground(Console::FG_RED);
-	console().WriteFormat("DebugInterrupt occured\n");
+	Console::SetStyle(Console::Style::ERROR);
+	Console::WriteFormat("DebugInterrupt occured\n");
 	regs->Dump();
 }
 
 KERNINT(NonMaskable)
 {
-	console().SetForeground(Console::FG_RED);
-	console().WriteFormat("NonMaskable occured\n");
+	Console::SetStyle(Console::Style::ERROR);
+	Console::WriteFormat("NonMaskable occured\n");
 	regs->Dump();
 }
 
 KERNINT(BreakPoint)
 {
-	console().SetForeground(Console::FG_RED);
-	console().WriteFormat("BreakPoint occured\n");
+	Console::SetStyle(Console::Style::ERROR);
+	Console::WriteFormat("BreakPoint occured\n");
 	regs->Dump();
 }
 
 KERNINT(Overflow)
 {
-	console().SetForeground(Console::FG_RED);
-	console().WriteFormat("Overflow occured\n");
+	Console::SetStyle(Console::Style::ERROR);
+	Console::WriteFormat("Overflow occured\n");
 	regs->Dump();
 }
 
 KERNINT(Arraybounds)
 {
-	console().SetForeground(Console::FG_RED);
-	console().WriteFormat("Arraybounds occured\n");
+	Console::SetStyle(Console::Style::ERROR);
+	Console::WriteFormat("Arraybounds occured\n");
 	regs->Dump();
 }
 
 KERNINT(InvalidOpcode)
 {
-	console().SetForeground(Console::FG_RED);
-	console().WriteFormat("InvalidOpcode occured\n");
+	Console::SetStyle(Console::Style::ERROR);
+	Console::WriteFormat("InvalidOpcode occured\n");
 	regs->Dump();
 }
 
 KERNINT(DeviceNotAvailable)
 {
-	console().SetForeground(Console::FG_RED);
-	console().WriteFormat("DeviceNotAvailable occured\n");
+	Console::SetStyle(Console::Style::ERROR);
+	Console::WriteFormat("DeviceNotAvailable occured\n");
 	regs->Dump();
 }
 
 KERNEXC(DoubleFault)
 {
-	console().SetForeground(Console::FG_RED);
-	console().WriteFormat("DoubleFault occured\n");
+	Console::SetStyle(Console::Style::ERROR);
+	Console::WriteFormat("DoubleFault occured\n");
 	error.Dump();
 	regs->Dump();
 }
 
 KERNINT(CoprocSegOverrun)
 {
-	console().SetForeground(Console::FG_RED);
-	console().WriteFormat("CoprocSegOverrun occured\n");
+	Console::SetStyle(Console::Style::ERROR);
+	Console::WriteFormat("CoprocSegOverrun occured\n");
 	regs->Dump();
 }
 
 KERNEXC(InvalidTSS)
 {
-	console().SetForeground(Console::FG_RED);
-	console().WriteFormat("InvalidTSS occured\n");
+	Console::SetStyle(Console::Style::ERROR);
+	Console::WriteFormat("InvalidTSS occured\n");
 	error.Dump();
 	regs->Dump();
 }
 
 KERNEXC(SegmentNotPresent)
 {
-	console().SetForeground(Console::FG_RED);
-	console().WriteFormat("SegmentNotPresent occured\n");
+	Console::SetStyle(Console::Style::ERROR);
+	Console::WriteFormat("SegmentNotPresent occured\n");
 	error.Dump();
 	regs->Dump();
 }
 
 KERNEXC(StackFault)
 {
-	console().SetForeground(Console::FG_RED);
-	console().WriteFormat("StackFault occured\n");
+	Console::SetStyle(Console::Style::ERROR);
+	Console::WriteFormat("StackFault occured\n");
 	error.Dump();
 	regs->Dump();
 }
 
 KERNEXC(GeneralProtection)
 {
-	console().SetForeground(Console::FG_RED);
-	console().WriteFormat("GeneralProtection occured\n");
+	Console::SetStyle(Console::Style::ERROR);
+	Console::WriteFormat("GeneralProtection occured\n");
 	error.Dump();
 	regs->Dump();
 }
 
 KERNPAG(PageFault)
 {
-	console().SetForeground(Console::FG_RED);
-	console().WriteFormat("PageFault occured\n");
+	Console::SetStyle(Console::Style::ERROR);
+	Console::WriteFormat("PageFault occured\n");
 	error.Dump();
 	regs->Dump();
 }
 
 KERNINT(CoprocError)
 {
-	console().SetForeground(Console::FG_RED);
-	console().WriteFormat("CoprocError occured\n");
+	Console::SetStyle(Console::Style::ERROR);
+	Console::WriteFormat("CoprocError occured\n");
 	regs->Dump();
 }
 
 KERNEXC(AlignmentCheck)
 {
-	console().SetForeground(Console::FG_RED);
-	console().WriteFormat("AlignmentCheck occured\n");
+	Console::SetStyle(Console::Style::ERROR);
+	Console::WriteFormat("AlignmentCheck occured\n");
 	error.Dump();
 	regs->Dump();
 }
 
 KERNINT(MachineCheck)
 {
-	console().SetForeground(Console::FG_RED);
-	console().WriteFormat("MachineCheck occured\n");
+	Console::SetStyle(Console::Style::ERROR);
+	Console::WriteFormat("MachineCheck occured\n");
 	regs->Dump();
 }
 
 KERNINT(SSEFault)
 {
-	console().SetForeground(Console::FG_RED);
-	console().WriteFormat("SSEFault occured\n");
+	Console::SetStyle(Console::Style::ERROR);
+	Console::WriteFormat("SSEFault occured\n");
 	regs->Dump();
 }
 

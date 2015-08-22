@@ -81,9 +81,9 @@ void SECTION(".init.text") Processor::Startup(unsigned long stack)
 	while((pit().GetCurrent(0) <= 11932) && !apflag) ;
 	cmos().SetShutdownStatus(Cmos::SH_NORMAL);
 	if(apflag)
-		console().WriteMessage(Console::MSG_OK, "AP no. 0x%2x: ", "booted", physID);
+		Console::WriteMessage(Console::Style::OK, "AP no. 0x%2x: ", "booted", physID);
 	else
-		console().WriteMessage(Console::MSG_WARNING, "AP no. 0x%2x: ", "no response, disabled", physID);
+		Console::WriteMessage(Console::Style::WARNING, "AP no. 0x%2x: ", "no response, disabled", physID);
 }
 
 void Processor::Shutdown(void)

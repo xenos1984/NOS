@@ -23,7 +23,7 @@ SECTION(".init.text") IOApic::IOApic(unsigned long addr, unsigned int base)
 			SetIRQ(i, 0xff, irqbase + i + 0x20, INT_POL_LOW | INT_LEVELTRIG | INT_MASK | DEST_LOGICAL | DM_LOWPRI);
 	}
 
-	console().WriteMessage(Console::MSG_INFO, "I/O APIC:", "at 0x%8x, Version 0x%2x, IRQ 0x%2x - 0x%2x", addr, GetVersion(), irqbase, irqbase + irqcount - 1);
+	Console::WriteMessage(Console::Style::INFO, "I/O APIC:", "at 0x%8x, Version 0x%2x, IRQ 0x%2x - 0x%2x", addr, GetVersion(), irqbase, irqbase + irqcount - 1);
 }
 
 unsigned int IOApic::GetID(void)

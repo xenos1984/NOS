@@ -24,10 +24,10 @@ void SECTION(".init.text") AML::ParseTable(ACPI::TableHeader* header)
 /*	unsigned char* ptr = (unsigned char*)(sizeof(AcpiHeader) + (unsigned long)header);
 
 	for(unsigned i = 0; i < header->Length - sizeof(AcpiHeader); i++)
-		console().WriteFormat("%2x", ptr[i]);
-	console().Write('\n');
+		Console::WriteFormat("%2x", ptr[i]);
+	Console::Write('\n');
 	ParseCode(&ptr, header->Length - sizeof(AcpiHeader));*/
-	console().WriteFormat("%d bytes of AML code\n", header->Length - sizeof(ACPI::TableHeader));
+	Console::WriteFormat("%d bytes of AML code\n", header->Length - sizeof(ACPI::TableHeader));
 }
 
 void SECTION(".init.text") AML::ParseCode(unsigned char **x, unsigned int len)
@@ -43,9 +43,9 @@ void SECTION(".init.text") AML::ParseCode(unsigned char **x, unsigned int len)
 		case 0x01: // OneOp
 		case 0x06: // AliasOp
 			NameString(x);
-			console().WriteFormat(" = ");
+			Console::WriteFormat(" = ");
 			NameString(x);
-			console().Write('\n');
+			Console::Write('\n');
 			break;
 
 		case 0x08: // NameOp
@@ -57,7 +57,7 @@ void SECTION(".init.text") AML::ParseCode(unsigned char **x, unsigned int len)
 		case 0x10: // ScopeOp
 			length = PackageLength(x);
 			NameString(x);
-			console().WriteFormat(": ScopeOp of length %d\n", length);
+			Console::WriteFormat(": ScopeOp of length %d\n", length);
 			ParseCode(x, length);
 			break;
 
@@ -92,7 +92,7 @@ void SECTION(".init.text") AML::ParseCode(unsigned char **x, unsigned int len)
 			case 0x83: // ProcessorOp
 				length = PackageLength(x);
 				NameString(x);
-				console().WriteFormat(": ProcessorOp of length %d", length);
+				Console::WriteFormat(": ProcessorOp of length %d", length);
 				break;
 
 			case 0x84: // PowerResOp
@@ -199,10 +199,10 @@ void SECTION(".init.text") AML::NameString(unsigned char **x)
 	unsigned int i;
 
 	if((*x)[0] == '\\')
-		console().Write((*x)++[0]);
+		Console::Write((*x)++[0]);
 
 	while((*x)[0] == '^')
-		console().Write((*x)++[0]);
+		Console::Write((*x)++[0]);
 
 	switch((*x)[0])
 	{
@@ -211,7 +211,7 @@ void SECTION(".init.text") AML::NameString(unsigned char **x)
 		break;
 
 	case 0x2e:
-		console().WriteFormat("%4s\\%4s", *x + 1, *x + 5);
+		Console::WriteFormat("%4s\\%4s", *x + 1, *x + 5);
 		*x += 9;
 		break;
 
@@ -221,16 +221,16 @@ void SECTION(".init.text") AML::NameString(unsigned char **x)
 		(*x)++;
 		while(true)
 		{
-			console().WriteFormat("%4s", *x);
+			Console::WriteFormat("%4s", *x);
 			*x += 4;
 			if(0 == --i)
 				break;
-			console().Write('\\');
+			Console::Write('\\');
 		}
 		break;
 
 	default:
-		console().WriteFormat("%4s", *x);
+		Console::WriteFormat("%4s", *x);
 		*x += 4;
 		break;
 	}

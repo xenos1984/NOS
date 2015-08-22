@@ -54,7 +54,7 @@ SECTION(".init.text") I386TaskManager::I386TaskManager(unsigned int nc)
 
 void SECTION(".init.text") I386TaskManager::Init(void)
 {
-	console().WriteMessage(Console::MSG_INFO, "CPU mode:", "single CPU");
+	Console::WriteMessage(Console::Style::INFO, "CPU mode:", "single CPU");
 
 	new (taskman_space) I386TaskManager(1);
 
@@ -73,7 +73,7 @@ void SECTION(".init.text") I386TaskManager::Init(void)
 	}
 	else
 	{
-		console().WriteMessage(Console::MSG_WARNING, "APIC:", "Not present.");
+		Console::WriteMessage(Console::Style::WARNING, "APIC:", "Not present.");
 		cmos().SetPeriodic(7); // 512Hz
 		irqman().Unmask(8);
 	}

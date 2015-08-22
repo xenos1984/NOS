@@ -44,7 +44,7 @@ void TaskScheduler::DeleteThread(Thread* t)
 
 	lock.Enter();
 	p = t->owner;
-	//console().WriteFormat("Delete thread @ 0x%8x, owner = 0x%8x, threads = %d\n", t, p, p->threads.Value());
+	//Console::WriteFormat("Delete thread @ 0x%8x, owner = 0x%8x, threads = %d\n", t, p, p->threads.Value());
 	p->RemoveThread(t);
 	if(p->threads.Value() == 0)
 		DeleteProcess(p);
@@ -54,7 +54,7 @@ void TaskScheduler::DeleteThread(Thread* t)
 
 void TaskScheduler::DeleteProcess(Process* p)
 {
-	//console().WriteFormat("Delete process @ 0x%8x, prev = 0x%8x, next = 0x%8x\n", p, p->prev, p->next);
+	//Console::WriteFormat("Delete process @ 0x%8x, prev = 0x%8x, next = 0x%8x\n", p, p->prev, p->next);
 	p->next->prev = p->prev;
 	p->prev->next = p->next;
 	p->next = p->prev = nullptr;
@@ -123,10 +123,10 @@ void TaskScheduler::SwitchToIdle(void)
 	to->state = ThreadStateActive;
 	current[n] = to;
 
-//	console().WriteFormat("[%d] Switch from 0x%16lx to idle 0x%16lx.\n", n, from, to);
+//	Console::WriteFormat("[%d] Switch from 0x%16lx to idle 0x%16lx.\n", n, from, to);
 	taskman().SwitchTo(from, to);
 
-	console().WriteMessage(Console::MSG_ERROR, "Kernel panic:", "Return to dead thread in SwitchToIdle.");
+	Console::WriteMessage(Console::MSG_ERROR, "Kernel panic:", "Return to dead thread in SwitchToIdle.");
 	while(true) ;
 }
 */

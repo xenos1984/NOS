@@ -31,9 +31,9 @@ SECTION(".init.text") CPU::CPU(void)
 		edx_00000001.raw = 0;
 	}
 
-	console().WriteMessage(Console::MSG_INFO, "CPU Vendor:", "%12s", vendor.string);
-	console().WriteMessage(Console::MSG_INFO, "CPU Type:", "Type: %1x Fam: %2x%1x Mod: %1x%1x Step: %1x", eax_00000001.bits.type, eax_00000001.bits.extfamily, eax_00000001.bits.family, eax_00000001.bits.extmodel, eax_00000001.bits.model, eax_00000001.bits.stepping);
-	console().WriteMessage(Console::MSG_INFO, "CPU Features 1:", "EDX = 0x%8x, ECX = 0x%8x", edx_00000001.raw, ecx_00000001.raw);
+	Console::WriteMessage(Console::Style::INFO, "CPU Vendor:", "%12s", vendor.string);
+	Console::WriteMessage(Console::Style::INFO, "CPU Type:", "Type: %1x Fam: %2x%1x Mod: %1x%1x Step: %1x", eax_00000001.bits.type, eax_00000001.bits.extfamily, eax_00000001.bits.family, eax_00000001.bits.extmodel, eax_00000001.bits.model, eax_00000001.bits.stepping);
+	Console::WriteMessage(Console::Style::INFO, "CPU Features 1:", "EDX = 0x%8x, ECX = 0x%8x", edx_00000001.raw, ecx_00000001.raw);
 
 	asm volatile ( "cpuid"
 		: "=a" (max_ext_func)
@@ -47,7 +47,7 @@ SECTION(".init.text") CPU::CPU(void)
 			: "=b" (ebx_80000001.raw), "=c" (ecx_80000001.raw), "=d" (edx_80000001.raw)
 			: "a" (0x80000001)
 		);
-		console().WriteMessage(Console::MSG_INFO, "CPU Features 2:", "EDX = 0x%8x, ECX = 0x%8x", edx_80000001.raw, ecx_80000001.raw);
+		Console::WriteMessage(Console::Style::INFO, "CPU Features 2:", "EDX = 0x%8x, ECX = 0x%8x", edx_80000001.raw, ecx_80000001.raw);
 	}
 	else
 	{
@@ -70,7 +70,7 @@ SECTION(".init.text") CPU::CPU(void)
 			: "=a" (brand.bytes.eax_80000004), "=b" (brand.bytes.ebx_80000004), "=c" (brand.bytes.ecx_80000004), "=d" (brand.bytes.edx_80000004)
 			: "0" (0x80000004)
 		);
-		console().WriteMessage(Console::MSG_INFO, "CPU Brand:", "%s", brand.string);
+		Console::WriteMessage(Console::Style::INFO, "CPU Brand:", "%s", brand.string);
 	}
 	else
 	{

@@ -10,7 +10,7 @@
 #include <Memory.h>
 #include <Chunker.h>
 #include <Process.h>
-#include INC_ARCH(VGAConsole.h)
+#include <Console.h>
 #include INC_ARCH(X86Pager.h)
 #include INC_SUBARCH(Entry.h)
 #include INC_ARCH(DescriptorTable.h)
@@ -35,7 +35,6 @@ using namespace Kernel;
 extern "C" void SECTION(".init.text") KernelEntry(unsigned long magic, Multiboot::Info* mbi)
 {
 	// Init console and show message.
-	new (console_space) VGAConsole;
 	Core::Welcome();
 
 	// Get basic CPU info.

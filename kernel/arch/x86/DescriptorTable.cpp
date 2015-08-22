@@ -90,5 +90,5 @@ SECTION(".init.text") void DescriptorTable::InitIDT(void)
 #if defined ELF32
 	CreateInterruptGate(FIRST_IRQ + 8, KERNEL_CODE, &CMOSTimerIRQWrapper);
 #endif
-	console().WriteMessage(Console::MSG_OK, "IDT:", "Installed @ 0x%p", this);
+	Console::WriteMessage(Console::Style::OK, "IDT:", "Installed @ 0x%p", this);
 }
