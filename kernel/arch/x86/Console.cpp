@@ -71,7 +71,7 @@ namespace Kernel
 			unsigned long raw[TOTAL_BYTES / sizeof(long)];
 		} buffer; /**< Cache to avoid reading video memory when scrolling. */
 
-		static Attribute attribs[] =
+		static const Attribute attribs[] =
 		{
 			static_cast<Attribute>(BG_BLACK | FG_LIGHT_GRAY),
 			static_cast<Attribute>(BG_BLACK | FG_WHITE),

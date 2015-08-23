@@ -8,13 +8,9 @@ namespace Kernel
 	class AtomicLock
 	{
 	private:
-		volatile unsigned int key;
+		volatile unsigned int key = 0;
 
 	public:
-		AtomicLock(void);
-
-		constexpr AtomicLock(unsigned int k) : key(k) {};
-
 		void Enter(void);
 		void Exit(void);
 	};

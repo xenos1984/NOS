@@ -3,12 +3,13 @@
 #include <cstdarg>
 #include <cstdint>
 #include <Console.h>
+#include <AtomicOps.h>
 
 namespace Kernel
 {
 	namespace Console
 	{
-		static AtomicLock lock = AtomicLock(0);
+		static AtomicLock lock;
 
 		void Write(char chr)
 		{

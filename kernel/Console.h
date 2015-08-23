@@ -5,7 +5,6 @@
 
 #include <cstdarg>
 #include <cstdint>
-#include <AtomicOps.h>
 
 namespace Kernel
 {

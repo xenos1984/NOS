@@ -1,11 +1,11 @@
-// Core.cpp - Core kernel implementation
+// Core.cpp - Core kernel implementation.
 
 #include <new>
 #include <Core.h>
+#include <Console.h>
 #include INC_ARCH(CPU.h)
 #include INC_SUBARCH(SysVars.h)
 #include INC_SUBARCH(Video.h)
-#include INC_SUBARCH(AtariConsole.h)
 #include INC_SUBARCH(Interrupt.h)
 
 using namespace Kernel;
@@ -13,7 +13,7 @@ using namespace Kernel;
 extern "C" void SECTION(".init.text") KernelEntry(void)
 {
 	Video::Init();
-	new (console_space) AtariConsole;
+	Console::Init();
 	Core::Welcome();
 
 	intvects[0x02] = BusErrorWrapper;

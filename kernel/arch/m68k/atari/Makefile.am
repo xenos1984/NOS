@@ -7,16 +7,16 @@ AM_CPPFLAGS = -imacros $(top_srcdir)/config.h -I$(top_srcdir)/kernel -I$(top_src
 noinst_LIBRARIES = libatari.a
 
 libatari_a_SOURCES = \
-	AtariConsole.h \
 	Blitter.h \
+	Console.h \
 	Interrupt.h \
 	MFP.h \
 	PSG.h \
 	SysVars.h \
 	Video.h \
 	\
-	AtariConsole.cpp \
 	Blitter.cpp \
+	Console.cpp \
 	Core.cpp \
 	Interrupt.cpp \
 	InterruptStub.S \

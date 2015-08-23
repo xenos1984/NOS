@@ -11,11 +11,6 @@
 
 namespace Kernel
 {
-	inline AtomicLock::AtomicLock(void)
-	{
-		key = 0;
-	}
-
 	inline void AtomicLock::Enter(void)
 	{
 		asm volatile ("1: \n"
