@@ -34,6 +34,7 @@ void DumpRegisters(RegisterSetEx* regs)
 
 void BusError(RegisterSetEx* regs)
 {
+	Console::SetStyle(Console::Style::ERROR);
 	Console::WriteFormat("BusError at PC = %8x\n", regs->pc);
 	DumpRegisters(regs);
 	Stop(0x2700);
@@ -41,6 +42,7 @@ void BusError(RegisterSetEx* regs)
 
 void AddressError(RegisterSetEx* regs)
 {
+	Console::SetStyle(Console::Style::ERROR);
 	Console::WriteFormat("AddressError at PC = %8x\n", regs->pc);
 	DumpRegisters(regs);
 	Stop(0x2700);
@@ -48,6 +50,7 @@ void AddressError(RegisterSetEx* regs)
 
 void IllegalInstr(RegisterSet* regs)
 {
+	Console::SetStyle(Console::Style::ERROR);
 	Console::WriteFormat("IllegalInstr at PC = %8x\n", regs->pc);
 	DumpRegisters(regs);
 	Stop(0x2700);
@@ -55,6 +58,7 @@ void IllegalInstr(RegisterSet* regs)
 
 void DivByZero(RegisterSet* regs)
 {
+	Console::SetStyle(Console::Style::ERROR);
 	Console::WriteFormat("DivByZero at PC = %8x\n", regs->pc);
 	DumpRegisters(regs);
 }

@@ -36,6 +36,7 @@ namespace Kernel
 		static uint8_t GetShiftMode(void);
 		static void SetVideoMemory(void* mem);
 		static void* GetVideoMemory(void);
+		static uint32_t GetCount(void);
 		static void SetPalette(uint8_t index, uint16_t value);
 		static void SetPalette(const uint16_t* values);
 	};

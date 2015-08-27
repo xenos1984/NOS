@@ -52,7 +52,7 @@ namespace Kernel
 		static volatile uint8_t* videoMemory; /**< Pointer to video memory. */
 		static const uint8_t* font;
 
-		static const Attribute attribs[] =
+		static const Attribute attribs4[] =
 		{
 			static_cast<Attribute>(BG_BLACK | FG_LIGHT_GRAY),
 			static_cast<Attribute>(BG_BLACK | FG_WHITE),
@@ -60,11 +60,18 @@ namespace Kernel
 			static_cast<Attribute>(BG_BLACK | FG_YELLOW),
 			static_cast<Attribute>(BG_BLACK | FG_RED)
 		};
+		static const Attribute attribs1[] =
+		{
+			static_cast<Attribute>(BG_BLACK | FG_WHITE),
+			static_cast<Attribute>(BG_BLACK | FG_WHITE),
+			static_cast<Attribute>(BG_BLACK | FG_WHITE),
+			static_cast<Attribute>(BG_BLACK | FG_WHITE),
+			static_cast<Attribute>(BG_BLACK | FG_WHITE)
+		};
 		static Attribute attrib; /**< Text attribute byte. */
 
 		void SECTION(".init.text") Init(void)
 		{
-			attrib  = attribs[0];
 			if(MFP::IsColorMonitor())
 			{
 				numLines = 25;
@@ -72,6 +79,7 @@ namespace Kernel
 				numPlanes = 4;
 				height = 8;
 				font = font8x8t;
+				attrib  = attribs4[0];
 			}
 			else
 			{
@@ -80,6 +88,7 @@ namespace Kernel
 				numPlanes = 1;
 				height = 16;
 				font = font8x16t;
+				attrib  = attribs1[0];
 			}
 			xPos = yPos = 0;
 			bytesPerLine = height * numPlanes * numColumns;
@@ -90,7 +99,7 @@ namespace Kernel
 
 		void SetStyle(Style s)
 		{
-			attrib = attribs[static_cast<int>(s)];
+			attrib = (numPlanes == 4 ? attribs4 : attribs1)[static_cast<int>(s)];
 		}
 
 		void Clear(void)
@@ -101,7 +110,7 @@ namespace Kernel
 
 		void PutChar(unsigned char c)
 		{
-			int i, j;
+			unsigned int i, j;
 
 			if(c == '\t')
 			{

@@ -9,20 +9,20 @@ using namespace Kernel;
 static const uint16_t defcolors[16] SECTION(".init.data") =
 {
 	0x0000,
-	0x0700,
-	0x0070,
-	0x0770,
 	0x0007,
-	0x0707,
+	0x0070,
 	0x0077,
+	0x0700,
+	0x0707,
+	0x0770,
 	0x0555,
 	0x0333,
-	0x0733,
-	0x0373,
-	0x0773,
 	0x0337,
-	0x0737,
+	0x0373,
 	0x0377,
+	0x0733,
+	0x0737,
+	0x0773,
 	0x0777
 };
 
@@ -67,4 +67,9 @@ void Video::SetPalette(const uint16_t* values)
 
 	for(i = 0; i < 16; i++)
 		_v().color[i] = values[i];
+}
+
+uint32_t Video::GetCount(void)
+{
+	return ((uint32_t)(_v().vidcounthigh) << 16) | ((uint32_t)(_v().vidcountmid) << 8) | (uint32_t)(_v().vidcountlow);
 }

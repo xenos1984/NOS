@@ -215,7 +215,6 @@ namespace Kernel
 			va_list arg;
 			lock.Enter();
 			va_start(arg, format);
-			SetStyle(Style::TEXT);
 			writef(format, &arg);
 			va_end(arg);
 			lock.Exit();
