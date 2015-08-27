@@ -77,7 +77,7 @@ namespace Kernel
 		static const uint8_t HOP_S = 2;
 		static const uint8_t HOP_S_AND_H = 3;
 
-		static void BitBlt(bool wait, void* source, void* dest, uint16_t xs, uint16_t ys, uint16_t xd, uint16_t yd, uint16_t xc, uint16_t yc, uint8_t cop = OP_S, uint8_t chop = HOP_S, uint16_t em1 = 0xffff, uint16_t em2 = 0xffff, uint16_t em3 = 0xffff);
+		static void BitBlt(bool wait, void* source, void* dest, int16_t xs, int16_t ys, int16_t xd, int16_t yd, uint16_t xc, uint16_t yc, uint8_t cop = OP_S, uint8_t chop = HOP_S, uint16_t* const ht = nullptr, uint16_t em1 = 0xffff, uint16_t em2 = 0xffff, uint16_t em3 = 0xffff);
 	};
 }
 

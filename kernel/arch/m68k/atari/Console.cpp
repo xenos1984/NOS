@@ -104,7 +104,13 @@ namespace Kernel
 
 		void Clear(void)
 		{
-			Blitter::BitBlt(true, nullptr, (void*)videoMemory, 2, 2, 2, 2, numColumns * numPlanes / 2, height * numLines, Blitter::OP_FALSE);
+			uint16_t src[4];
+			unsigned int i;
+
+			for(i = 0; i < numPlanes; i++)
+				src[i] = -(attrib >> ((4 + i)) & 1);
+
+			Blitter::BitBlt(true, (void*)src, (void*)videoMemory, 2, -2 * (numPlanes - 1), 2, 2, numPlanes, height * numLines * numColumns / 2);
 			xPos = yPos = 0;
 		}
 
@@ -134,10 +140,17 @@ namespace Kernel
 			if(yPos >= numLines)
 			{
 				yPos = numLines - 1;
+
 				// Scroll up a line.
 				Blitter::BitBlt(true, (void*)(videoMemory + bytesPerLine), (void*)videoMemory, 2, 2, 2, 2, numColumns * numPlanes / 2, height * (numLines - 1));
+
 				// Clear the last line.
-				Blitter::BitBlt(true, nullptr, (void*)(videoMemory + totalBytes - bytesPerLine), 2, 2, 2, 2, numColumns * numPlanes / 2, height, Blitter::OP_FALSE);
+				uint16_t src[4];
+
+				for(i = 0; i < numPlanes; i++)
+					src[i] = -(attrib >> ((4 + i)) & 1);
+
+				Blitter::BitBlt(true, (void*)src, (void*)(videoMemory + totalBytes - bytesPerLine), 2, -2 * (numPlanes - 1), 2, 2, numPlanes, height * numColumns / 2);
 			}
 		}
 	}

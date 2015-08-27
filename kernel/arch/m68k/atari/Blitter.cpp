@@ -7,9 +7,13 @@
 
 using namespace Kernel;
 
-void Blitter::BitBlt(bool wait, void* source, void* dest, uint16_t xs, uint16_t ys, uint16_t xd, uint16_t yd, uint16_t xc, uint16_t yc, uint8_t cop, uint8_t chop, uint16_t em1, uint16_t em2, uint16_t em3)
+void Blitter::BitBlt(bool wait, void* source, void* dest, int16_t xs, int16_t ys, int16_t xd, int16_t yd, uint16_t xc, uint16_t yc, uint8_t cop, uint8_t chop, uint16_t* const ht, uint16_t em1, uint16_t em2, uint16_t em3)
 {
 	Wait();
+	if(ht != nullptr)
+		for(int i = 0; i < 16; i++)
+			_b().halftone[i] = ht[i];
+
 	_b().op = cop;
 	_b().hop = chop;
 	_b().saddr = (uint32_t)source;
