@@ -29,7 +29,7 @@ static const uint16_t defcolors[16] SECTION(".init.data") =
 SECTION(".init.text") void Video::Init(void)
 {
 	SetVideoMemory((void*)(sysvars.PhysTop - 32 * 1024));
-	SetShiftMode(2);
+	SetShiftMode(0);
 	SetPalette(defcolors);
 }
 

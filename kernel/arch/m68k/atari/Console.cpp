@@ -118,6 +118,8 @@ namespace Kernel
 		{
 			unsigned int i, j;
 
+			MFP::SerialSend(c);
+
 			if(c == '\t')
 			{
 				xPos += (8 - (xPos & 7));

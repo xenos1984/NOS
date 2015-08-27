@@ -67,6 +67,9 @@ namespace Kernel
 		static const uint8_t GPIP_COLOR = 0x80;
 
 	public:
+		static void Init(void);
+		static void SerialSend(uint8_t c);
+
 		inline static bool IsColorMonitor(void)
 		{
 			return((_m().GpipData & GPIP_COLOR) == GPIP_COLOR);

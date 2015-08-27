@@ -5,6 +5,7 @@
 #include <Console.h>
 #include INC_ARCH(CPU.h)
 #include INC_SUBARCH(SysVars.h)
+#include INC_SUBARCH(MFP.h)
 #include INC_SUBARCH(Video.h)
 #include INC_SUBARCH(Interrupt.h)
 
@@ -12,6 +13,7 @@ using namespace Kernel;
 
 extern "C" void SECTION(".init.text") KernelEntry(void)
 {
+	MFP::Init();
 	Video::Init();
 	Console::Init();
 	Core::Welcome();
