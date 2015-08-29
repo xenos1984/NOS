@@ -44,22 +44,22 @@ namespace Kernel
 			PageTableEntry page[PAGES_PER_TABLE * PAGES_PER_TABLE];
 
 		public:
-			template<PageBits bits> bool MapPage(Memory::PhysAddr phys, uintptr_t virt, unsigned int flags)
+			template<Memory::PageBits bits> bool MapPage(Memory::PhysAddr phys, uintptr_t virt, unsigned int flags)
 			{
-				static_assert(IsAllowedSize(bits), "illegal page size");
+				static_assert(IsValidSize(bits), "illegal page size");
 			}
 
-			template<PageBits bits> bool UnmapPage(uintptr_t virt)
+			template<Memory::PageBits bits> bool UnmapPage(uintptr_t virt)
 			{
-				static_assert(IsAllowedSize(bits), "illegal page size");
+				static_assert(IsValidSize(bits), "illegal page size");
 			}
 		};
 
-		template<> bool PageDirectory::MapPage<PAGE_4K>(Memory::PhysAddr phys, uintptr_t virt, unsigned int flags)
+		template<> bool PageDirectory::MapPage<Memory::PAGE_4K>(Memory::PhysAddr phys, uintptr_t virt, unsigned int flags)
 		{
 		}
 
-		template<> bool PageDirectory::MapPage<PAGE_4M>(Memory::PhysAddr phys, uintptr_t virt, unsigned int flags)
+		template<> bool PageDirectory::MapPage<Memory::PAGE_4M>(Memory::PhysAddr phys, uintptr_t virt, unsigned int flags)
 		{
 			if(phys & 0x3fffff)
 				return false;
@@ -77,11 +77,11 @@ namespace Kernel
 			pte.bits.present = 1;
 		}
 
-		template<> bool PageDirectory::UnmapPage<PAGE_4K>(uintptr_t virt)
+		template<> bool PageDirectory::UnmapPage<Memory::PAGE_4K>(uintptr_t virt)
 		{
 		}
 
-		template<> bool PageDirectory::UnmapPage<PAGE_4M>(uintptr_t virt)
+		template<> bool PageDirectory::UnmapPage<Memory::PAGE_4M>(uintptr_t virt)
 		{
 		}
 
@@ -89,8 +89,8 @@ namespace Kernel
 
 		void Test(void)
 		{
-			RecPageDir.MapPage<PAGE_4K>(0, 0, 0);
-			RecPageDir.MapPage<PAGE_4M>(0, 0, 0);
+			RecPageDir.MapPage<Memory::PAGE_4K>(0x100000, 0, 0);
+			RecPageDir.MapPage<Memory::PAGE_4M>(0x100000, 0, 0);
 		}
 	}
 }

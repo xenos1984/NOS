@@ -4,23 +4,17 @@
 #define __ARCH_X86_IA32_PAGER_H__
 
 #include <cstdint>
+#include <Memory.h>
 
 namespace Kernel
 {
 	namespace Pager
 	{
-		enum PageBits : int
-		{
-			PAGE_4K = 12,
-			PAGE_4M = 22
-		};
+		static const unsigned long ValidSizes = (1UL << Memory::PAGE_4K) | (1UL << Memory::PAGE_4M);
 
-		static const int AllowedSizes = (1UL << PAGE_4K) | (1UL << PAGE_4M);
-
-		constexpr bool IsAllowedSize(PageBits size)
+		constexpr bool IsValidSize(Memory::PageBits size)
 		{
-//			return true;
-			return(AllowedSizes & (1UL << size) != 0);
+			return Memory::IsValidSize(size, ValidSizes);
 		}
 	}
 }
