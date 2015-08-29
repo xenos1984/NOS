@@ -34,7 +34,7 @@ namespace Kernel
 
 		constexpr bool IsValidSize(PageBits size, unsigned long mask)
 		{
-			return(mask & (1UL << size) != 0);
+			return((mask & (1UL << size)) != 0);
 		}
 	}
 }

@@ -9,74 +9,52 @@ namespace Kernel
 {
 	namespace Pager
 	{
+		typedef uint32_t PageTableEntry;
+
 		static const unsigned int PAGES_PER_TABLE = 1024;
 		static const unsigned int PAGE_RECURSIVE = 1023;
 		static const uintptr_t REC_PAGE_DIR = (((uintptr_t)PAGE_RECURSIVE) << 22) + (((uintptr_t)PAGE_RECURSIVE) << 12);
 		static const uintptr_t REC_PAGE_TAB = ((uintptr_t)PAGE_RECURSIVE) << 22;
 
-		union PageTableEntry
+		template<Memory::PageBits bits> PageTableEntry& PageTable(uintptr_t virt)
 		{
-			struct
-			{
-				Memory::PhysAddr present : 1;
-				Memory::PhysAddr writeable : 1;
-				Memory::PhysAddr user : 1;
-				Memory::PhysAddr writethrough : 1;
-				Memory::PhysAddr cachedisable : 1;
-				Memory::PhysAddr accessed : 1;
-				Memory::PhysAddr dirty : 1;
-				Memory::PhysAddr large : 1;
-				Memory::PhysAddr global : 1;
-				Memory::PhysAddr : 3;
-				Memory::PhysAddr page: std::numeric_limits<Memory::PhysAddr>::digits - 12;
-			} bits PACKED;
-			Memory::PhysAddr raw;
-		};
+			static_assert(IsValidSize(bits), "invalid page size");
+		}
 
-		struct PageTable
+		template<Memory::PageBits bits> bool MapPage(Memory::PhysAddr phys, uintptr_t virt, unsigned int flags)
 		{
-			PageTableEntry page[PAGES_PER_TABLE];
-		} PACKED;
+			static_assert(IsValidSize(bits), "invalid page size");
+		}
 
-		class PageDirectory
+		template<Memory::PageBits bits> bool UnmapPage(uintptr_t virt)
 		{
-		private:
-			PageTableEntry page[PAGES_PER_TABLE * PAGES_PER_TABLE];
+			static_assert(IsValidSize(bits), "invalid page size");
+		}
 
-		public:
-			template<Memory::PageBits bits> bool MapPage(Memory::PhysAddr phys, uintptr_t virt, unsigned int flags)
-			{
-				static_assert(IsValidSize(bits), "illegal page size");
-			}
+		template<> PageTableEntry& PageTable<Memory::PAGE_4M>(uintptr_t virt)
+		{
+			return ((PageTableEntry*)REC_PAGE_DIR)[virt >> Memory::PAGE_4M];
+		}
 
-			template<Memory::PageBits bits> bool UnmapPage(uintptr_t virt)
-			{
-				static_assert(IsValidSize(bits), "illegal page size");
-			}
-		};
-
-		template<> bool PageDirectory::MapPage<Memory::PAGE_4K>(Memory::PhysAddr phys, uintptr_t virt, unsigned int flags)
+		template<> bool MapPage<Memory::PAGE_4K>(Memory::PhysAddr phys, uintptr_t virt, unsigned int flags)
 		{
 		}
 
-		template<> bool PageDirectory::MapPage<Memory::PAGE_4M>(Memory::PhysAddr phys, uintptr_t virt, unsigned int flags)
+		template<> bool MapPage<Memory::PAGE_4M>(Memory::PhysAddr phys, uintptr_t virt, unsigned int flags)
 		{
 			if(phys & 0x3fffff)
 				return false;
 			if(virt & 0x3fffff)
 				return false;
 
-			PageTableEntry& pte = page[PAGE_RECURSIVE * PAGES_PER_TABLE + (virt >> 22)];
+			PageTableEntry& pte = PageTable<Memory::PAGE_4M>(virt);
 
-			if(pte.bits.present)
+			if(pte & PAGE_PRESENT)
 				return false;
 
-			pte.raw = phys;
-			pte.bits.large = 1;
-			pte.bits.global = 1;
-			pte.bits.present = 1;
+			pte = phys | PAGE_PRESENT | PAGE_GLOBAL | PAGE_LARGE;
 		}
-
+/*
 		template<> bool PageDirectory::UnmapPage<Memory::PAGE_4K>(uintptr_t virt)
 		{
 		}
@@ -84,13 +62,11 @@ namespace Kernel
 		template<> bool PageDirectory::UnmapPage<Memory::PAGE_4M>(uintptr_t virt)
 		{
 		}
-
-		static PageDirectory& RecPageDir = *(PageDirectory*)REC_PAGE_TAB;
-
+*/
 		void Test(void)
 		{
-			RecPageDir.MapPage<Memory::PAGE_4K>(0x100000, 0, 0);
-			RecPageDir.MapPage<Memory::PAGE_4M>(0x100000, 0, 0);
+			MapPage<Memory::PAGE_4K>(0x1000000, 0x2000000, 0);
+			MapPage<Memory::PAGE_4M>(0x1000000, 0x2000000, 0);
 		}
 	}
 }
