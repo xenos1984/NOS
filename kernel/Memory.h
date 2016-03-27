@@ -7,7 +7,7 @@ namespace Kernel
 {
 	namespace Memory
 	{
-		enum PageBits : unsigned int
+		enum PageBits : unsigned long
 		{
 			PAGE_1K = 10,
 			PAGE_2K,

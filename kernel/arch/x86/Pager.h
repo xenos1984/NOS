@@ -3,14 +3,13 @@
 #ifndef __ARCH_X86_PAGER_H__
 #define __ARCH_X86_PAGER_H__
 
-#include <limits>
 #include <Memory.h>
 
 namespace Kernel
 {
 	namespace Pager
 	{
-		enum PageTableEntryFlags
+		enum PageTableEntryFlags : unsigned long
 		{
 			PAGE_PRESENT       = 0x0001UL,
 			PAGE_WRITEABLE     = 0x0002UL,

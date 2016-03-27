@@ -3,7 +3,6 @@
 #ifndef __ARCH_X86_IA32_PAGER_H__
 #define __ARCH_X86_IA32_PAGER_H__
 
-#include <cstdint>
 #include <Memory.h>
 
 namespace Kernel
