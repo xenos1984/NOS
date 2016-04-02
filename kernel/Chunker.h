@@ -14,9 +14,9 @@ namespace Kernel
 
 		Memory::PhysAddr Alloc(Memory::Zone zone = static_cast<Memory::Zone>(0));
 		bool Free(Memory::PhysAddr addr);
-		bool Free(Memory::PhysAddr start, Memory::PhysAddr length);
+		bool Free(Memory::PhysAddr first, Memory::PhysAddr length);
 		bool Reserve(Memory::PhysAddr addr);
-		bool Reserve(Memory::PhysAddr start, Memory::PhysAddr length);
+		bool Reserve(Memory::PhysAddr first, Memory::PhysAddr length);
 	}
 }
 

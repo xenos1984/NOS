@@ -46,7 +46,12 @@ extern "C" void SECTION(".init.text") KernelEntry(unsigned long magic, Multiboot
 
 	// Init physical memory manager.
 	uint32_t mem = ((Multiboot::Info*)(Symbol::kernelOffset.Addr() + (uintptr_t)mbi))->UpperMemory;
-	Chunker::Init(1UL << 20, (mem > (15UL << 10) ? 15UL << 20 : mem << 10), Memory::Zone::DMA24);
+	uint32_t length = (mem > (15UL << 10) ? 15UL << 20 : mem << 10);
+	uint32_t end = Symbol::kernelEnd.Addr() - Symbol::kernelOffset.Addr();
+	Chunker::Init(1UL << 20, length, Memory::Zone::DMA24);
+	Chunker::Free(end, length + (1UL << 20) - end);
+	Memory::PhysAddr test = Chunker::Alloc();
+	Chunker::Free(test);
 
 	new (physmem_space) X86Pager(mbi);
 	new (virtmem_space) VirtualMemory();

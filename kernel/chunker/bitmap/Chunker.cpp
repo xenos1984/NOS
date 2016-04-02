@@ -35,8 +35,10 @@ namespace Kernel
 				bitmap[n] &= ~(1UL << b);
 			}
 
-			void Free(Memory::PhysAddr start, Memory::PhysAddr length)
+			void Free(Memory::PhysAddr first, Memory::PhysAddr length)
 			{
+				for(Memory::PhysAddr addr = first; addr < first + length; addr += (1UL << Memory::MinPageBits))
+					Free(addr);
 			}
 
 			void Reserve(Memory::PhysAddr addr)
@@ -47,8 +49,36 @@ namespace Kernel
 				bitmap[n] |= 1UL << b;
 			}
 
-			void Reserve(Memory::PhysAddr start, Memory::PhysAddr length)
+			void Reserve(Memory::PhysAddr first, Memory::PhysAddr length)
 			{
+				for(Memory::PhysAddr addr = first; addr < first + length; addr += (1UL << Memory::MinPageBits))
+					Reserve(addr);
+			}
+
+			Memory::PhysAddr Alloc(void)
+			{
+				unsigned long n = (length >> Memory::MinPageBits) / std::numeric_limits<unsigned long>::digits;
+				unsigned long b = std::numeric_limits<unsigned long>::digits;
+
+				while(n > 0)
+				{
+					n--;
+					if(bitmap[n] != ~0UL)
+					{
+						while(b > 0)
+						{
+							b--;
+							if(!(bitmap[n] & (1UL << b)))
+							{
+								bitmap[n] |= 1UL << b;
+								// Console::WriteFormat("Alloc memory: base = 0x%p, n = 0x%x, b = 0x%x\n", start, n, b);
+								return start + ((n * std::numeric_limits<unsigned long>::digits + b) << Memory::MinPageBits);
+							}
+						}
+					}
+				}
+
+				return 0;
 			}
 		};
 
@@ -99,6 +129,30 @@ namespace Kernel
 
 		Memory::PhysAddr Alloc(Memory::Zone zone)
 		{
+			unsigned int i = static_cast<int>(zone);
+			Region* r;
+			Memory::PhysAddr addr;
+
+			do
+			{
+				r = regions[i];
+				if(r != nullptr)
+				{
+					do
+					{
+						r = r->prev;
+						addr = r->Alloc();
+						// Console::WriteFormat("Alloc memory: 0x%p\n", addr);
+						if(addr)
+							return addr;
+					}
+					while(r != regions[i]);
+				}
+				i++;
+			}
+			while(i < static_cast<int>(Memory::Zone::MAX));
+
+			return 0;
 		}
 
 		Region* FindRegion(Memory::PhysAddr addr)
@@ -127,6 +181,7 @@ namespace Kernel
 		{
 			Region* r = FindRegion(addr);
 
+			// Console::WriteFormat("Free memory at 0x%p\n", addr);
 			if(r != nullptr)
 			{
 				r->Free(addr);
@@ -136,13 +191,14 @@ namespace Kernel
 				return false;
 		}
 
-		bool Free(Memory::PhysAddr start, Memory::PhysAddr length)
+		bool Free(Memory::PhysAddr first, Memory::PhysAddr length)
 		{
-			Region* r = FindRegion(start);
+			Region* r = FindRegion(first);
 
+			// Console::WriteFormat("Free memory from 0x%p to 0x%p\n", first, first + length);
 			if(r != nullptr)
 			{
-				r->Free(start, length);
+				r->Free(first, length);
 				return true;
 			}
 			else
@@ -162,13 +218,13 @@ namespace Kernel
 				return false;
 		}
 
-		bool Reserve(Memory::PhysAddr start, Memory::PhysAddr length)
+		bool Reserve(Memory::PhysAddr first, Memory::PhysAddr length)
 		{
-			Region* r = FindRegion(start);
+			Region* r = FindRegion(first);
 
 			if(r != nullptr)
 			{
-				r->Reserve(start, length);
+				r->Reserve(first, length);
 				return true;
 			}
 			else
