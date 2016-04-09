@@ -52,6 +52,8 @@ namespace Kernel
 		extern "C" const ExtSymbol userEnd;
 		extern "C" const ExtSymbol kernelStart;
 		extern "C" const ExtSymbol kernelEnd;
+		extern "C" const ExtSymbol scratchStart;
+		extern "C" const ExtSymbol scratchEnd;
 	}
 }
 

@@ -4,6 +4,7 @@
 #include <new>
 #include <chunker/bitmap/Chunker.h>
 #include <Memory.h>
+#include <Symbol.h>
 #include <AtomicOps.h>
 #include <Console.h>
 
@@ -106,7 +107,10 @@ namespace Kernel
 			for(i = 0; i < fbmlen; i++)
 				firstbitmap[i] = ~0UL;
 
-			Console::WriteMessage(Console::Style::INFO, "Chunker:", "Started with %d MB starting at %d MB in zone %d.", length >> 20, start >> 20, zone);
+			// Free scratch area.
+			Free(Symbol::scratchStart.Addr() - Symbol::kernelOffset.Addr(), Symbol::scratchEnd.Addr() - Symbol::scratchStart.Addr());
+
+			Console::WriteMessage(Console::Style::INFO, "Chunker:", "Started with %d kB (%d kB free) starting at %p in zone %d.", length >> 10, (Symbol::scratchEnd.Addr() - Symbol::scratchStart.Addr()) >> 10, start, zone);
 		}
 
 		void AddRegion(Memory::PhysAddr start, Memory::PhysAddr length, Memory::Zone zone)
