@@ -1,87 +1,24 @@
 // Pager.cpp - Working with page tables.
 
 #include <cstdint>
+#include <new>
 #include <Pager.h>
 #include <Memory.h>
+#include <Chunker.h>
+#include INC_ARCH(PageTableEntry.h)
+#include INC_ARCH(PageTable.h)
 #include INC_ARCH(ControlRegisters.h)
 
 namespace Kernel
 {
 	namespace Pager
 	{
-		static const unsigned int PAGES_PER_TABLE = 1024;
-		static const unsigned int PAGE_RECURSIVE = 1023;
+//		static const unsigned int PAGES_PER_TABLE = 1024;
+//		static const unsigned int PAGE_RECURSIVE = 1023;
 		static const unsigned int PAGE_SIZE = 4096;
 		static const unsigned int PAGE_SIZE_MASK = 4095;
-		static const uintptr_t REC_PAGE_DIR = (((uintptr_t)PAGE_RECURSIVE) << 22) + (((uintptr_t)PAGE_RECURSIVE) << 12);
-		static const uintptr_t REC_PAGE_TAB = ((uintptr_t)PAGE_RECURSIVE) << 22;
-
-		class PageTableEntry
-		{
-		private:
-			uint32_t raw;
-
-			inline void Invalidate(void)
-			{
-				asm volatile ("invlpg (%0)" : : "r"(Virt()));
-			}
-
-		public:
-			static PageTableEntry& Entry(int i)
-			{
-				return reinterpret_cast<PageTableEntry*>(REC_PAGE_TAB)[i];
-			}
-
-			PageTableEntry& operator=(uint32_t phys)
-			{
-				raw = phys | PAGE_PRESENT;
-				Invalidate();
-				return *this;
-			}
-
-			uintptr_t Virt(void)
-			{
-				return PAGE_SIZE * ((((uintptr_t)this) - REC_PAGE_TAB) / sizeof(PageTableEntry));
-			}
-
-			Memory::PhysAddr Phys(void)
-			{
-				return raw & (~PAGE_SIZE_MASK);
-			}
-
-			void Clear(void)
-			{
-				raw = 0;
-				Invalidate();
-			}
-
-			bool IsPresent(void)
-			{
-				return (bool)(raw & PAGE_PRESENT);
-			}
-		} PACKED;
-
-		class PageTable
-		{
-		private:
-			PageTableEntry entry[PAGES_PER_TABLE] = {PageTableEntry{}};
-
-		public:
-			PageTableEntry& Entry(int i)
-			{
-				return entry[i];
-			}
-
-			static PageTable& Directory(void)
-			{
-				return *reinterpret_cast<PageTable*>(REC_PAGE_DIR);
-			}
-
-			static PageTable& Table(int i)
-			{
-				return reinterpret_cast<PageTable*>(REC_PAGE_TAB)[i];
-			}
-		} PACKED;
+//		static const uintptr_t REC_PAGE_DIR = (((uintptr_t)PAGE_RECURSIVE) << 22) + (((uintptr_t)PAGE_RECURSIVE) << 12);
+//		static const uintptr_t REC_PAGE_TAB = ((uintptr_t)PAGE_RECURSIVE) << 22;
 /*
 		template<Memory::PageBits bits> PageTableEntry& PageTable(uintptr_t virt)
 		{
@@ -106,6 +43,23 @@ namespace Kernel
 */
 		template<> bool MapPage<Memory::PAGE_4K>(Memory::PhysAddr phys, uintptr_t virt, unsigned int flags)
 		{
+			if(phys & ((1UL << Memory::PAGE_4K) - 1))
+				return false;
+			if(virt & ((1UL << Memory::PAGE_4K) - 1))
+				return false;
+
+			unsigned int tab = virt >> Memory::PAGE_4M;
+			unsigned int entry = (virt >> Memory::PAGE_4K) & 0x3ff;
+
+			if(!PageTable32::Exists<1>(tab))
+				PageTable32::Create<1>(tab);
+
+			PageTableEntry& pte = PageTable32::Table<1>(tab).Entry(entry);
+
+			if(pte.IsPresent())
+				return false;
+
+			pte = phys;
 			return true;
 		}
 
@@ -116,7 +70,7 @@ namespace Kernel
 			if(virt & ((1UL << Memory::PAGE_4M) - 1))
 				return false;
 
-			PageTableEntry& pte = PageTable::Directory().Entry(virt >> 22);
+			PageTableEntry& pte = PageTable32::Table<0>(0).Entry(virt >> Memory::PAGE_4M);
 
 			if(pte.IsPresent())
 				return false;

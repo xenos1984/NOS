@@ -4,7 +4,7 @@
 #define __ARCH_X86_PAGER_H__
 
 #include <Memory.h>
-
+/*
 namespace Kernel
 {
 	namespace Pager
@@ -23,7 +23,7 @@ namespace Kernel
 		};
 	}
 }
-
+*/
 #include INC_SUBARCH(Pager.h)
 
 #endif
