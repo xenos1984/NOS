@@ -54,6 +54,7 @@ namespace Kernel
 		static const uint16_t CRTC_ADDR = 0x3d4;
 		static const uint16_t CRTC_DATA = 0x3d5;
 		static const uint16_t DEBUG_PORT = 0xe9;
+		static const uint16_t DEBUG_PORT_VBOX = 0x504;
 
 		static const unsigned int LINES = 25;
 		static const unsigned int COLUMNS = 80;
@@ -128,7 +129,8 @@ namespace Kernel
 			volatile unsigned long *t;
 			unsigned int i;
 
-			Port::WriteU8(DEBUG_PORT, c); // Bochs debugger console
+			Port::WriteU8(DEBUG_PORT, c); // Bochs / QEMU debugger console
+			Port::WriteU8(DEBUG_PORT_VBOX, c); // VirtualBox debugger console
 
 			if(c == '\t')
 			{
