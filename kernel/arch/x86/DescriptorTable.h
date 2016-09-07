@@ -81,10 +81,10 @@ namespace Kernel
 
 		union
 		{
-			Segment segment[];
-			System system[];
-			Gate gate[];
-			uint64_t raw[];
+			Segment segment[0];
+			System system[0];
+			Gate gate[0];
+			uint64_t raw[0];
 		};
 
 	public:

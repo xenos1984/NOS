@@ -10,7 +10,7 @@ extern int stack;
 FloppyDriver::FloppyDriver(char* cmd __attribute__((unused)))
 {
 	CreateThread((void*)&FloppyDriver::TestFunc, (void*)((unsigned long)&stack - 0x800));
-
+/*
 	asm volatile ("1:\n"
 		"fld1\n"
 		"fxch\n"
@@ -20,13 +20,14 @@ FloppyDriver::FloppyDriver(char* cmd __attribute__((unused)))
 		"fmulp\n"
 		"fabs\n"
 		"jmp 1b\n" : : "t"(0.4));
-
+*/
 	while(1);
 }
 
 void FloppyDriver::TestFunc(void)
 {
 	ExitProcess();
+/*
 	asm volatile ("1:\n"
 		"fld1\n"
 		"fxch\n"
@@ -36,7 +37,7 @@ void FloppyDriver::TestFunc(void)
 		"fmulp\n"
 		"fabs\n"
 		"jmp 1b\n" : : "t"(0.6));
-
+*/
 	while(1);
 }
 
