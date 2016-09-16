@@ -7,7 +7,7 @@ namespace Kernel
 {
 	namespace Heap
 	{
-		Init(void);
+		void Init(void);
 
 		void* Alloc(unsigned long bytes, bool phys = true);
 		void* Alloc(unsigned long bytes, unsigned long align, bool phys = true);
