@@ -64,7 +64,7 @@ namespace Kernel
 			if(virt & Memory::PGM_4M)
 				return false;
 
-			PageTableEntry& pte = PageTable32::Table<0>(0).Entry(virt >> Memory::PGB_4M);
+			PageTableEntry& pte = PageTable32::Top().Entry(virt >> Memory::PGB_4M);
 
 			if(pte.IsPresent())
 				return false;
@@ -103,7 +103,7 @@ namespace Kernel
 				if((addr & Memory::PGM_4M) == 0 && end - addr >= Memory::PGS_4M)
 				{
 					// If there is a page table or 4MB page mapped here, return.
-					if(PageTable32::Table<0>(0).Entry(addr >> Memory::PGB_4M).IsPresent())
+					if(PageTable32::Top().Entry(addr >> Memory::PGB_4M).IsPresent())
 						return false;
 
 					addr += Memory::PGS_4M;

@@ -6,6 +6,7 @@
 #include <type_traits>
 #include <Memory.h>
 #include <Pager.h>
+#include <Chunker.h>
 #include INC_ARCH(PageTableEntry.h)
 
 namespace Kernel
@@ -36,7 +37,8 @@ namespace Kernel
 
 		public:
 			inline PageTableEntry& Entry(unsigned int i);
-			template<unsigned int level> static PageTable<size>& Table(unsigned long i);
+			template<unsigned int level> static inline PageTable<size>& Table(unsigned long i);
+			static inline PageTable<size>& Top(void);
 			template<unsigned int level, typename std::enable_if<level == 0>::type* = nullptr> static bool Exists(unsigned long i);
 			template<unsigned int level, typename std::enable_if<level != 0>::type* = nullptr> static bool Exists(unsigned long i);
 			template<unsigned int level> static PageTable<size>& Create(unsigned long i);
@@ -54,7 +56,12 @@ namespace Kernel
 			return reinterpret_cast<PageTable<size>*>(PAGE_TABLE_ADDR[level + 1])[i];
 		}
 
-		template<unsigned int size> template<unsigned int level, typename std::enable_if<level == 0>::type*> bool PageTable<size>::Exists(unsigned long i)
+		template<unsigned int size> inline PageTable<size>& PageTable<size>::Top(void)
+		{
+			return Table<0>(0);
+		}
+
+		template<unsigned int size> template<unsigned int level, typename std::enable_if<level == 0>::type*> bool PageTable<size>::Exists(unsigned long i __attribute__((unused)))
 		{
 			return true;
 		}
