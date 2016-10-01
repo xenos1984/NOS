@@ -19,7 +19,7 @@ namespace Kernel
 			static_assert(IsValidSize(bits), "invalid page size");
 		}
 */
-		template<Memory::PageBits bits> bool MapPage(Memory::PhysAddr phys, uintptr_t virt, unsigned int flags)
+		template<Memory::PageBits bits> bool MapPage(Memory::PhysAddr phys __attribute__((unused)), uintptr_t virt __attribute__((unused)), unsigned int flags __attribute__((unused)))
 		{
 			static_assert(IsValidSize(bits), "invalid page size");
 			return false;
@@ -83,6 +83,33 @@ namespace Kernel
 		{
 		}
 */
+		bool IsMapped(uintptr_t virt)
+		{
+			// Normalize address to smallest possible page size.
+			virt &= Memory::PGM_4K;
+
+			// Check top level page table first.
+			PageTableEntry& pte4m = PageTable32::Top().Entry(virt >> Memory::PGB_4M);
+
+			// If it is not present, then this page is not mapped.
+			if(!pte4m.IsPresent())
+				return false;
+
+			// If it is present and 4MB, then this page is mapped.
+			if(pte4m.IsLarge())
+				return true;
+
+			// For a 4kB page, we need to check the next level.
+			PageTableEntry& pte4k = PageTable32::Table<1>(virt >> Memory::PGB_4M).Entry((virt >> Memory::PGB_4K) & 0x3ff);
+
+			// If it is present, this page is mapped.
+			if(pte4k.IsPresent())
+				return true;
+
+			// Otherwise, it is not mapped.
+			return false;
+		}
+
 		bool Map(Memory::PhysAddr phys, uintptr_t virt, size_t length, unsigned long type)
 		{
 			uintptr_t addr, diff;

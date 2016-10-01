@@ -45,7 +45,7 @@ namespace Kernel
 
 			Memory::PhysAddr Phys(void) const
 			{
-				return raw & (~4095ULL);
+				return raw & (~0xfffULL);
 			}
 
 			void Clear(void)
