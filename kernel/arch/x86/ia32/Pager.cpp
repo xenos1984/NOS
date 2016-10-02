@@ -83,7 +83,7 @@ namespace Kernel
 		{
 		}
 */
-		bool IsMapped(uintptr_t virt)
+			Memory::PageBits MappedSize(uintptr_t virt)
 		{
 			// Normalize address to smallest possible page size.
 			virt &= Memory::PGM_4K;
@@ -93,21 +93,21 @@ namespace Kernel
 
 			// If it is not present, then this page is not mapped.
 			if(!pte4m.IsPresent())
-				return false;
+				return (Memory::PageBits)0;
 
 			// If it is present and 4MB, then this page is mapped.
 			if(pte4m.IsLarge())
-				return true;
+				return Memory::PGB_4M;
 
 			// For a 4kB page, we need to check the next level.
 			PageTableEntry& pte4k = PageTable32::Table<1>(virt >> Memory::PGB_4M).Entry((virt >> Memory::PGB_4K) & 0x3ff);
 
 			// If it is present, this page is mapped.
 			if(pte4k.IsPresent())
-				return true;
+				return Memory::PGB_4K;
 
 			// Otherwise, it is not mapped.
-			return false;
+			return (Memory::PageBits)0;
 		}
 
 		bool Map(Memory::PhysAddr phys, uintptr_t virt, size_t length, unsigned long type)
