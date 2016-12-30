@@ -83,7 +83,7 @@ namespace Kernel
 		{
 		}
 */
-			Memory::PageBits MappedSize(uintptr_t virt)
+		Memory::PageBits MappedSize(uintptr_t virt)
 		{
 			// Normalize address to smallest possible page size.
 			virt &= Memory::PGM_4K;
@@ -126,27 +126,29 @@ namespace Kernel
 			// Check whether there is anything already mapped in that area.
 			for(addr = virt; addr < end; )
 			{
+				unsigned int tab = addr >> Memory::PGB_4M;
+				unsigned int entry = (addr >> Memory::PGB_4K) & 0x3ff;
+
 				// Should we map the whole 4MB following addr?
 				if((addr & Memory::PGM_4M) == 0 && end - addr >= Memory::PGS_4M)
 				{
 					// If there is a page table or 4MB page mapped here, return.
-					if(PageTable32::Top().Entry(addr >> Memory::PGB_4M).IsPresent())
+					if(PageTable32::Top().Entry(tab).IsPresent())
 						return false;
 
 					addr += Memory::PGS_4M;
 				}
 				else
 				{
-					unsigned int tab = addr >> Memory::PGB_4M;
-					unsigned int entry = (addr >> Memory::PGB_4K) & 0x3ff;
-
 					// Check whether page table exists here.
-					// TODO: Check also for 4MB page already mapped here!
-					if(PageTable32::Exists<1>(tab))
+					if(PageTable32::Top().Entry(tab).IsPresent())
 					{
+						// Check whether 4MB page is mapped here.
+						if(PageTable32::Top().Entry(tab).IsLarge())
+							return false;
+
 						// Check whether this entry is already mapped.
-						PageTableEntry& pte = PageTable32::Table<1>(tab).Entry(entry);
-						if(pte.IsPresent())
+						if(PageTable32::Table<1>(tab).Entry(entry).IsPresent())
 							return false;
 
 						addr += Memory::PGS_4K;
