@@ -79,16 +79,13 @@ namespace Kernel
 		static const uint32_t D_INT386     = 0xe; /**< Interrupt Gate (386 style) */
 		static const uint32_t D_TRAP386    = 0xf; /**< Trap Gate (386 style) */
 
-		union
-		{
-			Segment segment[0];
-			System system[0];
-			Gate gate[0];
-			uint64_t raw[0];
-		};
+		Segment& Seg(int n);
+		System& Sys(int n);
+		Gate& Gat(int n);
+		uint64_t& Raw(int n);
 
 	public:
-		DescriptorTable(void);
+		DescriptorTable(void) = default;
 
 		void Clear(int sel);
 		void CreateInterruptGate(int sel, uint16_t cs, void (*ip)(void), uint8_t dpl = 0);

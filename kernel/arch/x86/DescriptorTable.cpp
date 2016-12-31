@@ -9,58 +9,88 @@ using namespace Kernel;
 
 extern "C" void sysentry(void);
 
-SECTION(".init.text") DescriptorTable::DescriptorTable(void)
+inline DescriptorTable::Segment& DescriptorTable::Seg(int n)
 {
+	return reinterpret_cast<DescriptorTable::Segment*>(this)[n];
+}
+
+inline DescriptorTable::System& DescriptorTable::Sys(int n)
+{
+	return reinterpret_cast<DescriptorTable::System*>(this)[n];
+}
+
+inline DescriptorTable::Gate& DescriptorTable::Gat(int n)
+{
+	return reinterpret_cast<DescriptorTable::Gate*>(this)[n];
+}
+
+inline uint64_t& DescriptorTable::Raw(int n)
+{
+	return reinterpret_cast<uint64_t*>(this)[n];
 }
 
 SECTION(".init.text") void DescriptorTable::Clear(int sel)
 {
+	uint64_t& raw = Raw(sel);
+
 #ifdef ELF64
-	if((raw[sel] & 0x0000800000000000) && !(raw[sel] & 0x0000100000000000))
-		raw[sel + 1] = 0;
+	if((raw & 0x0000800000000000) && !(raw & 0x0000100000000000))
+	{
+		uint64_t raw2 = Raw(sel + 1);
+		raw2 = 0;
+	}
 #endif
-	raw[sel] = 0;
+	raw = 0;
 }
 
-SECTION(".init.text") void DescriptorTable::CreateInterruptGate(int n, uint16_t cs, void (*ip)(void), uint8_t dpl)
+SECTION(".init.text") void DescriptorTable::CreateInterruptGate(int sel, uint16_t cs, void (*ip)(void), uint8_t dpl)
 {
+	uintptr_t addr = (uintptr_t)ip;
+	Gate& gate = Gat(sel);
+
 #ifdef ELF64
-	gate[n].OffsetHigh = (unsigned long)ip >> 32;
+	gate.OffsetHigh = addr >> 32;
 #endif
-	gate[n].OffsetMed = (unsigned long)ip >> 16;
-	gate[n].OffsetLow = (unsigned long)ip;
-	gate[n].Selector = cs;
-	gate[n].Type = D_INT386;
-	gate[n].Present = 1;
-	gate[n].Privilege = dpl;
+	gate.OffsetMed = addr >> 16;
+	gate.OffsetLow = addr;
+	gate.Selector = cs;
+	gate.Type = D_INT386;
+	gate.Present = 1;
+	gate.Privilege = dpl;
 }
 
-SECTION(".init.text") void DescriptorTable::CreateTrapGate(int n, uint16_t cs, void (*ip)(void), uint8_t dpl)
+SECTION(".init.text") void DescriptorTable::CreateTrapGate(int sel, uint16_t cs, void (*ip)(void), uint8_t dpl)
 {
+	uintptr_t addr = (uintptr_t)ip;
+	Gate& gate = Gat(sel);
+
 #ifdef ELF64
-	gate[n].OffsetHigh = (unsigned long)ip >> 32;
+	gate.OffsetHigh = addr >> 32;
 #endif
-	gate[n].OffsetMed = (unsigned long)ip >> 16;
-	gate[n].OffsetLow = (unsigned long)ip;
-	gate[n].Selector = cs;
-	gate[n].Type = D_TRAP386;
-	gate[n].Present = 1;
-	gate[n].Privilege = dpl;
+	gate.OffsetMed = addr >> 16;
+	gate.OffsetLow = addr;
+	gate.Selector = cs;
+	gate.Type = D_TRAP386;
+	gate.Present = 1;
+	gate.Privilege = dpl;
 }
 
-SECTION(".init.text") void DescriptorTable::CreateTSS(int n, void* tss, uint32_t length)
+SECTION(".init.text") void DescriptorTable::CreateTSS(int sel, void* tss, uint32_t length)
 {
+	uintptr_t addr = (uintptr_t)tss;
+	System& system = Sys(sel);
+
 #ifdef ELF64
-	system[n].BaseHigh2 = (unsigned long)tss >> 32;
+	system.BaseHigh2 = addr >> 32;
 #endif
-	system[n].BaseHigh = (unsigned long)tss >> 24;
-	system[n].BaseMed = (unsigned long)tss >> 16;
-	system[n].BaseLow = (unsigned long)tss;
-	system[n].LimitHigh = length >> 16;
-	system[n].LimitLow = length;
-	system[n].Type = D_TSSA386;
-	system[n].Present = 1;
-	system[n].Granularity = 0;
+	system.BaseHigh = addr >> 24;
+	system.BaseMed = addr >> 16;
+	system.BaseLow = addr;
+	system.LimitHigh = length >> 16;
+	system.LimitLow = length;
+	system.Type = D_TSSA386;
+	system.Present = 1;
+	system.Granularity = 0;
 }
 
 SECTION(".init.text") void DescriptorTable::InitIDT(void)
