@@ -54,6 +54,7 @@ namespace Kernel
 				return false;
 
 			pte = phys;
+
 			return true;
 		}
 
@@ -70,6 +71,8 @@ namespace Kernel
 				return false;
 
 			pte = phys;
+			pte.SetLarge(true);
+
 			return true;
 /*
 			pte = phys | PAGE_PRESENT | PAGE_GLOBAL | PAGE_LARGE;

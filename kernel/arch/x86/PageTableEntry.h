@@ -18,17 +18,21 @@ namespace Kernel
 			uint32_t raw = 0;
 #endif
 
-			enum Flags : unsigned long
+#if defined ARCH_X86_AMD64 || defined CONFIG_PAE
+			enum Flags : uint64_t
+#else
+			enum Flags : uint32_t
+#endif
 			{
-				PAGE_PRESENT       = 0x0001UL,
-				PAGE_WRITEABLE     = 0x0002UL,
-				PAGE_USER          = 0x0004UL,
-				PAGE_WRITE_THROUGH = 0x0008UL,
-				PAGE_CACHE_DISABLE = 0x0010UL,
-				PAGE_ACCESSED      = 0x0020UL,
-				PAGE_DIRTY         = 0x0040UL,
-				PAGE_LARGE         = 0x0080UL,
-				PAGE_GLOBAL        = 0x0100UL
+				PAGE_PRESENT       = 0x0001,
+				PAGE_WRITEABLE     = 0x0002,
+				PAGE_USER          = 0x0004,
+				PAGE_WRITE_THROUGH = 0x0008,
+				PAGE_CACHE_DISABLE = 0x0010,
+				PAGE_ACCESSED      = 0x0020,
+				PAGE_DIRTY         = 0x0040,
+				PAGE_LARGE         = 0x0080,
+				PAGE_GLOBAL        = 0x0100
 			};
 
 		public:
@@ -86,6 +90,62 @@ namespace Kernel
 			inline bool IsGlobal(void) const
 			{
 				return (bool)(raw & PAGE_GLOBAL);
+			}
+
+			inline void SetPresent(bool x)
+			{
+				if(x)
+					raw |= PAGE_PRESENT;
+				else
+					raw &= ~PAGE_PRESENT;
+			}
+
+			inline void SetWriteable(bool x)
+			{
+				if(x)
+					raw |= PAGE_WRITEABLE;
+				else
+					raw &= ~PAGE_WRITEABLE;
+			}
+
+			inline void SetUser(bool x)
+			{
+				if(x)
+					raw |= PAGE_USER;
+				else
+					raw &= ~PAGE_USER;
+			}
+
+			inline void SetAccessed(bool x)
+			{
+				if(x)
+					raw |= PAGE_ACCESSED;
+				else
+					raw &= ~PAGE_ACCESSED;
+			}
+
+			inline void SetDirty(bool x)
+			{
+				if(x)
+					raw |= PAGE_DIRTY;
+				else
+					raw &= ~PAGE_DIRTY;
+			}
+
+			inline void SetLarge(bool x)
+			{
+				if(x)
+					raw |= PAGE_LARGE;
+				else
+					raw &= ~PAGE_LARGE;
+			}
+
+			inline void SetGlobal(bool x)
+			{
+				if(x)
+					raw |= PAGE_GLOBAL;
+				else
+					raw &= ~PAGE_GLOBAL;
 			}
 		} PACKED;
 	}
