@@ -23,15 +23,30 @@ namespace Kernel
 
 		SECTION(".init.text") Info* Info::InitMemory(void)
 		{
-			uint32_t mem = ((Multiboot::Info*)(Symbol::kernelOffset.Addr() + (uintptr_t)this))->UpperMemory;
+			new (physmem_space) X86Pager(this);
+			new (virtmem_space) VirtualMemory();
+			Info* mbi = (Info*)x86pager().MapTempRegion((unsigned long)this, sizeof(Info));
+			MemoryMap* mmap;
+			MemoryMap* mmap0;
+
+			uint32_t mem = mbi->UpperMemory;
 			uint32_t length = (mem > (15UL << 10) ? 15UL << 20 : mem << 10);
 			Chunker::Init(1UL << 20, length, Memory::Zone::DMA24);
 			Memory::PhysAddr test = Chunker::Alloc();
 			Chunker::Free(test);
 
-			new (physmem_space) X86Pager(this);
-			new (virtmem_space) VirtualMemory();
-			return (Info*)x86pager().MapTempRegion((unsigned long)this, sizeof(Info));
+			if(mbi->Flags & FLAGS_MEMORY_MAP)
+			{
+				Console::WriteFormat("Memory map of length 0x%8x at address 0x%8x\n", mbi->MemoryMapLength, mbi->MemoryMapAddress);
+				mmap0 = (MemoryMap*)x86pager().MapTempRegion(mbi->MemoryMapAddress, mbi->MemoryMapLength);
+				for(mmap = mmap0; (unsigned long)mmap - (unsigned long)mmap0 < mbi->MemoryMapLength; mmap = (MemoryMap*)((unsigned long)mmap + mmap->Size + 4))
+				{
+					Console::WriteFormat("Mem: 0x%16lx-0x%16lx, Type: 0x%2x\n", mmap->BaseAddr, mmap->BaseAddr + mmap->Length - 1, mmap->Type);
+					x86pager().AddMemoryArea(mmap);
+				}
+			}
+
+			return mbi;
 		}
 
 		SECTION(".init.text") void Info::InitModules(void)
