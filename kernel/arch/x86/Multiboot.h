@@ -7,9 +7,26 @@
 
 namespace Kernel
 {
-	class Multiboot
+	namespace Multiboot
 	{
-	public:
+		static const uint32_t MAGIC = 0x2BADB002; /**< Passed by multiboot loader. */
+
+		enum Flags : uint32_t
+		{
+			FLAGS_MEMORY_INFO  = 0x00000001,
+			FLAGS_BOOT_DEVICE  = 0x00000002,
+			FLAGS_CMDLINE      = 0x00000004,
+			FLAGS_MODULES      = 0x00000008,
+			FLAGS_SYMBOLS_AOUT = 0x00000010,
+			FLAGS_SYMBOLS_ELF  = 0x00000020,
+			FLAGS_MEMORY_MAP   = 0x00000040,
+			FLAGS_DRIVES       = 0x00000080,
+			FLAGS_CONFIG       = 0x00000100,
+			FLAGS_NAME         = 0x00000200,
+			FLAGS_APM_TAB      = 0x00000400,
+			FLAGS_VBE_INFO     = 0x00000800
+		};
+
 		/** AOut symbols passed in multiboot info structure. */
 		struct AOutSymbols
 		{
@@ -29,12 +46,16 @@ namespace Kernel
 		} PACKED;
 
 		/** Module list entry. */
-		struct Module
+		class Module
 		{
+		public:
 			uint32_t ModStart;
 			uint32_t ModEnd;
 			uint32_t String;
 			uint32_t Reserved;
+
+			Module(void) = delete;
+			bool Start(void);
 		} PACKED;
 
 		/** Memory map entry. */
@@ -58,8 +79,9 @@ namespace Kernel
 		} PACKED;
 
 		/** Multiboot info structure. */
-		struct Info
+		class Info
 		{
+		public:
 			uint32_t Flags;
 			uint32_t LowerMemory;
 			uint32_t UpperMemory;
@@ -88,40 +110,16 @@ namespace Kernel
 			uint16_t VbeInterfaceSeg;
 			uint16_t VbeInterfaceOff;
 			uint16_t VbeInterfaceLength;
+
+			Info(void) = delete;
+
+//			bool Check(void);
+			Info* InitMemory(void);
+			void InitModules(void);
 		} PACKED;
 
-	private:
-		Info* mbi;
-		Module* mbm;
-
-	public:
-		static const uint32_t MULTIBOOT_MAGIC = 0x2BADB002; /**< Passed by multiboot loader. */
-
-		static const uint32_t MB_FLAGS_MEMORY_INFO  = 0x00000001;
-		static const uint32_t MB_FLAGS_BOOT_DEVICE  = 0x00000002;
-		static const uint32_t MB_FLAGS_CMDLINE      = 0x00000004;
-		static const uint32_t MB_FLAGS_MODULES      = 0x00000008;
-		static const uint32_t MB_FLAGS_SYMBOLS_AOUT = 0x00000010;
-		static const uint32_t MB_FLAGS_SYMBOLS_ELF  = 0x00000020;
-		static const uint32_t MB_FLAGS_MEMORY_MAP   = 0x00000040;
-		static const uint32_t MB_FLAGS_DRIVES       = 0x00000080;
-		static const uint32_t MB_FLAGS_CONFIG       = 0x00000100;
-		static const uint32_t MB_FLAGS_NAME         = 0x00000200;
-		static const uint32_t MB_FLAGS_APM_TAB      = 0x00000400;
-		static const uint32_t MB_FLAGS_VBE_INFO     = 0x00000800;
-
-		Multiboot(unsigned long magic, Info* mbi);
-
-		inline Info* GetInfo(void)
-		{
-			return mbi;
-		}
-
-		void StartModules(void);
-	};
+		bool CheckMagic(uint32_t magic);
+	}
 }
-
-extern char multiboot_space[];
-inline Kernel::Multiboot& multiboot(void) { return(reinterpret_cast<Kernel::Multiboot&>(multiboot_space)); }
 
 #endif

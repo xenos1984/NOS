@@ -26,10 +26,13 @@
 
 using namespace Kernel;
 
-extern "C" void SECTION(".init.text") KernelEntry(unsigned long magic, Multiboot::Info* mbi)
+extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, Multiboot::Info* mbi)
 {
 	// Init console and show message.
 	Core::Welcome();
+
+	// Check multiboot magic.
+	Multiboot::CheckMagic(magic);
 
 	// Get basic CPU info.
 	new (bspcpu_space) CPU;
@@ -44,16 +47,10 @@ extern "C" void SECTION(".init.text") KernelEntry(unsigned long magic, Multiboot
 	kprocess().data.cr3 = CR3::Read();
 	kprocess().data.pgtab = (X86Pager::PageTable*)tabPGDIR;
 
-	// Init physical memory manager.
-	uint32_t mem = ((Multiboot::Info*)(Symbol::kernelOffset.Addr() + (uintptr_t)mbi))->UpperMemory;
-	uint32_t length = (mem > (15UL << 10) ? 15UL << 20 : mem << 10);
-	Chunker::Init(1UL << 20, length, Memory::Zone::DMA24);
-	Memory::PhysAddr test = Chunker::Alloc();
-	Chunker::Free(test);
+	// Init memory manager.
+	mbi = mbi->InitMemory();
 
-	new (physmem_space) X86Pager(mbi);
-	new (virtmem_space) VirtualMemory();
-	new (multiboot_space) Multiboot(magic, mbi);
+	// Init further hardware components.
 	new (cmos_space) Cmos;
 	new (pit_space) PIT;
 
@@ -100,7 +97,7 @@ extern "C" void SECTION(".init.text") KernelEntry(unsigned long magic, Multiboot
 		new (sysclock_space) PITClock(cmos().GetTime(), 0);
 	}
 
-	multiboot().StartModules();
+	mbi->InitModules();
 }
 
 extern "C" void FreeMemory(void)

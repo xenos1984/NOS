@@ -160,19 +160,19 @@ SECTION(".init.text") X86Pager::X86Pager(Multiboot::Info* mbi) : basemem(0, 0, n
 	basemem.Mark((unsigned long)mbi, (unsigned long)mbi + sizeof(Multiboot::Info), true);
 	info = (Multiboot::Info*)MapToLinear(mbi, (void*)((PAGE_SIZE_MASK & (unsigned long)mbi) + allocendvirt), 2);
 
-	if((info->Flags & Multiboot::MB_FLAGS_DRIVES) && (info->DrivesLength > 0))
+	if((info->Flags & Multiboot::FLAGS_DRIVES) && (info->DrivesLength > 0))
 		basemem.Mark(info->DrivesAddress, info->DrivesAddress + info->DrivesLength, true);
 
-	if(info->Flags & Multiboot::MB_FLAGS_MEMORY_MAP)
+	if(info->Flags & Multiboot::FLAGS_MEMORY_MAP)
 		basemem.Mark(info->MemoryMapAddress, info->MemoryMapAddress + info->MemoryMapLength, true);
 
-	if(info->Flags & Multiboot::MB_FLAGS_NAME)
+	if(info->Flags & Multiboot::FLAGS_NAME)
 		basemem.Mark(info->BootLoaderName, info->BootLoaderName, true);
 
-	if(info->Flags & Multiboot::MB_FLAGS_CMDLINE)
+	if(info->Flags & Multiboot::FLAGS_CMDLINE)
 		basemem.Mark(info->CommandLine, info->CommandLine, true);
 
-	if((info->Flags & Multiboot::MB_FLAGS_MODULES) && (info->ModuleCount > 0))
+	if((info->Flags & Multiboot::FLAGS_MODULES) && (info->ModuleCount > 0))
 	{
 		basemem.Mark(info->ModuleAddress, info->ModuleAddress + info->ModuleCount * sizeof(Multiboot::Module), true);
 		mmod = (Multiboot::Module*)MapToLinear((void*)(unsigned long)(info->ModuleAddress), (void*)((PAGE_SIZE_MASK & info->ModuleAddress) + allocendvirt + 2 * PAGE_SIZE), 2);
