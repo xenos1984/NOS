@@ -7,6 +7,18 @@ namespace Kernel
 {
 	namespace Memory
 	{
+		enum class MemType
+		{
+			KERNEL_EXEC,
+			KERNEL_RO,
+			KERNEL_RW,
+			USER_EXEC,
+			USER_RO,
+			USER_RW,
+			USER_COW,
+			USER_DEMAND
+		};
+
 		enum PageBits : unsigned long
 		{
 			PGB_1K = 10,
