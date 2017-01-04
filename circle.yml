@@ -14,7 +14,8 @@ dependencies:
 
 compile:
     override:
-        - bash autogen.sh
+        - mkdir -p .config
+        - ./autogen.sh
         - ./configure --host=i786-pc-elf
         - make
 
