@@ -1,0 +1,20 @@
+dependencies:
+    pre:
+        - sudo apt-get update
+        - sudo apt-get install libgmp3-dev
+        - sudo apt-get install libmpfr-dev
+        - sudo apt-get install libmpc-dev
+        - sudo apt-get install texinfo
+        - sudo apt-get install libisl-dev
+        - sudo apt-get install libcloog-isl-dev
+        - bash ci/toolchain.sh i786-pc-elf
+
+    cache_directories:
+        - /usr/cross
+
+compile:
+    override:
+        - bash autogen.sh
+        - ./configure --host=i786-pc-elf
+        - make
+
