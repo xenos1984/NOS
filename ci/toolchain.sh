@@ -8,6 +8,7 @@ newlib_version="2.4.0"
 target=$1
 
 if [ -d /usr/cross/$target ]
+then
 	exit 0
 fi
 
@@ -15,16 +16,19 @@ mkdir -p /tmp/toolchain
 cd /tmp/toolchain
 
 if [ ! -f gcc-$gcc_version.tar.bz2 ]
+then
 	wget -c -O gcc-$gcc_version.tar.bz2 ftp://ftp.gnu.org/gnu/gcc/gcc-$gcc_version/gcc-$gcc_version.tar.bz2
 	tar -xf gcc-$gcc_version.tar.bz2
 fi
 
 if [ ! -f binutils-$binutils_version.tar.bz2 ]
+then
 	wget -c -O binutils-$binutils_version.tar.bz2 ftp://ftp.gnu.org/gnu/binutils/binutils-$binutils_version.tar.bz2
 	tar -xf binutils-$binutils_version.tar.bz2
 fi
 
 if [ ! -f newlib-$newlib_version.tar.gz ]
+then
 	wget -c -O newlib-$newlib_version.tar.gz ftp://sources.redhat.com/pub/newlib/newlib-$newlib_version.tar.gz
 	tar -xf newlib-$newlib_version.tar.gz
 fi
