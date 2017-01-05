@@ -17,4 +17,10 @@ compile:
         - ./autogen.sh
         - ./configure --host=i786-pc-elf
         - make
+        - mkdir -p $CIRCLE_ARTIFACTS/i786-pc-elf
+        - cp *.elf $CIRCLE_ARTIFACTS/i786-pc-elf/
+
+test:
+    override:
+        - test -f $CIRCLE_ARTIFACTS/i786-pc-elf/Kernel.elf
 
