@@ -10,11 +10,10 @@ dependencies:
         - bash ci/toolchain.sh i786-pc-elf
 
     cache_directories:
-        - /usr/cross
+        - ~/cross
 
 compile:
     override:
-        - mkdir -p .config
         - ./autogen.sh
         - ./configure --host=i786-pc-elf
         - make

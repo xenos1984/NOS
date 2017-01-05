@@ -6,8 +6,9 @@ gcc_version="6.3.0"
 newlib_version="2.4.0"
 
 target=$1
+prefix=~/cross/$target
 
-if [ -d /usr/cross/$target ]
+if [ -d $prefix ]
 then
 	exit 0
 fi
@@ -39,32 +40,32 @@ mkdir -p /tmp/toolchain/build-newlib
 
 cd /tmp/toolchain/build-binutils
 sudo rm -rf *
-/tmp/toolchain/binutils-$binutils_version/configure --target=$target --prefix=/usr/cross/$target --disable-nls 2>&1
+/tmp/toolchain/binutils-$binutils_version/configure --target=$target --prefix=$prefix --disable-nls 2>&1
 make all 2>&1
-sudo make install 2>&1
+make install 2>&1
 sudo rm -rf *
 
 cd /tmp/toolchain/build-gcc
-/tmp/toolchain/gcc-$gcc_version/configure --target=$target --prefix=/usr/cross/$target --disable-nls --enable-languages=c,c++ --enable-libstdcxx --without-headers 2>&1
+/tmp/toolchain/gcc-$gcc_version/configure --target=$target --prefix=$prefix --disable-nls --enable-languages=c,c++ --enable-libstdcxx --without-headers 2>&1
 make all-gcc 2>&1
-sudo make install-gcc 2>&1
+make install-gcc 2>&1
 make all-target-libgcc 2>&1
-sudo make install-target-libgcc 2>&1
+make install-target-libgcc 2>&1
 
-sudo ln -s -f /usr/cross/$target/bin/* /usr/local/bin/
+sudo ln -s -f $prefix/bin/* /usr/local/bin/
 
 cd /tmp/toolchain/build-newlib
 sudo rm -rf *
-/tmp/toolchain/newlib-$newlib_version/configure --target=$target --prefix=/usr/cross/$target 2>&1
+/tmp/toolchain/newlib-$newlib_version/configure --target=$target --prefix=$prefix 2>&1
 make all 2>&1
-sudo make install 2>&1
+make install 2>&1
 sudo rm -rf *
 
 cd /tmp/toolchain/build-gcc
-/tmp/toolchain/gcc-$gcc_version/configure --target=$target --prefix=/usr/cross/$target --disable-nls --enable-languages=c,c++ --enable-libstdcxx --without-headers --with-newlib 2>&1
+/tmp/toolchain/gcc-$gcc_version/configure --target=$target --prefix=$prefix --disable-nls --enable-languages=c,c++ --enable-libstdcxx --without-headers --with-newlib 2>&1
 make all-target-libstdc++-v3 2>&1
-sudo make install-target-libstdc++-v3 2>&1
+make install-target-libstdc++-v3 2>&1
 sudo rm -rf *
 
-sudo ln -s -f /usr/cross/$target/bin/* /usr/local/bin/
+sudo ln -s -f $prefix/bin/* /usr/local/bin/
 
