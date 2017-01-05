@@ -63,7 +63,7 @@ libx86_a_SOURCES = \
 	SMP.cpp \
 	X86Pager.cpp
 
-noinst_PROGRAMS = Kernel.elf ../../../Kernel.elf
+noinst_PROGRAMS = Kernel.elf ../../../Kernel.elf eltorito.iso NOS.iso
 
 Kernel_elf_SOURCES =
 
@@ -79,3 +79,14 @@ _________Kernel_elf_SOURCES =
 
 ../../../Kernel.elf$(EXEEXT): Kernel.elf
 	$(NOS_OBJCOPY) $(copy_flags) $< $@
+
+eltorito_iso_SOURCES =
+
+eltorito.iso$(EXEEXT):
+	grub-mkimage -o eltorito.img -O i386-pc-eltorito biosdisk iso9660 multiboot configfile
+
+NOS_iso_SOURCES =
+
+NOS.iso$(EXEEXT): Kernel.elf grub.cfg eltorito.iso
+	genisoimage -R -f -c boot/boot.cat -b boot/grub/eltorito.img -no-emul-boot -boot-load-size 4 -boot-info-table -o NOS.iso -graft-points nos/Kernel.elf=Kernel.elf boot/grub/eltorito.img=eltorito.img boot/grub/grub.cfg=grub.cfg
+

@@ -1,6 +1,7 @@
 dependencies:
     pre:
         - sudo apt-get update
+        - sudo apt-get install grub-pc
         - sudo apt-get install libgmp3-dev
         - sudo apt-get install libmpfr-dev
         - sudo apt-get install libmpc-dev
@@ -18,9 +19,11 @@ compile:
         - ./configure --host=i786-pc-elf
         - make
         - mkdir -p $CIRCLE_ARTIFACTS/i786-pc-elf
-        - cp *.elf $CIRCLE_ARTIFACTS/i786-pc-elf/
+        - cp *.elf kernel/arch/x86/NOS.iso $CIRCLE_ARTIFACTS/i786-pc-elf/
 
 test:
     override:
         - test -f $CIRCLE_ARTIFACTS/i786-pc-elf/Kernel.elf
+        - test -f $CIRCLE_ARTIFACTS/i786-pc-elf/Floppy.elf
+        - test -f $CIRCLE_ARTIFACTS/i786-pc-elf/NOS.iso
 
