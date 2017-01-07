@@ -19,7 +19,7 @@ namespace Kernel
 			static_assert(IsValidSize(bits), "invalid page size");
 		}
 */
-		template<Memory::PageBits bits> bool MapPage(Memory::PhysAddr phys __attribute__((unused)), uintptr_t virt __attribute__((unused)), unsigned int flags __attribute__((unused)))
+		template<Memory::PageBits bits> bool MapPage(Memory::PhysAddr phys __attribute__((unused)), uintptr_t virt __attribute__((unused)), Memory::MemType type __attribute__((unused)))
 		{
 			static_assert(IsValidSize(bits), "invalid page size");
 			return false;
@@ -35,7 +35,7 @@ namespace Kernel
 			return ((PageTableEntry*)REC_PAGE_DIR)[virt >> Memory::PGB_4M];
 		}
 */
-		template<> bool MapPage<Memory::PGB_4K>(Memory::PhysAddr phys, uintptr_t virt, unsigned int flags)
+		template<> bool MapPage<Memory::PGB_4K>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type)
 		{
 			if(phys & Memory::PGM_4K)
 				return false;
@@ -58,7 +58,7 @@ namespace Kernel
 			return true;
 		}
 
-		template<> bool MapPage<Memory::PGB_4M>(Memory::PhysAddr phys, uintptr_t virt, unsigned int flags)
+		template<> bool MapPage<Memory::PGB_4M>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type)
 		{
 			if(phys & Memory::PGM_4M)
 				return false;
@@ -113,7 +113,7 @@ namespace Kernel
 			return (Memory::PageBits)0;
 		}
 
-		bool Map(Memory::PhysAddr phys, uintptr_t virt, size_t length, unsigned long type)
+		bool Map(Memory::PhysAddr phys, uintptr_t virt, size_t length, Memory::MemType type)
 		{
 			uintptr_t addr, diff;
 			uintptr_t end = virt + length;
@@ -183,8 +183,8 @@ namespace Kernel
 
 		void Test(void)
 		{
-			MapPage<Memory::PGB_4K>(0x1000000, 0x2000000, 0);
-			MapPage<Memory::PGB_4M>(0x1000000, 0x00000000, 0);
+			MapPage<Memory::PGB_4K>(0x1000000, 0x2000000, Memory::MemType::KERNEL_RO);
+			MapPage<Memory::PGB_4M>(0x1000000, 0x00000000, Memory::MemType::KERNEL_EXEC);
 		}
 	}
 }

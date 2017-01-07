@@ -84,7 +84,7 @@ namespace Kernel
 			Memory::PhysAddr phys = Chunker::Alloc();
 			uintptr_t virt = PAGE_TABLE_ADDR[level + 1] + i * sizeof(PageTable<size>);
 
-			Pager::MapPage<Memory::PGB_4K>(phys, virt, 0);
+			Pager::MapPage<Memory::PGB_4K>(phys, virt, Memory::MemType::KERNEL_RW);
 			new (reinterpret_cast<PageTable*>(virt)) PageTable;
 
 			return *reinterpret_cast<PageTable*>(virt);
