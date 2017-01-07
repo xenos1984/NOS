@@ -27,3 +27,6 @@ Operating system project
 * m68k-atari-elf (temporarily not supported)
 * arm-raspi2-eabi (planned)
 
+## Latest builds:
+* [i786-pc-elf GRUB2 bootable iso image](https://circleci.com/api/v1/project/xenos1984/NOS/latest/artifacts/0/$CIRCLE_ARTIFACTS/i786-pc-elf/NOS.iso)
+
