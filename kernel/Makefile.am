@@ -22,6 +22,7 @@ libkernel_a_SOURCES = \
 	Pager.h \
 	PhysicalMemory.h \
 	Process.h \
+	Segment.h \
 	Symbol.h \
 	TaskManager.h \
 	TaskScheduler.h \
