@@ -19,7 +19,9 @@ compile:
         - ./configure --host=i786-pc-elf
         - make
         - mkdir -p $CIRCLE_ARTIFACTS/i786-pc-elf
-        - cp *.elf kernel/arch/x86/NOS.iso $CIRCLE_ARTIFACTS/i786-pc-elf/
+        - cp kernel/arch/x86/Kernel.elf $CIRCLE_ARTIFACTS/i786-pc-elf/
+        - cp drivers/pc/floppy/Floppy.elf $CIRCLE_ARTIFACTS/i786-pc-elf/
+        - cp images/x86/NOS.iso $CIRCLE_ARTIFACTS/i786-pc-elf/
 
 test:
     override:

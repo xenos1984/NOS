@@ -106,6 +106,8 @@ AC_CONFIG_FILES([
 	drivers/pc/Makefile
 	drivers/pc/floppy/Makefile
 	drivers/atari/Makefile
+	images/Makefile
+	images/x86/Makefile
 	refman/Makefile
 	refman/refman.doxyfile
 ])

@@ -2,5 +2,5 @@
 
 SUBDIRS = ${arch_subdir}
 
-DIST_SUBDIRS = x86 m68k
+DIST_SUBDIRS = x86
 

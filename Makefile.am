@@ -2,4 +2,5 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = fonts kernel drivers refman
+SUBDIRS = fonts kernel drivers images refman
+

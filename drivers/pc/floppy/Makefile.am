@@ -2,19 +2,14 @@
 
 AM_CPPFLAGS = -imacros config.h -I$(top_srcdir)/drivers -I$(top_srcdir)/include
 
-noinst_PROGRAMS = floppy ../../../Floppy.elf
+noinst_PROGRAMS = Floppy.elf
 
-floppy_SOURCES = \
+Floppy_elf_SOURCES = \
 	FloppyDriver.cpp
 
-floppy_DEPENDENCIES = \
+Floppy_elf_DEPENDENCIES = \
 	$(top_srcdir)/drivers/arch/$(arch_subdir)/ldscript
 
-floppy_LDFLAGS = \
+Floppy_elf_LDFLAGS = \
 	-T $(top_srcdir)/drivers/arch/$(arch_subdir)/ldscript
 
-_________Floppy_elf_SOURCES =
-
-../../../Floppy.elf$(EXEEXT): floppy
-#	cp $< $@
-	$(NOS_OBJCOPY) $(copy_flags) $< $@
