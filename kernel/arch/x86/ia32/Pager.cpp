@@ -53,7 +53,7 @@ namespace Kernel
 			if(pte.IsPresent())
 				return false;
 
-			pte = phys;
+			pte.Set(phys, type);
 
 			return true;
 		}
@@ -70,7 +70,7 @@ namespace Kernel
 			if(pte.IsPresent())
 				return false;
 
-			pte = phys;
+			pte.Set(phys, type);
 			pte.SetLarge(true);
 
 			return true;

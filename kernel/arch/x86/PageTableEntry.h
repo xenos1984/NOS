@@ -36,7 +36,7 @@ namespace Kernel
 				PAGE_GLOBAL        = 0x0100
 			};
 
-			constexpr std::underlying_type<Flags>::type TypeFlags(Memory::MemType type)
+			constexpr static std::underlying_type<Flags>::type TypeFlags(Memory::MemType type)
 			{
 				switch(type)
 				{
@@ -56,6 +56,8 @@ namespace Kernel
 					return PAGE_PRESENT | PAGE_USER;
 				case Memory::MemType::USER_DEMAND:
 					return PAGE_PRESENT | PAGE_USER;
+				default:
+					return 0;
 				}
 			}
 
@@ -65,9 +67,9 @@ namespace Kernel
 				return reinterpret_cast<PageTableEntry*>(REC_PAGE_TAB)[i];
 			}
 */
-			PageTableEntry& operator=(Memory::PhysAddr phys)
+			PageTableEntry& Set(Memory::PhysAddr phys, Memory::MemType type)
 			{
-				raw = phys | PAGE_PRESENT;
+				raw = phys | TypeFlags(type);
 				return *this;
 			}
 
