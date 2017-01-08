@@ -3,6 +3,7 @@
 #ifndef __ARCH_X86_PAGETABLEENTRY_H__
 #define __ARCH_X86_PAGETABLEENTRY_H__
 
+#include <type_traits>
 #include <Memory.h>
 
 namespace Kernel
@@ -34,6 +35,29 @@ namespace Kernel
 				PAGE_LARGE         = 0x0080,
 				PAGE_GLOBAL        = 0x0100
 			};
+
+			constexpr std::underlying_type<Flags>::type TypeFlags(Memory::MemType type)
+			{
+				switch(type)
+				{
+				case Memory::MemType::KERNEL_EXEC:
+					return PAGE_PRESENT | PAGE_GLOBAL;
+				case Memory::MemType::KERNEL_RO:
+					return PAGE_PRESENT | PAGE_GLOBAL;
+				case Memory::MemType::KERNEL_RW:
+					return PAGE_PRESENT | PAGE_WRITEABLE | PAGE_GLOBAL;
+				case Memory::MemType::USER_EXEC:
+					return PAGE_PRESENT | PAGE_USER;
+				case Memory::MemType::USER_RO:
+					return PAGE_PRESENT | PAGE_USER;
+				case Memory::MemType::USER_RW:
+					return PAGE_PRESENT | PAGE_WRITEABLE | PAGE_USER;
+				case Memory::MemType::USER_COW:
+					return PAGE_PRESENT | PAGE_USER;
+				case Memory::MemType::USER_DEMAND:
+					return PAGE_PRESENT | PAGE_USER;
+				}
+			}
 
 		public:
 /*			static PageTableEntry& Entry(int i)
