@@ -13,12 +13,6 @@ namespace Kernel
 {
 	namespace Pager
 	{
-/*
-		template<Memory::PageBits bits> PageTableEntry& PageTable(uintptr_t virt)
-		{
-			static_assert(IsValidSize(bits), "invalid page size");
-		}
-*/
 		template<Memory::PageBits bits> void MapPage(Memory::PhysAddr phys __attribute__((unused)), uintptr_t virt __attribute__((unused)), Memory::MemType type __attribute__((unused)))
 		{
 			static_assert(IsValidSize(bits), "invalid page size");
@@ -27,11 +21,6 @@ namespace Kernel
 		template<Memory::PageBits bits> bool UnmapPage(uintptr_t virt)
 		{
 			static_assert(IsValidSize(bits), "invalid page size");
-		}
-
-		template<> PageTableEntry& PageTable<Memory::PGB_4M>(uintptr_t virt)
-		{
-			return ((PageTableEntry*)REC_PAGE_DIR)[virt >> Memory::PGB_4M];
 		}
 */
 		template<> void MapPage<Memory::PGB_4K>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type)
