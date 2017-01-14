@@ -27,5 +27,5 @@ Operating system project
 * arm-raspi2-eabi (planned)
 
 ## Latest builds:
-* [i786-pc-elf GRUB2 bootable iso image](https://circleci.com/api/v1/project/xenos1984/NOS/latest/artifacts/0/$CIRCLE_ARTIFACTS/i786-pc-elf/NOS.iso)
+* [i786-pc-elf GRUB2 bootable iso image](https://circleci.com/api/v1/project/xenos1984/NOS/latest/artifacts/0/$CIRCLE_ARTIFACTS/i786-pc-elf/NOS.iso) ([config log](https://circleci.com/api/v1/project/xenos1984/NOS/latest/artifacts/0/$CIRCLE_ARTIFACTS/i786-pc-elf/config.txt), [build log](https://circleci.com/api/v1/project/xenos1984/NOS/latest/artifacts/0/$CIRCLE_ARTIFACTS/i786-pc-elf/build.txt))
 

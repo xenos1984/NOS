@@ -19,7 +19,8 @@ compile:
         - ./configure --host=i786-pc-elf
         - make 2>&1 | tee build.log
         - mkdir -p $CIRCLE_ARTIFACTS/i786-pc-elf
-        - cp build.log $CIRCLE_ARTIFACTS/i786-pc-elf/
+        - cp config.log $CIRCLE_ARTIFACTS/i786-pc-elf/config.txt
+        - cp build.log $CIRCLE_ARTIFACTS/i786-pc-elf/build.txt
         - cp kernel/arch/x86/Kernel.elf $CIRCLE_ARTIFACTS/i786-pc-elf/
         - cp drivers/pc/floppy/Floppy.elf $CIRCLE_ARTIFACTS/i786-pc-elf/
         - cp images/x86/NOS.iso $CIRCLE_ARTIFACTS/i786-pc-elf/
