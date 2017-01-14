@@ -19,10 +19,9 @@ namespace Kernel
 			static_assert(IsValidSize(bits), "invalid page size");
 		}
 */
-		template<Memory::PageBits bits> bool MapPage(Memory::PhysAddr phys __attribute__((unused)), uintptr_t virt __attribute__((unused)), Memory::MemType type __attribute__((unused)))
+		template<Memory::PageBits bits> void MapPage(Memory::PhysAddr phys __attribute__((unused)), uintptr_t virt __attribute__((unused)), Memory::MemType type __attribute__((unused)))
 		{
 			static_assert(IsValidSize(bits), "invalid page size");
-			return false;
 		}
 /*
 		template<Memory::PageBits bits> bool UnmapPage(uintptr_t virt)
@@ -35,13 +34,8 @@ namespace Kernel
 			return ((PageTableEntry*)REC_PAGE_DIR)[virt >> Memory::PGB_4M];
 		}
 */
-		template<> bool MapPage<Memory::PGB_4K>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type)
+		template<> void MapPage<Memory::PGB_4K>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type)
 		{
-			if(phys & Memory::PGM_4K)
-				return false;
-			if(virt & Memory::PGM_4K)
-				return false;
-
 			unsigned int tab = virt >> Memory::PGB_4M;
 			unsigned int entry = (virt >> Memory::PGB_4K) & 0x3ff;
 
@@ -49,30 +43,13 @@ namespace Kernel
 				PageTable32::Create<1>(tab);
 
 			PageTableEntry& pte = PageTable32::Table<1>(tab).Entry(entry);
-
-			if(pte.IsPresent())
-				return false;
-
 			pte.Set<Memory::PGB_4K>(phys, type);
-
-			return true;
 		}
 
-		template<> bool MapPage<Memory::PGB_4M>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type)
+		template<> void MapPage<Memory::PGB_4M>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type)
 		{
-			if(phys & Memory::PGM_4M)
-				return false;
-			if(virt & Memory::PGM_4M)
-				return false;
-
 			PageTableEntry& pte = PageTable32::Top().Entry(virt >> Memory::PGB_4M);
-
-			if(pte.IsPresent())
-				return false;
-
 			pte.Set<Memory::PGB_4M>(phys, type);
-
-			return true;
 		}
 /*
 		template<> bool PageDirectory::UnmapPage<Memory::PGB_4K>(uintptr_t virt)
