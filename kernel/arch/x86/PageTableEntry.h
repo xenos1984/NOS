@@ -67,10 +67,10 @@ namespace Kernel
 				return reinterpret_cast<PageTableEntry*>(REC_PAGE_TAB)[i];
 			}
 */
-			PageTableEntry& Set(Memory::PhysAddr phys, Memory::MemType type)
+			template<Memory::PageBits bits> PageTableEntry& Set(Memory::PhysAddr phys __attribute__((unused)), Memory::MemType type __attribute__((unused)))
 			{
-				raw = phys | TypeFlags(type);
-				return *this;
+				static_assert(IsValidSize(bits), "invalid page size");
+				return false;
 			}
 
 			Memory::PhysAddr Phys(void) const
@@ -174,6 +174,18 @@ namespace Kernel
 					raw &= ~PAGE_GLOBAL;
 			}
 		} PACKED;
+
+		template<> PageTableEntry& PageTableEntry::Set<Memory::PGB_4K>(Memory::PhysAddr phys, Memory::MemType type)
+		{
+			raw = phys | TypeFlags(type);
+			return *this;
+		}
+
+		template<> PageTableEntry& PageTableEntry::Set<Memory::PGB_4M>(Memory::PhysAddr phys, Memory::MemType type)
+		{
+			raw = phys | TypeFlags(type) | PAGE_LARGE;
+			return *this;
+		}
 	}
 }
 

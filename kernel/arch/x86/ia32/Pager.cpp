@@ -53,7 +53,7 @@ namespace Kernel
 			if(pte.IsPresent())
 				return false;
 
-			pte.Set(phys, type);
+			pte.Set<Memory::PGB_4K>(phys, type);
 
 			return true;
 		}
@@ -70,13 +70,10 @@ namespace Kernel
 			if(pte.IsPresent())
 				return false;
 
-			pte.Set(phys, type);
-			pte.SetLarge(true);
+			pte.Set<Memory::PGB_4M>(phys, type);
 
 			return true;
-/*
-			pte = phys | PAGE_PRESENT | PAGE_GLOBAL | PAGE_LARGE;
-*/		}
+		}
 /*
 		template<> bool PageDirectory::UnmapPage<Memory::PGB_4K>(uintptr_t virt)
 		{
