@@ -37,6 +37,7 @@ namespace Kernel
 
 		public:
 			inline PageTableEntry& Entry(unsigned int i);
+			template<unsigned int level> inline unsigned long Index(void);
 			template<unsigned int level> static inline PageTable<size>& Table(unsigned long i);
 			static inline PageTable<size>& Top(void);
 			template<unsigned int level, typename std::enable_if<level == 0>::type* = nullptr> static bool Exists(unsigned long i);
@@ -49,6 +50,12 @@ namespace Kernel
 		template<unsigned int size> inline PageTableEntry& PageTable<size>::Entry(unsigned int i)
 		{
 			return entry[i];
+		}
+
+		template<unsigned int size> template<unsigned int level> inline unsigned long PageTable<size>::Index(void)
+		{
+			static_assert(level < PAGE_LEVELS, "Table level exceeds number of paging levels.");
+			return (reinterpret_cast<uintptr_t>(this) - PAGE_TABLE_ADDR[level + 1]) / sizeof(PageTable<size>);
 		}
 
 		template<unsigned int size> template<unsigned int level> inline PageTable<size>& PageTable<size>::Table(unsigned long i)
@@ -81,7 +88,7 @@ namespace Kernel
 		{
 			static_assert(level < PAGE_LEVELS, "Table level exceeds number of paging levels.");
 
-			for(unsigned long i = 0; i < size; i++)
+			for(unsigned int i = 0; i < size; i++)
 			{
 				if(!entry[i].IsClear())
 					return false;
@@ -106,7 +113,7 @@ namespace Kernel
 
 		template<unsigned int size> template<unsigned int level> void PageTable<size>::Destroy(unsigned long i)
 		{
-			static_assert(level > 0, "Top level page table cannot be created.");
+			static_assert(level > 0, "Top level page table cannot be destroyed.");
 			static_assert(level < PAGE_LEVELS, "Table level exceeds number of paging levels.");
 		}
 
