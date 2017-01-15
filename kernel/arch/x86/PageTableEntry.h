@@ -83,6 +83,11 @@ namespace Kernel
 				raw = 0;
 			}
 
+			inline bool IsClear(void) const
+			{
+				return (raw == 0);
+			}
+
 			inline bool IsPresent(void) const
 			{
 				return (bool)(raw & PAGE_PRESENT);
