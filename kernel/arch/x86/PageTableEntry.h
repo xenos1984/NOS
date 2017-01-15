@@ -70,7 +70,7 @@ namespace Kernel
 			template<Memory::PageBits bits> PageTableEntry& Set(Memory::PhysAddr phys __attribute__((unused)), Memory::MemType type __attribute__((unused)))
 			{
 				static_assert(IsValidSize(bits), "invalid page size");
-				return false;
+				return *this;
 			}
 
 			Memory::PhysAddr Phys(void) const
