@@ -42,7 +42,7 @@ namespace Kernel
 			static inline PageTable<size>& Top(void);
 			template<unsigned int level, typename std::enable_if<level == 0>::type* = nullptr> static bool Exists(unsigned long i);
 			template<unsigned int level, typename std::enable_if<level != 0>::type* = nullptr> static bool Exists(unsigned long i);
-			template<unsigned int level> bool IsEmpty(void);
+			bool IsEmpty(void);
 			template<unsigned int level> static PageTable<size>& Create(unsigned long i);
 			template<unsigned int level> void Destroy(void);
 		} PACKED;
@@ -84,10 +84,8 @@ namespace Kernel
 			return Table<level - 1>(i >> PAGE_BITS[level]).Entry(i & ((1 << PAGE_BITS[level]) - 1)).IsPresent();
 		}
 
-		template<unsigned int size> template<unsigned int level> bool PageTable<size>::IsEmpty(void)
+		template<unsigned int size> bool PageTable<size>::IsEmpty(void)
 		{
-			static_assert(level < PAGE_LEVELS, "Table level exceeds number of paging levels.");
-
 			for(unsigned int i = 0; i < size; i++)
 			{
 				if(!entry[i].IsClear())
@@ -115,6 +113,11 @@ namespace Kernel
 		{
 			static_assert(level > 0, "Top level page table cannot be destroyed.");
 			static_assert(level < PAGE_LEVELS, "Table level exceeds number of paging levels.");
+
+			unsigned long idx = this->Index<level>();
+			Memory::PhysAddr phys = Top().Entry(idx).Phys();
+			Chunker::Free(phys);
+			Pager::UnmapPage<Memory::PGB_4K>((uintptr_t)this);
 		}
 
 #ifdef ARCH_X86_IA32

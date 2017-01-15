@@ -53,11 +53,13 @@ namespace Kernel
 			unsigned int tab = virt >> Memory::PGB_4M;
 			unsigned int entry = (virt >> Memory::PGB_4K) & 0x3ff;
 
-			PageTableEntry& pte = PageTable32::Table<1>(tab).Entry(entry);
+			PageTable32& pt = PageTable32::Table<1>(tab);
+			PageTableEntry& pte = pt.Entry(entry);
 			pte.Clear();
 			Invalidate(virt);
 
-			// TODO: Remove empty page directories.
+			if(pt.IsEmpty())
+				pt.Destroy<1>();
 		}
 
 		template<> void UnmapPage<Memory::PGB_4M>(uintptr_t virt)
