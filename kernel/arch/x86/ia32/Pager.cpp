@@ -13,6 +13,11 @@ namespace Kernel
 {
 	namespace Pager
 	{
+		inline void Invalidate(uintptr_t virt)
+		{
+			asm volatile ("invlpg (%0)" : : "r"(virt));
+		}
+
 		template<Memory::PageBits bits> void MapPage(Memory::PhysAddr phys __attribute__((unused)), uintptr_t virt __attribute__((unused)), Memory::MemType type __attribute__((unused)))
 		{
 			static_assert(IsValidSize(bits), "invalid page size");
@@ -33,12 +38,14 @@ namespace Kernel
 
 			PageTableEntry& pte = PageTable32::Table<1>(tab).Entry(entry);
 			pte.Set<Memory::PGB_4K>(phys, type);
+			Invalidate(virt);
 		}
 
 		template<> void MapPage<Memory::PGB_4M>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type)
 		{
 			PageTableEntry& pte = PageTable32::Top().Entry(virt >> Memory::PGB_4M);
 			pte.Set<Memory::PGB_4M>(phys, type);
+			Invalidate(virt);
 		}
 
 		template<> void UnmapPage<Memory::PGB_4K>(uintptr_t virt)
@@ -48,6 +55,7 @@ namespace Kernel
 
 			PageTableEntry& pte = PageTable32::Table<1>(tab).Entry(entry);
 			pte.Clear();
+			Invalidate(virt);
 
 			// TODO: Remove empty page directories.
 		}
@@ -56,6 +64,7 @@ namespace Kernel
 		{
 			PageTableEntry& pte = PageTable32::Top().Entry(virt >> Memory::PGB_4M);
 			pte.Clear();
+			Invalidate(virt);
 		}
 
 		Memory::PageBits MappedSize(uintptr_t virt)
