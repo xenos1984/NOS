@@ -16,6 +16,8 @@ namespace Kernel
 		bool IsMapped(uintptr_t virt, size_t length);
 		bool IsUnmapped(uintptr_t virt, size_t length);
 		bool Map(Memory::PhysAddr phys, uintptr_t virt, size_t length, Memory::MemType type);
+		Memory::PhysAddr VirtToPhys(uintptr_t virt);
+		Memory::PhysAddr VirtToPhys(void* virt);
 	}
 }
 

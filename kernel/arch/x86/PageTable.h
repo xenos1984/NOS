@@ -44,7 +44,7 @@ namespace Kernel
 			template<unsigned int level, typename std::enable_if<level != 0>::type* = nullptr> static bool Exists(unsigned long i);
 			template<unsigned int level> bool IsEmpty(void);
 			template<unsigned int level> static PageTable<size>& Create(unsigned long i);
-			template<unsigned int level> static void Destroy(unsigned long i);
+			template<unsigned int level> void Destroy(void);
 		} PACKED;
 
 		template<unsigned int size> inline PageTableEntry& PageTable<size>::Entry(unsigned int i)
@@ -111,7 +111,7 @@ namespace Kernel
 			return *reinterpret_cast<PageTable*>(virt);
 		}
 
-		template<unsigned int size> template<unsigned int level> void PageTable<size>::Destroy(unsigned long i)
+		template<unsigned int size> template<unsigned int level> void PageTable<size>::Destroy(void)
 		{
 			static_assert(level > 0, "Top level page table cannot be destroyed.");
 			static_assert(level < PAGE_LEVELS, "Table level exceeds number of paging levels.");
