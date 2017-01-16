@@ -70,10 +70,46 @@ namespace Kernel
 			void Destroy(void);
 		};
 
+		template<unsigned int size> inline PageTableEntry& PageTableSize<size>::Entry(unsigned int i)
+		{
+			return entry[i];
+		}
+
+		template<unsigned int size> bool PageTableSize<size>::IsEmpty(void)
+		{
+			for(unsigned int i = 0; i < size; i++)
+			{
+				if(!entry[i].IsClear())
+					return false;
+			}
+
+			return true;
+		}
+
+		template<unsigned int level> inline unsigned long PageTableLevel<level>::Index(void)
+		{
+			static_assert(level < PAGE_LEVELS, "Table level exceeds number of paging levels.");
+			return (reinterpret_cast<uintptr_t>(this) - PAGE_TABLE_ADDR[level + 1]) / sizeof(PageTableLevel<level>);
+		}
+
 		template<unsigned int level> inline PageTableLevel<level>& PageTableLevel<level>::Table(unsigned long i)
 		{
 			static_assert(level < PAGE_LEVELS, "Table level exceeds number of paging levels.");
 			return reinterpret_cast<PageTableLevel<level>*>(PAGE_TABLE_ADDR[level + 1])[i];
+		}
+
+		template<unsigned int level> PageTableLevel<level>& PageTableLevel<level>::Create(unsigned long i)
+		{
+			static_assert(level > 0, "Top level page table cannot be created.");
+			static_assert(level < PAGE_LEVELS, "Table level exceeds number of paging levels.");
+
+			Memory::PhysAddr phys = Chunker::Alloc();
+			uintptr_t virt = PAGE_TABLE_ADDR[level + 1] + i * sizeof(PageTableLevel<level>);
+
+			Pager::MapPage<Memory::PGB_4K>(phys, virt, Memory::MemType::KERNEL_RW);
+			new (reinterpret_cast<PageTableLevel<level>*>(virt)) PageTableLevel<level>;
+
+			return *reinterpret_cast<PageTableLevel<level>*>(virt);
 		}
 
 		inline PageTableLevel<0>& PageTableTop(void)
