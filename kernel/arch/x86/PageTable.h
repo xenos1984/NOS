@@ -59,11 +59,7 @@ namespace Kernel
 			/** Page table entry which points to this page table. */
 			inline PageTableEntry& Pointer(void);
 
-			/** Check whether this table exists (top level table always exists). */
-//			template<typename std::enable_if<level == 0>::type* = nullptr> static bool Exists(unsigned long i);
-			/** Check whether this table exists. */
-//			template<typename std::enable_if<level != 0>::type* = nullptr> static bool Exists(unsigned long i);
-			/** Check whether this table exists. */
+			/** Check whether the i'th table at this level exists. */
 			static bool Exists(unsigned long i);
 
 			/** Create new page table at this level. */
@@ -109,22 +105,7 @@ namespace Kernel
 		{
 			return Parent().Entry(Index() & ((1 << PAGE_BITS[level - 1]) - 1));
 		}
-/*
-		template<unsigned int level> template <typename std::enable_if<level == 0>::type*> bool PageTableLevel<level>::Exists(unsigned long i __attribute__((unused)))
-		{
-			return true;
-		}
 
-		template<unsigned int level> template <typename std::enable_if<level != 0>::type*> bool PageTableLevel<level>::Exists(unsigned long i)
-		{
-			static_assert(level < PAGE_LEVELS, "Table level exceeds number of paging levels.");
-
-			if(!Exists<level - 1>(i >> PAGE_BITS[level]))
-				return false;
-
-			return Table(i).Pointer().IsPresent();
-		}
-*/
 		template<unsigned int level> bool PageTableLevel<level>::Exists(unsigned long i)
 		{
 			static_assert(level < PAGE_LEVELS, "Table level exceeds number of paging levels.");
@@ -169,107 +150,14 @@ namespace Kernel
 			return PageTableLevel<0>::Table(0);
 		}
 
-		template<unsigned int size> class PageTable
-		{
-		private:
-			PageTableEntry entry[size] = {PageTableEntry{}};
-
-		public:
-			inline PageTableEntry& Entry(unsigned int i);
-			template<unsigned int level> inline unsigned long Index(void);
-			template<unsigned int level> static inline PageTable<size>& Table(unsigned long i);
-			static inline PageTable<size>& Top(void);
-			template<unsigned int level, typename std::enable_if<level == 0>::type* = nullptr> static bool Exists(unsigned long i);
-			template<unsigned int level, typename std::enable_if<level != 0>::type* = nullptr> static bool Exists(unsigned long i);
-			bool IsEmpty(void);
-			template<unsigned int level> static PageTable<size>& Create(unsigned long i);
-			template<unsigned int level> void Destroy(void);
-		} PACKED;
-
-		template<unsigned int size> inline PageTableEntry& PageTable<size>::Entry(unsigned int i)
-		{
-			return entry[i];
-		}
-
-		template<unsigned int size> template<unsigned int level> inline unsigned long PageTable<size>::Index(void)
-		{
-			static_assert(level < PAGE_LEVELS, "Table level exceeds number of paging levels.");
-			return (reinterpret_cast<uintptr_t>(this) - PAGE_TABLE_ADDR[level + 1]) / sizeof(PageTable<size>);
-		}
-
-		template<unsigned int size> template<unsigned int level> inline PageTable<size>& PageTable<size>::Table(unsigned long i)
-		{
-			static_assert(level < PAGE_LEVELS, "Table level exceeds number of paging levels.");
-			return reinterpret_cast<PageTable<size>*>(PAGE_TABLE_ADDR[level + 1])[i];
-		}
-
-		template<unsigned int size> inline PageTable<size>& PageTable<size>::Top(void)
-		{
-			return Table<0>(0);
-		}
-
-		template<unsigned int size> template<unsigned int level, typename std::enable_if<level == 0>::type*> bool PageTable<size>::Exists(unsigned long i __attribute__((unused)))
-		{
-			return true;
-		}
-
-		template<unsigned int size> template<unsigned int level, typename std::enable_if<level != 0>::type*> bool PageTable<size>::Exists(unsigned long i)
-		{
-			static_assert(level < PAGE_LEVELS, "Table level exceeds number of paging levels.");
-
-			if(!Exists<level - 1>(i >> PAGE_BITS[level]))
-				return false;
-
-			return Table<level - 1>(i >> PAGE_BITS[level]).Entry(i & ((1 << PAGE_BITS[level]) - 1)).IsPresent();
-		}
-
-		template<unsigned int size> bool PageTable<size>::IsEmpty(void)
-		{
-			for(unsigned int i = 0; i < size; i++)
-			{
-				if(!entry[i].IsClear())
-					return false;
-			}
-
-			return true;
-		}
-
-		template<unsigned int size> template<unsigned int level> PageTable<size>& PageTable<size>::Create(unsigned long i)
-		{
-			static_assert(level > 0, "Top level page table cannot be created.");
-			static_assert(level < PAGE_LEVELS, "Table level exceeds number of paging levels.");
-
-			Memory::PhysAddr phys = Chunker::Alloc();
-			uintptr_t virt = PAGE_TABLE_ADDR[level + 1] + i * sizeof(PageTable<size>);
-
-			Pager::MapPage<Memory::PGB_4K>(phys, virt, Memory::MemType::KERNEL_RW);
-			new (reinterpret_cast<PageTable*>(virt)) PageTable;
-
-			return *reinterpret_cast<PageTable*>(virt);
-		}
-
-		template<unsigned int size> template<unsigned int level> void PageTable<size>::Destroy(void)
-		{
-			static_assert(level > 0, "Top level page table cannot be destroyed.");
-			static_assert(level < PAGE_LEVELS, "Table level exceeds number of paging levels.");
-
-			unsigned long idx = this->Index<level>();
-			Memory::PhysAddr phys = Top().Entry(idx).Phys();
-			Chunker::Free(phys);
-			Pager::UnmapPage<Memory::PGB_4K>((uintptr_t)this);
-		}
-
 #ifdef ARCH_X86_IA32
 #ifdef CONFIG_PAE
 		typedef PageTableLevel<0> PageDirPtr;
 		typedef PageTableLevel<1> PageDir;
 		typedef PageTableLevel<2> PageTab;
-		typedef PageTable<4> PageTablePtr;
-		typedef PageTable<512> PageTablePAE;
 #else
 		typedef PageTableLevel<0> PageDir;
 		typedef PageTableLevel<1> PageTab;
-		typedef PageTable<1024> PageTable32;
 #endif
 #endif
 #ifdef ARCH_X86_AMD64
@@ -277,7 +165,6 @@ namespace Kernel
 		typedef PageTableLevel<1> PageDirPtr;
 		typedef PageTableLevel<2> PageDir;
 		typedef PageTableLevel<3> PageTab;
-		typedef PageTable<512> PageTable64;
 #endif
 	}
 }
