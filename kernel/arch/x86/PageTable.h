@@ -15,20 +15,71 @@ namespace Kernel
 	{
 #ifdef ARCH_X86_IA32
 #ifdef CONFIG_PAE
-		static const unsigned int PAGE_LEVELS = 3;
-		static const unsigned int PAGE_BITS[] = {2, 9, 9};
-		static const uintptr_t PAGE_TABLE_ADDR[] = {0xfffffff8, 0xffffffe0, 0xffffc000, 0xff800000};
+		static constexpr unsigned int PAGE_LEVELS = 3;
+		static constexpr unsigned int PAGE_BITS[] = {2, 9, 9};
+		static constexpr uintptr_t PAGE_TABLE_ADDR[] = {0xfffffff8, 0xffffffe0, 0xffffc000, 0xff800000};
 #else
-		static const unsigned int PAGE_LEVELS = 2;
-		static const unsigned int PAGE_BITS[] = {10, 10};
-		static const uintptr_t PAGE_TABLE_ADDR[] = {0xfffffffc, 0xfffff000, 0xffc00000};
+		static constexpr unsigned int PAGE_LEVELS = 2;
+		static constexpr unsigned int PAGE_BITS[] = {10, 10};
+		static constexpr uintptr_t PAGE_TABLE_ADDR[] = {0xfffffffc, 0xfffff000, 0xffc00000};
 #endif
 #endif
 #ifdef ARCH_X86_AMD64
-		static const unsigned int PAGE_LEVELS = 4;
-		static const unsigned int PAGE_BITS[] = {9, 9, 9, 9};
-		static const uintptr_t PAGE_TABLE_ADDR[] = {0xffffff7fbfdfeff0, 0xffffff7fbfdfe000, 0xffffff7fbfc00000, 0xffffff7f80000000, 0xffffff0000000000};
+		static constexpr unsigned int PAGE_LEVELS = 4;
+		static constexpr unsigned int PAGE_BITS[] = {9, 9, 9, 9};
+		static constexpr uintptr_t PAGE_TABLE_ADDR[] = {0xffffff7fbfdfeff0, 0xffffff7fbfdfe000, 0xffffff7fbfc00000, 0xffffff7f80000000, 0xffffff0000000000};
 #endif
+
+		/** Page table with a fixed number of entries. */
+		template<unsigned int size> class PageTableSize
+		{
+		private:
+			/** Array of page table entries, default constructed. */
+			PageTableEntry entry[size] = {PageTableEntry{}};
+
+		public:
+			/** Reference to i'th entry in the table. */
+			inline PageTableEntry& Entry(unsigned int i);
+
+			/** Check whether table is completely empty. */
+			bool IsEmpty(void);
+		} PACKED;
+
+		/** Page table at a fixed level in the paging hierarchy */
+		template<unsigned int level> class PageTableLevel : public PageTableSize<2 << PAGE_BITS[level]>
+		{
+		public:
+			/** Return i if this is the i'th table at this level. */
+			inline unsigned long Index(void);
+			/** Reference to the i'th table at this level. */
+			static inline PageTableLevel<level>& Table(unsigned long i);
+
+			/** Page table which contains the page table entry pointing to this page table. */
+			inline PageTableLevel<level - 1>& Parent(void);
+			/** Page table entry which points to this page table. */
+			inline PageTableEntry& Pointer(void);
+
+			/** Check whether this table exists (top level table always exists). */
+//			template<typename std::enable_if<level == 0>::type* = nullptr> static bool Exists(unsigned long i);
+			/** Check whether this table exists. */
+//			template<typename std::enable_if<level != 0>::type* = nullptr> static bool Exists(unsigned long i);
+
+			/** Create new page table at this level. */
+			static PageTableLevel<level>& Create(unsigned long i);
+			/** Destroy a page table. */
+			void Destroy(void);
+		};
+
+		template<unsigned int level> inline PageTableLevel<level>& PageTableLevel<level>::Table(unsigned long i)
+		{
+			static_assert(level < PAGE_LEVELS, "Table level exceeds number of paging levels.");
+			return reinterpret_cast<PageTableLevel<level>*>(PAGE_TABLE_ADDR[level + 1])[i];
+		}
+
+		inline PageTableLevel<0>& PageTableTop(void)
+		{
+			return PageTableLevel<0>::Table(0);
+		}
 
 		template<unsigned int size> class PageTable
 		{
