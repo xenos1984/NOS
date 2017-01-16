@@ -46,7 +46,7 @@ namespace Kernel
 		} PACKED;
 
 		/** Page table at a fixed level in the paging hierarchy */
-		template<unsigned int level> class PageTableLevel : public PageTableSize<2 << PAGE_BITS[level]>
+		template<unsigned int level> class PageTableLevel : public PageTableSize<1 << PAGE_BITS[level]>
 		{
 		public:
 			/** Return i if this is the i'th table at this level. */
@@ -98,6 +98,16 @@ namespace Kernel
 			return reinterpret_cast<PageTableLevel<level>*>(PAGE_TABLE_ADDR[level + 1])[i];
 		}
 
+		template<unsigned int level> inline PageTableLevel<level - 1>& PageTableLevel<level>::Parent(void)
+		{
+			return PageTableLevel<level - 1>::Table(Index() >> PAGE_BITS[level - 1]);
+		}
+
+		template<unsigned int level> inline PageTableEntry& PageTableLevel<level>::Pointer(void)
+		{
+			return Parent().Entry(Index() & ((1 << PAGE_BITS[level - 1]) - 1));
+		}
+
 		template<unsigned int level> PageTableLevel<level>& PageTableLevel<level>::Create(unsigned long i)
 		{
 			static_assert(level > 0, "Top level page table cannot be created.");
@@ -110,6 +120,16 @@ namespace Kernel
 			new (reinterpret_cast<PageTableLevel<level>*>(virt)) PageTableLevel<level>;
 
 			return *reinterpret_cast<PageTableLevel<level>*>(virt);
+		}
+
+		template<unsigned int level> void PageTableLevel<level>::Destroy(void)
+		{
+			static_assert(level > 0, "Top level page table cannot be destroyed.");
+			static_assert(level < PAGE_LEVELS, "Table level exceeds number of paging levels.");
+
+			Memory::PhysAddr phys = Pointer().Phys();
+			Pager::UnmapPage<Memory::PGB_4K>((uintptr_t)this);
+			Chunker::Free(phys);
 		}
 
 		inline PageTableLevel<0>& PageTableTop(void)
