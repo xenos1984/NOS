@@ -63,6 +63,8 @@ namespace Kernel
 //			template<typename std::enable_if<level == 0>::type* = nullptr> static bool Exists(unsigned long i);
 			/** Check whether this table exists. */
 //			template<typename std::enable_if<level != 0>::type* = nullptr> static bool Exists(unsigned long i);
+			/** Check whether this table exists. */
+			static bool Exists(unsigned long i);
 
 			/** Create new page table at this level. */
 			static PageTableLevel<level>& Create(unsigned long i);
@@ -106,6 +108,34 @@ namespace Kernel
 		template<unsigned int level> inline PageTableEntry& PageTableLevel<level>::Pointer(void)
 		{
 			return Parent().Entry(Index() & ((1 << PAGE_BITS[level - 1]) - 1));
+		}
+/*
+		template<unsigned int level> template <typename std::enable_if<level == 0>::type*> bool PageTableLevel<level>::Exists(unsigned long i __attribute__((unused)))
+		{
+			return true;
+		}
+
+		template<unsigned int level> template <typename std::enable_if<level != 0>::type*> bool PageTableLevel<level>::Exists(unsigned long i)
+		{
+			static_assert(level < PAGE_LEVELS, "Table level exceeds number of paging levels.");
+
+			if(!Exists<level - 1>(i >> PAGE_BITS[level]))
+				return false;
+
+			return Table(i).Pointer().IsPresent();
+		}
+*/
+		template<unsigned int level> bool PageTableLevel<level>::Exists(unsigned long i)
+		{
+			static_assert(level < PAGE_LEVELS, "Table level exceeds number of paging levels.");
+
+			if(level == 0)
+				return true;
+
+			if(!PageTableLevel<level - 1>::Exists(i >> PAGE_BITS[level]))
+				return false;
+
+			return Table(i).Pointer().IsPresent();
 		}
 
 		template<unsigned int level> PageTableLevel<level>& PageTableLevel<level>::Create(unsigned long i)
