@@ -129,13 +129,15 @@ namespace Kernel
 		{
 			static_assert(level < PAGE_LEVELS, "Table level exceeds number of paging levels.");
 
-			if(level == 0)
-				return true;
-
 			if(!PageTableLevel<level - 1>::Exists(i >> PAGE_BITS[level]))
 				return false;
 
 			return Table(i).Pointer().IsPresent();
+		}
+
+		template<> bool PageTableLevel<0>::Exists(unsigned long i __attribute__((unused)))
+		{
+			return true;
 		}
 
 		template<unsigned int level> PageTableLevel<level>& PageTableLevel<level>::Create(unsigned long i)

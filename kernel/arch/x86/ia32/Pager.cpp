@@ -33,17 +33,17 @@ namespace Kernel
 			unsigned int tab = virt >> Memory::PGB_4M;
 			unsigned int entry = (virt >> Memory::PGB_4K) & 0x3ff;
 
-			if(!PageTable32::Exists<1>(tab))
-				PageTable32::Create<1>(tab);
+			if(!PageTab::Exists(tab))
+				PageTab::Create(tab);
 
-			PageTableEntry& pte = PageTable32::Table<1>(tab).Entry(entry);
+			PageTableEntry& pte = PageTab::Table(tab).Entry(entry);
 			pte.Set<Memory::PGB_4K>(phys, type);
 			Invalidate(virt);
 		}
 
 		template<> void MapPage<Memory::PGB_4M>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type)
 		{
-			PageTableEntry& pte = PageTable32::Top().Entry(virt >> Memory::PGB_4M);
+			PageTableEntry& pte = PageTableTop().Entry(virt >> Memory::PGB_4M);
 			pte.Set<Memory::PGB_4M>(phys, type);
 			Invalidate(virt);
 		}
@@ -53,18 +53,18 @@ namespace Kernel
 			unsigned int tab = virt >> Memory::PGB_4M;
 			unsigned int entry = (virt >> Memory::PGB_4K) & 0x3ff;
 
-			PageTable32& pt = PageTable32::Table<1>(tab);
+			PageTab& pt = PageTab::Table(tab);
 			PageTableEntry& pte = pt.Entry(entry);
 			pte.Clear();
 			Invalidate(virt);
 
 			if(pt.IsEmpty())
-				pt.Destroy<1>();
+				pt.Destroy();
 		}
 
 		template<> void UnmapPage<Memory::PGB_4M>(uintptr_t virt)
 		{
-			PageTableEntry& pte = PageTable32::Top().Entry(virt >> Memory::PGB_4M);
+			PageTableEntry& pte = PageTableTop().Entry(virt >> Memory::PGB_4M);
 			pte.Clear();
 			Invalidate(virt);
 		}
@@ -75,7 +75,7 @@ namespace Kernel
 			virt &= Memory::PGM_4K;
 
 			// Check top level page table first.
-			PageTableEntry& pte4m = PageTable32::Top().Entry(virt >> Memory::PGB_4M);
+			PageTableEntry& pte4m = PageTableTop().Entry(virt >> Memory::PGB_4M);
 
 			// If it is not present, then this page is not mapped.
 			if(!pte4m.IsPresent())
@@ -86,7 +86,7 @@ namespace Kernel
 				return Memory::PGB_4M;
 
 			// For a 4kB page, we need to check the next level.
-			PageTableEntry& pte4k = PageTable32::Table<1>(virt >> Memory::PGB_4M).Entry((virt >> Memory::PGB_4K) & 0x3ff);
+			PageTableEntry& pte4k = PageTab::Table(virt >> Memory::PGB_4M).Entry((virt >> Memory::PGB_4K) & 0x3ff);
 
 			// If it is present, this page is mapped.
 			if(pte4k.IsPresent())
@@ -119,7 +119,7 @@ namespace Kernel
 				if((addr & Memory::PGM_4M) == 0 && end - addr >= Memory::PGS_4M)
 				{
 					// If there is a page table or 4MB page mapped here, return.
-					if(PageTable32::Top().Entry(tab).IsPresent())
+					if(PageTableTop().Entry(tab).IsPresent())
 						return false;
 
 					addr += Memory::PGS_4M;
@@ -127,14 +127,14 @@ namespace Kernel
 				else
 				{
 					// Check whether page table exists here.
-					if(PageTable32::Top().Entry(tab).IsPresent())
+					if(PageTableTop().Entry(tab).IsPresent())
 					{
 						// Check whether 4MB page is mapped here.
-						if(PageTable32::Top().Entry(tab).IsLarge())
+						if(PageTableTop().Entry(tab).IsLarge())
 							return false;
 
 						// Check whether this entry is already mapped.
-						if(PageTable32::Table<1>(tab).Entry(entry).IsPresent())
+						if(PageTab::Table(tab).Entry(entry).IsPresent())
 							return false;
 
 						addr += Memory::PGS_4K;
