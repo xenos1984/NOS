@@ -229,13 +229,22 @@ namespace Kernel
 
 #ifdef ARCH_X86_IA32
 #ifdef CONFIG_PAE
+		typedef PageTableLevel<0> PageDirPtr;
+		typedef PageTableLevel<1> PageDir;
+		typedef PageTableLevel<2> PageTab;
 		typedef PageTable<4> PageTablePtr;
 		typedef PageTable<512> PageTablePAE;
 #else
+		typedef PageTableLevel<0> PageDir;
+		typedef PageTableLevel<1> PageTab;
 		typedef PageTable<1024> PageTable32;
 #endif
 #endif
 #ifdef ARCH_X86_AMD64
+		typedef PageTableLevel<0> PagePml4;
+		typedef PageTableLevel<1> PageDirPtr;
+		typedef PageTableLevel<2> PageDir;
+		typedef PageTableLevel<3> PageTab;
 		typedef PageTable<512> PageTable64;
 #endif
 	}
