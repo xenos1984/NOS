@@ -21,7 +21,7 @@ Operating system project
 		make
 
 ## Supported target triplets:
-* i[456]86-pc-elf (active)
+* i[3456]86-pc-elf (active)
 * x86_64-pc-elf (temporarily not supported)
 * m68k-atari-elf (temporarily not supported)
 * arm-raspi2-eabi (planned)

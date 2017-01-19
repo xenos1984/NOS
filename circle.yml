@@ -9,7 +9,6 @@ dependencies:
         - sudo apt-get install libisl-dev
         - sudo apt-get install libcloog-isl-dev
         - bash ci/toolchain.sh i686-pc-elf
-        - rm -rf ~/cross/i786-pc-elf
 
     cache_directories:
         - ~/cross
