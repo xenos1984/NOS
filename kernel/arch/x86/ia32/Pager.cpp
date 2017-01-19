@@ -32,9 +32,29 @@ namespace Kernel
 		{
 			unsigned int tab = virt >> Memory::PGB_4M;
 			unsigned int entry = (virt >> Memory::PGB_4K) & 0x3ff;
+			Memory::MemType tabtype;
 
 			if(!PageTab::Exists(tab))
-				PageTab::Create(tab);
+			{
+				switch(type)
+				{
+				case Memory::MemType::KERNEL_EXEC:
+				case Memory::MemType::KERNEL_RO:
+				case Memory::MemType::KERNEL_RW:
+					tabtype = Memory::MemType::KERNEL_RW;
+					break;
+				case Memory::MemType::USER_EXEC:
+				case Memory::MemType::USER_RO:
+				case Memory::MemType::USER_RW:
+				case Memory::MemType::USER_COW:
+				case Memory::MemType::USER_DEMAND:
+					tabtype = Memory::MemType::USER_RW;
+					break;
+				default:
+					tabtype = Memory::MemType::KERNEL_RW;
+				}
+				PageTab::Create(tab, tabtype);
+			}
 
 			PageTableEntry& pte = PageTab::Table(tab).Entry(entry);
 			pte.Set<Memory::PGB_4K>(phys, type);

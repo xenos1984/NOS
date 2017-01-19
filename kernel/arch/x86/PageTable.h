@@ -63,7 +63,7 @@ namespace Kernel
 			static bool Exists(unsigned long i);
 
 			/** Create new page table at this level. */
-			static PageTableLevel<level>& Create(unsigned long i);
+			static PageTableLevel<level>& Create(unsigned long i, Memory::MemType);
 			/** Destroy a page table. */
 			void Destroy(void);
 		};
@@ -121,7 +121,7 @@ namespace Kernel
 			return true;
 		}
 
-		template<unsigned int level> PageTableLevel<level>& PageTableLevel<level>::Create(unsigned long i)
+		template<unsigned int level> PageTableLevel<level>& PageTableLevel<level>::Create(unsigned long i, Memory::MemType type)
 		{
 			static_assert(level > 0, "Top level page table cannot be created.");
 			static_assert(level < PAGE_LEVELS, "Table level exceeds number of paging levels.");
@@ -129,7 +129,7 @@ namespace Kernel
 			Memory::PhysAddr phys = Chunker::Alloc();
 			uintptr_t virt = PAGE_TABLE_ADDR[level + 1] + i * sizeof(PageTableLevel<level>);
 
-			Pager::MapPage<Memory::PGB_4K>(phys, virt, Memory::MemType::KERNEL_RW);
+			Pager::MapPage<Memory::PGB_4K>(phys, virt, type);
 			new (reinterpret_cast<PageTableLevel<level>*>(virt)) PageTableLevel<level>;
 
 			return *reinterpret_cast<PageTableLevel<level>*>(virt);
