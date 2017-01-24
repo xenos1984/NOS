@@ -1,4 +1,5 @@
 // Entry.S - Entry point of the kernel.
+// vim:set ft=asm-gnu-x86_32:
 
 .extern KernelEntry
 .extern FreeMemory
@@ -19,58 +20,83 @@
 .global Entry
 .type Entry, @function
 Entry:
-	// make sure we're going in the right direction!
+	// Clear direction flag -> go forward.
 	cld
 	cli
 
-	// create page tables, first clear them
-	pushl %eax
+	// Save EAX for later.
+	movl %eax, %ebp
+
+	// Zero out page tables.
 	xorl %eax, %eax
 	movl $(tabPGDIR - KERNEL_OFFSET), %edi
 	movl $0x2000, %ecx
 	rep stosb
 
-	// chain tables together
+	// Map first page table to $0x00000000 and $KERNEL_OFFSET.
 	movl $(tabPGTAB - KERNEL_OFFSET + 3), (tabPGDIR - KERNEL_OFFSET)
 	movl $(tabPGTAB - KERNEL_OFFSET + 3), (tabPGDIR - KERNEL_OFFSET + (KERNEL_OFFSET >> 20))
 
-	// enter page directory as last page table, causing a chain reaction to mirror the tables at the top of virtual memory
+	// Recursive mapping of page table.
 	movl $(tabPGDIR - KERNEL_OFFSET + 3), (tabPGDIR - KERNEL_OFFSET + 0x0ffc)
 
-	// fill page table to map the first 4MB to KERNEL_OFFSET
-	movl $0x400, %ecx
-	movl $0x00000003, %eax
-	movl $(tabPGTAB - KERNEL_OFFSET), %edi
+	// Map IVT and BDA read only.
+	movl $0x00000001, (tabPGTAB - KERNEL_OFFSET)
+
+	// Map VGA buffer read write.
+	movl $32, %ecx // 32 entries * 4kB = 128kB.
+	movl $0x000a0003, %eax // First address = 0xA0000.
+	movl $(tabPGTAB - KERNEL_OFFSET + (0x000a0000 >> 10)), %edi
 1:
 	stosl
 	addl $0x1000, %eax
 	loop 1b
 
-	// set page dir base
+	// Map BIOS read only.
+	movl $32, %ecx // 32 entries * 4kB = 128kB.
+	movl $0x000e0001, %eax // First address = 0xB8000.
+	movl $(tabPGTAB - KERNEL_OFFSET + (0x000e0000 >> 10)), %edi
+1:
+	stosl
+	addl $0x1000, %eax
+	loop 1b
+
+	// Map the first 3MB to KERNEL_OFFSET
+	movl $0x300, %ecx
+	movl $0x00100003, %eax
+	movl $(tabPGTAB - KERNEL_OFFSET + (0x00100000 >> 10)), %edi
+1:
+	stosl
+	addl $0x1000, %eax
+	loop 1b
+
+	// Enter page directory in CR3.
 	movl $(tabPGDIR - KERNEL_OFFSET), %eax
 	movl %eax, %cr3
 
-	// enable paging, enable floating point exception
+	// Inable paging and floating point exception.
 	movl %cr0, %ecx
 	orl $0x8000002a, %ecx
 	movl %ecx, %cr0
 
-	// clear the idt + gdt @ tabIDT
+	// Clear the IDT and GDT.
 	xorl %eax, %eax
 	movl $tabIDT, %edi
 	movl $(IDT_LENGTH + GDT_LENGTH), %ecx
 	rep stosb
-	popl %eax
 
-	// setup a bare bones GDT
+	// Restore EAX.
+	movl %ebp, %eax
+
+	// Setup a bare bones GDT.
 	movl $myGDT, %esi
 	movl $tabGDT, %edi
 	movl $(8 * 8), %ecx
 	rep movsb
 
-	lgdt pGDT // load the GDT
-	lidt pIDT // load the IDT
-	lldt pLDT // load the LDT (0)
+	lgdt pGDT
+	lidt pIDT
+	lldt pLDT
 
 	movw $KERNEL_DATA, %dx
 	movw %dx, %ds
@@ -80,37 +106,44 @@ Entry:
 	movw $KERNEL_STACK, %dx
 	movw %dx, %ss
 
-	// load cs with new selector
+	// Load CS with new selector.
 	ljmp $KERNEL_CODE, $FlushGDT
 .size Entry, . - Entry
 
 .section .text
 .type FlushGDT, @function
 FlushGDT:
-	// clear identity mapping, preserve only kernel area
+	// Clear identity mapping, preserve only kernel area.
 	movl $0, (0xfffff000)
 
-	// set up kernel stack
+	// Set up kernel stack.
 	movl $bspStack, %esp
 
-	// push the multiboot info structure, and magic
-//	addl $KERNEL_OFFSET, %ebx
+	// Push the multiboot info structure and magic.
 	pushl %ebx
 	pushl %eax
-	// time for some C!
-	call KernelEntry // run the boot module by calling its C++ entry point
+
+	// Everything is set up for C / C++, so we can call the main entry function.
+	call KernelEntry
 	addl $8, %esp
+
+	// Free init memory.
 	call FreeMemory
 	pushl $0
+
+	// Determine address if this CPU's TSS.
 	str %eax
 	shrl $3, %eax
 	subl $FIRST_TSS, %eax
 	movl $TSS_LENGTH, %ebx
 	mull %ebx
 	addl $TSS_LIN_ADDR, %eax
+
+	// Save kernel SS:ESP in TSS.
 	movl $KERNEL_STACK, 8(%eax)
 	movl %esp, 4(%eax)
 
+	// Enable interrupts -> enable multitasking.
 1:
 	sti
 	hlt
