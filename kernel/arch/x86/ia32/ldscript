@@ -29,7 +29,7 @@ PHDRS
 
 SECTIONS
 {
-	.init (initStart + SIZEOF_HEADERS) : AT(ADDR(.init) - kernelOffset)
+	.init.text (initStart + SIZEOF_HEADERS) : AT(ADDR(.init.text) - kernelOffset)
 	{
 		. = ALIGN(16);
 		mb_address = .;
@@ -42,9 +42,18 @@ SECTIONS
 		LONG(kernelEnd - kernelOffset);
 		LONG(Entry - kernelOffset);
 
+		initTextStart = .;
 		*(.init.text)
+		. = ALIGN(4K);
+		initTextEnd = .;
+	} :init
+
+	.init.data : AT(ADDR(.init.data) - kernelOffset)
+	{
+		initDataStart = .;
 		*(.init.data)
 		. = ALIGN(4K);
+		initDataEnd = .;
 	} :init
 	initEnd = .;
 
