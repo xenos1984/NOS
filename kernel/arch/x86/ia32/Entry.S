@@ -14,6 +14,16 @@
 
 #include <arch/x86/ia32/Entry.h>
 
+.macro mappages count start flags
+	movl $\count, %ecx
+	movl $(\start | \flags), %eax
+	movl $(tabPGTAB - KERNEL_OFFSET + (\start >> 10)), %edi
+1:
+	stosl
+	addl $0x1000, %eax
+	loop 1b
+.endm
+
 .section .init.text
 .code32
 
@@ -41,40 +51,22 @@ Entry:
 	movl $(tabPGDIR - KERNEL_OFFSET + 3), (tabPGDIR - KERNEL_OFFSET + 0x0ffc)
 
 	// Map IVT and BDA read only.
-	movl $0x00000001, (tabPGTAB - KERNEL_OFFSET)
+	mappages 1, 0x00000000, 0x001
 
-	// Map VGA buffer read write.
-	movl $32, %ecx // 32 entries * 4kB = 128kB.
-	movl $0x000a0003, %eax // First address = 0xA0000.
-	movl $(tabPGTAB - KERNEL_OFFSET + (0x000a0000 >> 10)), %edi
-1:
-	stosl
-	addl $0x1000, %eax
-	loop 1b
+	// Map VGA buffer read write (32 entries * 4kB = 128kB)
+	mappages 32, 0x000a0000, 0x003
 
-	// Map BIOS read only.
-	movl $32, %ecx // 32 entries * 4kB = 128kB.
-	movl $0x000e0001, %eax // First address = 0xB8000.
-	movl $(tabPGTAB - KERNEL_OFFSET + (0x000e0000 >> 10)), %edi
-1:
-	stosl
-	addl $0x1000, %eax
-	loop 1b
+	// Map BIOS read only (32 entries * 4kB = 128kB)
+	mappages 32, 0x000e0000, 0x001
 
 	// Map the first 3MB to KERNEL_OFFSET
-	movl $0x300, %ecx
-	movl $0x00100003, %eax
-	movl $(tabPGTAB - KERNEL_OFFSET + (0x00100000 >> 10)), %edi
-1:
-	stosl
-	addl $0x1000, %eax
-	loop 1b
+	mappages 0x300, 0x00100000, 0x003
 
 	// Enter page directory in CR3.
 	movl $(tabPGDIR - KERNEL_OFFSET), %eax
 	movl %eax, %cr3
 
-	// Inable paging and floating point exception.
+	// Enable paging and floating point exception.
 	movl %cr0, %ecx
 	orl $0x8000002a, %ecx
 	movl %ecx, %cr0
