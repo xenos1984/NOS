@@ -4,6 +4,12 @@
 .extern KernelEntry
 .extern FreeMemory
 .extern initStart
+.extern initTextEnd
+.extern initDataStart
+.extern initDataEnd
+.extern textStart
+.extern textEnd
+.extern dataStart
 .extern dataEnd
 .extern kernelEnd
 .extern bspStack
@@ -14,10 +20,25 @@
 
 #include <arch/x86/ia32/Entry.h>
 
-.macro mappages count start flags
-	movl $\count, %ecx
-	movl $(\start | \flags), %eax
-	movl $(tabPGTAB - KERNEL_OFFSET + (\start >> 10)), %edi
+.macro mappages from to flags
+	movl $((\to - \from) >> 12), %ecx
+	movl $(\from | \flags), %eax
+	movl $(tabPGTAB - KERNEL_OFFSET + (\from >> 10)), %edi
+1:
+	stosl
+	addl $0x1000, %eax
+	loop 1b
+.endm
+
+.macro mappages2 from to flags
+	movl $\to, %ecx
+	subl $\from, %ecx
+	shrl $12, %ecx
+	movl $\from, %eax
+	movl %eax, %edi
+	orl $\flags, %eax
+	shrl $10, %edi
+	addl $(tabPGTAB - KERNEL_OFFSET), %edi
 1:
 	stosl
 	addl $0x1000, %eax
@@ -51,16 +72,25 @@ Entry:
 	movl $(tabPGDIR - KERNEL_OFFSET + 3), (tabPGDIR - KERNEL_OFFSET + 0x0ffc)
 
 	// Map IVT and BDA read only.
-	mappages 1, 0x00000000, 0x001
+	mappages 0x00000000, 0x00001000, 0x001
 
-	// Map VGA buffer read write (32 entries * 4kB = 128kB)
-	mappages 32, 0x000a0000, 0x003
+	// Map VGA buffer read write (32 entries * 4kB = 128kB).
+	mappages 0x000a0000, 0x000c0000, 0x003
 
-	// Map BIOS read only (32 entries * 4kB = 128kB)
-	mappages 32, 0x000e0000, 0x001
+	// Map BIOS read only (32 entries * 4kB = 128kB).
+	mappages 0x000e0000, 0x00100000, 0x001
 
-	// Map the first 3MB to KERNEL_OFFSET
-	mappages 0x300, 0x00100000, 0x003
+	// Map text part of startup section.
+	mappages2 (initStart - KERNEL_OFFSET), (initTextEnd - KERNEL_OFFSET), 0x001
+
+	// Map data part of startup section.
+	mappages2 (initDataStart - KERNEL_OFFSET), (initDataEnd - KERNEL_OFFSET), 0x003
+
+	// Map text part of kernel.
+	mappages2 (textStart - KERNEL_OFFSET), (textEnd - KERNEL_OFFSET), 0x001
+
+	// Map data part of kernel.
+	mappages2 (dataStart - KERNEL_OFFSET), (kernelEnd - KERNEL_OFFSET), 0x003
 
 	// Enter page directory in CR3.
 	movl $(tabPGDIR - KERNEL_OFFSET), %eax

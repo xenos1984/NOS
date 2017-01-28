@@ -3,6 +3,8 @@
 #ifndef __SYMBOL_H__
 #define __SYMBOL_H__
 
+#include <cstdint>
+
 namespace Kernel
 {
 	namespace Symbol
@@ -48,6 +50,10 @@ namespace Kernel
 		extern "C" const ExtSymbol bssEnd;
 		extern "C" const ExtSymbol initStart;
 		extern "C" const ExtSymbol initEnd;
+		extern "C" const ExtSymbol initTextStart;
+		extern "C" const ExtSymbol initTextEnd;
+		extern "C" const ExtSymbol initDataStart;
+		extern "C" const ExtSymbol initDataEnd;
 		extern "C" const ExtSymbol userStart;
 		extern "C" const ExtSymbol userEnd;
 		extern "C" const ExtSymbol kernelStart;

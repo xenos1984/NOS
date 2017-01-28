@@ -67,6 +67,7 @@ SECTIONS
 	userEnd = userStart + SIZEOF(.user);
 
 	kernelElfDynsym = userEnd;
+	textStart = userEnd;
 	.dynsym (userEnd) : AT(ADDR(.dynsym) - kernelOffset) { *(.dynsym) } :kernel
 	kernelElfDynstr = .;
 	.dynstr : AT(ADDR(.dynstr) - kernelOffset) { *(.dynstr) }
@@ -81,9 +82,11 @@ SECTIONS
 		*(.rodata*)
 		*(.gnu.linkonce.t.*)
 		*(.gnu.linkonce.r.*)
+		. = ALIGN(4K);
 	}
 	textEnd = .;
 
+	dataStart = .;
 	.data : AT(ADDR(.data) - kernelOffset)
 	{
 		*(.data*)
@@ -95,6 +98,7 @@ SECTIONS
 	.got.plt : { *(.got.plt) } :kernel
 
 	dataEnd = .;
+	bssStart = .;
 
 	.bss : AT(ADDR(.bss) - kernelOffset)
 	{
