@@ -16,7 +16,7 @@ namespace Kernel
 			uintptr_t virt;
 
 			first = start & ~Memory::PGM_4K;
-			last = (start + length - 1) & ~Memory::PGM_4K;
+			last = ((start + length - 1) & ~Memory::PGM_4K) + Memory::PGS_4K;
 
 			if(!Map(first, VirtMapEnd, last - first, type))
 				return nullptr;

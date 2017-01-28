@@ -5,6 +5,7 @@
 #include <Pager.h>
 #include <Memory.h>
 #include <Chunker.h>
+#include <Console.h>
 #include INC_ARCH(PageTableEntry.h)
 #include INC_ARCH(PageTable.h)
 #include INC_ARCH(ControlRegisters.h)
@@ -120,6 +121,8 @@ namespace Kernel
 		{
 			uintptr_t addr, diff;
 			uintptr_t end = virt + length;
+
+//			Console::WriteFormat("Map 0x%8x bytes from 0x%8x to 0x%8x.\n", length, phys, virt);
 
 			// Check alignment of supplied memory locations and length.
 			if(phys & Memory::PGM_4K)

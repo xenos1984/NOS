@@ -9,6 +9,7 @@
 #include <PhysicalMemory.h>
 #include <VirtualMemory.h>
 #include <Chunker.h>
+#include <Pager.h>
 #include <new>
 
 namespace Kernel
@@ -23,28 +24,28 @@ namespace Kernel
 
 		SECTION(".init.text") Info* Info::InitMemory(void)
 		{
-			new (physmem_space) X86Pager(this);
-			new (virtmem_space) VirtualMemory();
-			Info* mbi = (Info*)x86pager().MapTempRegion((unsigned long)this, sizeof(Info));
+			Info* mbi = reinterpret_cast<Info*>(Pager::MapBootRegion(reinterpret_cast<Memory::PhysAddr>(this), sizeof(Info), Memory::MemType::KERNEL_RO));
+//			new (physmem_space) X86Pager(this);
+//			new (virtmem_space) VirtualMemory();
 			MemoryMap* mmap;
 			MemoryMap* mmap0;
 
 			uint32_t mem = mbi->UpperMemory;
 			uint32_t length = (mem > (15UL << 10) ? 15UL << 20 : mem << 10);
 			Chunker::Init(1UL << 20, length, Memory::Zone::DMA24);
-			Memory::PhysAddr test = Chunker::Alloc();
-			Chunker::Free(test);
+			Console::WriteFormat("Upper memory: %dkB\n", mem);
 
 			if(mbi->Flags & FLAGS_MEMORY_MAP)
 			{
 				Console::WriteFormat("Memory map of length 0x%8x at address 0x%8x\n", mbi->MemoryMapLength, mbi->MemoryMapAddress);
-				mmap0 = (MemoryMap*)x86pager().MapTempRegion(mbi->MemoryMapAddress, mbi->MemoryMapLength);
-				for(mmap = mmap0; (unsigned long)mmap - (unsigned long)mmap0 < mbi->MemoryMapLength; mmap = (MemoryMap*)((unsigned long)mmap + mmap->Size + 4))
+				mmap0 = reinterpret_cast<MemoryMap*>(Pager::MapBootRegion(mbi->MemoryMapAddress, mbi->MemoryMapLength, Memory::MemType::KERNEL_RO));
+				for(mmap = mmap0; (uintptr_t)mmap - (uintptr_t)mmap0 < mbi->MemoryMapLength; mmap = (MemoryMap*)((uintptr_t)mmap + mmap->Size + 4))
 				{
 					Console::WriteFormat("Mem: 0x%16lx-0x%16lx, Type: 0x%2x\n", mmap->BaseAddr, mmap->BaseAddr + mmap->Length - 1, mmap->Type);
-					x86pager().AddMemoryArea(mmap);
+					//x86pager().AddMemoryArea(mmap);
 				}
 			}
+			asm volatile ("hlt");
 
 			return mbi;
 		}
