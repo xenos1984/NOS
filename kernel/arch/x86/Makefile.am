@@ -55,6 +55,7 @@ libx86_a_SOURCES = \
 	IOApic.cpp \
 	IOApicManager.cpp \
 	Multiboot.cpp \
+	Pager.cpp \
 	PIC.cpp \
 	PICManager.cpp \
 	PIT.cpp \
