@@ -21,6 +21,7 @@ namespace Kernel
 
 		enum PageBits : unsigned long
 		{
+			PGB_INV = 0,
 			PGB_1K = 10,
 			PGB_2K,
 			PGB_4K,

@@ -100,7 +100,7 @@ namespace Kernel
 
 			// If it is not present, then this page is not mapped.
 			if(!pte4m.IsPresent())
-				return (Memory::PageBits)0;
+				return Memory::PGB_INV;
 
 			// If it is present and 4MB, then this page is mapped.
 			if(pte4m.IsLarge())
@@ -114,7 +114,7 @@ namespace Kernel
 				return Memory::PGB_4K;
 
 			// Otherwise, it is not mapped.
-			return (Memory::PageBits)0;
+			return Memory::PGB_INV;
 		}
 
 		bool Map(Memory::PhysAddr phys, uintptr_t virt, size_t length, Memory::MemType type)
