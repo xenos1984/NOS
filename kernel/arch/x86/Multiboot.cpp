@@ -45,7 +45,6 @@ namespace Kernel
 					//x86pager().AddMemoryArea(mmap);
 				}
 			}
-			asm volatile ("hlt");
 
 			return mbi;
 		}

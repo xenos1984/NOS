@@ -68,6 +68,7 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, Multiboot::Inf
 		asm volatile ( "xsetbv" : : "a" (0x7), "d" (0x0), "c" (0x0) );
 	}
 	CR4::Write(cr4);
+	asm volatile ("hlt");
 
 #if defined CONFIG_SMP || defined CONFIG_ACPI
 	uint16_t segaddr = *(uint16_t*)(0x0000040e + Symbol::kernelOffset.Addr()); // EBDA
