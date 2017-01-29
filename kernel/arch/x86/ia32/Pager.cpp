@@ -117,28 +117,68 @@ namespace Kernel
 			return Memory::PGB_INV;
 		}
 
-		bool Map(Memory::PhysAddr phys, uintptr_t virt, size_t length, Memory::MemType type)
+		bool IsMapped(uintptr_t virt, size_t length)
 		{
-			uintptr_t addr, diff;
+			uintptr_t addr;
 			uintptr_t end = virt + length;
 
-//			Console::WriteFormat("Map 0x%8x bytes from 0x%8x to 0x%8x.\n", length, phys, virt);
-
-			// Check alignment of supplied memory locations and length.
-			if(phys & Memory::PGM_4K)
-				return false;
+			// Check alignment.
 			if(virt & Memory::PGM_4K)
 				return false;
 			if(length & Memory::PGM_4K)
 				return false;
 
-			// Check whether there is anything already mapped in that area.
+			// Go through all pages.
 			for(addr = virt; addr < end; )
 			{
 				unsigned int tab = addr >> Memory::PGB_4M;
 				unsigned int entry = (addr >> Memory::PGB_4K) & 0x3ff;
 
-				// Should we map the whole 4MB following addr?
+				// If page table is not present, then this address is not mapped.
+				if(!PageTableTop().Entry(tab).IsPresent())
+					return false;
+
+				// If there is a large page, then everything up to the next 4MB is mapped.
+				if(PageTableTop().Entry(tab).IsLarge())
+				{
+					addr = (addr + Memory::PGS_4M) & ~Memory::PGM_4M;
+					continue;
+				}
+
+				// Check all necessary entries in this page table (which we already know exists and is not large).
+				do
+				{
+					// Check whether this page is mapped.
+					if(!PageTab::Table(tab).Entry(entry).IsPresent())
+						return false;
+
+					addr += Memory::PGS_4K;
+					entry++;
+				}
+				while((addr < end) && (entry < 0x400));
+			}
+
+			return true;
+		}
+
+		bool IsUnmapped(uintptr_t virt, size_t length)
+		{
+			uintptr_t addr;
+			uintptr_t end = virt + length;
+
+			// Check alignment.
+			if(virt & Memory::PGM_4K)
+				return false;
+			if(length & Memory::PGM_4K)
+				return false;
+
+			// Go through all pages.
+			for(addr = virt; addr < end; )
+			{
+				unsigned int tab = addr >> Memory::PGB_4M;
+				unsigned int entry = (addr >> Memory::PGB_4K) & 0x3ff;
+
+				// Should we check the whole 4MB following addr?
 				if((addr & Memory::PGM_4M) == 0 && end - addr >= Memory::PGS_4M)
 				{
 					// If there is a page table or 4MB page mapped here, return.
@@ -167,6 +207,23 @@ namespace Kernel
 						addr = (tab + 1) << Memory::PGB_4M;
 				}
 			}
+
+			return true;
+		}
+
+		bool Map(Memory::PhysAddr phys, uintptr_t virt, size_t length, Memory::MemType type)
+		{
+			uintptr_t diff;
+
+//			Console::WriteFormat("Map 0x%8x bytes from 0x%8x to 0x%8x.\n", length, phys, virt);
+
+			// Check alignment of supplied memory location.
+			if(phys & Memory::PGM_4K)
+				return false;
+
+			// Check whether there is anything already mapped in that area.
+			if(!IsUnmapped(virt, length))
+				return false;
 
 			// Now that everything is checked, we can actually start mapping.
 			for(diff = 0; diff < length; )
