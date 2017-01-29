@@ -10,7 +10,7 @@ NOS_iso_SOURCES =
 NOS.iso$(EXEEXT): grub.cfg eltorito.img \
 	${top_builddir}/kernel/arch/x86/Kernel.elf \
 	${top_builddir}/drivers/pc/floppy/Floppy.elf
-	genisoimage -R -f -c boot/boot.cat -b boot/grub/eltorito.img -no-emul-boot -boot-load-size 4 -boot-info-table -o NOS.iso -graft-points \
+	genisoimage -R -c boot/boot.cat -b boot/grub/eltorito.img -no-emul-boot -boot-load-size 4 -boot-info-table -o NOS.iso -graft-points \
 		boot/grub/eltorito.img=eltorito.img \
 		boot/grub/grub.cfg=grub.cfg \
 		nos/Kernel.elf=${top_builddir}/kernel/arch/x86/Kernel.elf \
