@@ -244,6 +244,35 @@ namespace Kernel
 			return true;
 		}
 
+		bool Unmap(uintptr_t virt, size_t length)
+		{
+			uintptr_t addr;
+			uintptr_t end = virt + length;
+
+			// Check whether this area is indeed mapped.
+			if(!IsMapped(virt, length))
+				return false;
+
+			for(addr = virt; addr < end; )
+			{
+				switch(MappedSize(addr))
+				{
+				case Memory::PGB_4K:
+					UnmapPage<Memory::PGB_4K>(addr);
+					addr += Memory::PGS_4K;
+					break;
+				case Memory::PGB_4M:
+					UnmapPage<Memory::PGB_4M>(addr);
+					addr += Memory::PGS_4M;
+					break;
+				default:
+					return false;
+				}
+			}
+
+			return true;
+		}
+
 		void Test(void)
 		{
 			MapPage<Memory::PGB_4K>(0x1000000, 0x2000000, Memory::MemType::KERNEL_RO);
