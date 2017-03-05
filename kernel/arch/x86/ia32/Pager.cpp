@@ -273,6 +273,27 @@ namespace Kernel
 			return true;
 		}
 
+		Memory::PhysAddr VirtToPhys(uintptr_t addr)
+		{
+			unsigned int tab = addr >> Memory::PGB_4M;
+			unsigned int entry = (addr >> Memory::PGB_4K) & 0x3ff;
+
+			PageTableEntry& pgtab = PageTableTop().Entry(tab);
+
+			if(!pgtab.IsPresent())
+				return ~0;
+
+			if(pgtab.IsLarge())
+				return pgtab.Phys() | (addr & Memory::PGM_4M);
+
+			PageTableEntry& pgent = PageTab::Table(tab).Entry(entry);
+
+			if(!pgent.IsPresent())
+				return ~0;
+
+			return pgent.Phys() | (addr & Memory::PGM_4K);
+		}
+
 		void Test(void)
 		{
 			MapPage<Memory::PGB_4K>(0x1000000, 0x2000000, Memory::MemType::KERNEL_RO);
