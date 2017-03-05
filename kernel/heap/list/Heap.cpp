@@ -4,21 +4,29 @@
 #include <Memory.h>
 #include <Chunker.h>
 #include <Pager.h>
+#include <Symbol.h>
 #include <heap/Heap.h>
 
 namespace Kernel
 {
 	namespace Heap
 	{
-		struct Chunk
+		struct MemoryPointer
 		{
-			size_t length : (8 * sizeof(size_t) - 1);
-			size_t free : 1;
-			Chunk* prev;
-			Chunk* next;
-			unsigned char data[0];
+			uintptr_t mem;
+			uintptr_t length : (8 * sizeof(uintptr_t) - 1);
+			uintptr_t free : 1;
+			MemoryPointer* prev;
+			MemoryPointer* next;
 		};
 
+		static const uintptr_t heapaddr = Symbol::heapStart.Addr();
+		static const uintptr_t tabaddr = Symbol::heapTab.Addr();
+		static const size_t heaplen = Symbol::heapTab.Addr() - Symbol::heapStart.Addr();
+		static const size_t tablen = Symbol::heapEnd.Addr() - Symbol::heapTab.Addr();
+
+		static MemoryPointer root {heapaddr, heaplen, 1, &root, &root};
+/*
 		void Init(void* start, size_t length)
 		{
 			Memory::PhysAddr phys;
@@ -26,6 +34,7 @@ namespace Kernel
 			phys = Chunker::Alloc();
 			Pager::MapPage(phys, start, 0);
 		}
+*/
 	}
 }
 
