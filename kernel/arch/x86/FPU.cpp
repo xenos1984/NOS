@@ -3,7 +3,7 @@
 #include <new>
 #include INC_ARCH(FPU.h)
 #include INC_ARCH(CPU.h)
-#include <VirtualMemory.h>
+#include <Heap.h>
 
 using namespace Kernel;
 
@@ -75,7 +75,7 @@ void MMState::Restore(void)
 
 MMState* MMState::Create(void)
 {
-	MMState* mms = (MMState*)(virtmem().Alloc(bspcpu().GetSaveAreaSize(), 16, true));
+	MMState* mms = (MMState*)(Heap::Alloc(bspcpu().GetSaveAreaSize(), 16, true));
 
 	if(bspcpu().HasXSR())
 		new (mms) AVXState;

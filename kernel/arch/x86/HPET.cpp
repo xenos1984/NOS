@@ -2,14 +2,15 @@
 
 #include INC_ARCH(HPET.h)
 #include <Console.h>
-#include <PhysicalMemory.h>
-#include <VirtualMemory.h>
+#include <Pager.h>
+#include <Heap.h>
 
 using namespace Kernel;
 
 SECTION(".init.text") HPET::HPET(unsigned long phys)
 {
-	base = (_HPET*)physmem().MapToLinear((void*)phys, virtmem().Alloc(4096, 4096, false), 1);
+	base = (_HPET*)Heap::Alloc(Memory::PGS_4K, Memory::PGS_4K, false);
+	Pager::MapPage<Memory::PGB_4K>(phys, (uintptr_t)base, Memory::MemType::KERNEL_RW);
 	Console::WriteMessage(Console::Style::INFO, "HPET:", "at 0x%8x, Rev. 0x%2x, %d counters of %d bits, %d fs", phys, GetRevision(), GetTimerCount() + 1, (Timer64Bit() ? 64 : 32), GetPeriod());
 }
 

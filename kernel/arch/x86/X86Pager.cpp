@@ -6,7 +6,7 @@
 #include INC_ARCH(Multiboot.h)
 #include INC_ARCH(ControlRegisters.h)
 #include <Symbol.h>
-#include <VirtualMemory.h>
+#include <Heap.h>
 #include <Console.h>
 
 using namespace Kernel;
@@ -509,7 +509,7 @@ X86Pager::PageTable* X86Pager::CreateContext(void)
 	PageTable* pg;
 	unsigned long phys, i;
 
-	pg = (PageTable*)(virtmem().Alloc(PAGE_SIZE, PAGE_SIZE, true));
+	pg = (PageTable*)(Heap::Alloc(PAGE_SIZE, PAGE_SIZE, true));
 
 	for(i = 0; i < ((Symbol::libraryStart.Addr() >> PAGE_SIZE_SHIFT) & (PAGE_COUNT - 1)) / TABLE_COUNT; i++)
 		pg->page[i].raw = 0;
@@ -548,5 +548,5 @@ void X86Pager::DeleteContext(PageTable* pg)
 		}
 	}
 	CR3::Write(cr3);
-	virtmem().Free(pg);
+	Heap::Free(pg);
 }

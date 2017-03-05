@@ -2,16 +2,17 @@
 
 #include INC_ARCH(IOApic.h)
 #include <Console.h>
-#include <PhysicalMemory.h>
-#include <VirtualMemory.h>
+#include <Pager.h>
+#include <Heap.h>
 
 using namespace Kernel;
 
 SECTION(".init.text") IOApic::IOApic(unsigned long addr, unsigned int base)
 {
 	unsigned int i;
-	regsel = (volatile uint32_t*)physmem().MapToLinear((void*)addr, virtmem().Alloc(4096, 4096, false), 1);
-	win = (volatile uint32_t*)(0x10 + (unsigned long)regsel);
+	regsel = (volatile uint32_t*)Heap::Alloc(Memory::PGS_4K, Memory::PGS_4K, false);
+	win = (volatile uint32_t*)(0x10 + (uintptr_t)regsel);
+	Pager::MapPage<Memory::PGB_4K>(addr, (uintptr_t)regsel, Memory::MemType::KERNEL_RW);
 	irqbase = base;
 	irqcount = GetMaxEntry() + 1;
 

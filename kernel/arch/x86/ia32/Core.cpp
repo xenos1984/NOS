@@ -2,7 +2,6 @@
 
 #include <new>
 #include <Core.h>
-#include <VirtualMemory.h>
 #include <TaskScheduler.h>
 #include <Symbol.h>
 #include <Memory.h>

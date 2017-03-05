@@ -26,7 +26,6 @@ namespace Kernel
 		{
 			Info* mbi = reinterpret_cast<Info*>(Pager::MapBootRegion(reinterpret_cast<Memory::PhysAddr>(this), sizeof(Info), Memory::MemType::KERNEL_RO));
 //			new (physmem_space) X86Pager(this);
-//			new (virtmem_space) VirtualMemory();
 			MemoryMap* mmap;
 			MemoryMap* mmap0;
 

@@ -12,7 +12,6 @@
 #include <Process.h>
 #include <Console.h>
 #include <TaskScheduler.h>
-#include <VirtualMemory.h>
 #include <IRQManager.h>
 
 #define USERINT(name) void User##name(void)

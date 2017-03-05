@@ -21,7 +21,6 @@
 #include INC_ARCH(SMP.h)
 #include INC_ARCH(PICManager.h)
 #include INC_ARCH(IOApicManager.h)
-#include <VirtualMemory.h>
 #include <Symbol.h>
 #include <TaskScheduler.h>
 #include <Console.h>
