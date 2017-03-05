@@ -7,7 +7,7 @@
 #include INC_ARCH(Multiboot.h)
 #include <TaskManager.h>
 #include <PhysicalMemory.h>
-#include <VirtualMemory.h>
+#include <Heap.h>
 #include <Chunker.h>
 #include <Pager.h>
 #include <new>
@@ -45,6 +45,17 @@ namespace Kernel
 					//x86pager().AddMemoryArea(mmap);
 				}
 			}
+
+			Heap::Init();
+			Heap::ShowMap();
+			auto test = new int[256];
+			Heap::ShowMap();
+			auto test2 = new char[32];
+			Heap::ShowMap();
+			delete[] test;
+			Heap::ShowMap();
+			delete[] test2;
+			Heap::ShowMap();
 
 			return mbi;
 		}

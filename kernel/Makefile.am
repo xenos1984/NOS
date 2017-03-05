@@ -17,6 +17,7 @@ libkernel_a_SOURCES = \
 	Console.h \
 	Core.h \
 	Elf.h \
+	Heap.h \
 	IRQManager.h \
 	Memory.h \
 	Pager.h \
@@ -28,7 +29,6 @@ libkernel_a_SOURCES = \
 	TaskScheduler.h \
 	Thread.h \
 	Time.h \
-	VirtualMemory.h \
 	\
 	Clock.cpp \
 	Console.cpp \
@@ -37,12 +37,16 @@ libkernel_a_SOURCES = \
 	Process.cpp \
 	TaskScheduler.cpp \
 	Thread.cpp \
-	ThreadQueue.cpp \
-	VirtualMemory.cpp
+	ThreadQueue.cpp
 
 libkernel_a_SOURCES += \
 	chunker/bitmap/Chunker.h \
 	chunker/bitmap/Chunker.cpp
+
+libkernel_a_SOURCES += \
+	heap/Heap.h \
+	heap/Heap.cpp \
+	heap/list/Heap.cpp
 
 # libkernel_a_SOURCES += \
 # 	chunker/buddy/Chunker.h \

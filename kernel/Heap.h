@@ -14,7 +14,7 @@ namespace Kernel
 		void Free(void* addr, bool phys = true);
 
 		void ShowMap(void);
-	};
+	}
 }
 
 #endif

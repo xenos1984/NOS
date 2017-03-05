@@ -8,6 +8,7 @@
 #include <AtomicOps.h>
 #include <Console.h>
 #include <heap/Heap.h>
+#include <new>
 
 namespace Kernel
 {
@@ -20,21 +21,49 @@ namespace Kernel
 			uintptr_t free : 1;
 			MemoryPointer* prev;
 			MemoryPointer* next;
+
+			constexpr MemoryPointer(uintptr_t m, uintptr_t l, uintptr_t f, MemoryPointer* p, MemoryPointer* n) : mem(m), length(l), free(f), prev(p), next(n) {};
+			MemoryPointer(const MemoryPointer&) = delete;
+
+			MemoryPointer(MemoryPointer&& old)
+			{
+				mem = old.mem;
+				length = old.length;
+				free = old.free;
+				prev = old.prev;
+				next = old.next;
+				prev->next = this;
+				next->prev = this;
+			}
 		} PACKED;
 
-		static const uintptr_t heapaddr = Symbol::heapStart.Addr();
-		static const uintptr_t tabaddr = Symbol::heapTab.Addr();
-		static const size_t heaplen = Symbol::heapTab.Addr() - Symbol::heapStart.Addr();
-		static const size_t tablen = Symbol::heapEnd.Addr() - Symbol::heapTab.Addr();
-
-		static MemoryPointer root {heapaddr, heaplen, 1, &root, &root};
-		static MemoryPointer* const table = static_cast<MemoryPointer*>(Symbol::heapTab.Ptr());
+		static MemoryPointer root = MemoryPointer(0, 0, 1, &root, &root);
 		static unsigned long count = 0;
-		static const unsigned long cmax = tablen / sizeof(MemoryPointer) - 1;
-		static const size_t bs = 1 << Memory::MinPageBits;
-		static const unsigned int cpb = bs / sizeof(MemoryPointer);
+		static constexpr size_t bs = 1 << Memory::MinPageBits;
+		static constexpr unsigned int cpb = bs / sizeof(MemoryPointer);
 
 		static AtomicLock lock;
+
+		inline MemoryPointer& MemPtr(unsigned long index)
+		{
+			return static_cast<MemoryPointer*>(Symbol::heapTab.Ptr())[index];
+		}
+
+		inline uintptr_t MemAddr(unsigned long index)
+		{
+			return Symbol::heapTab.Addr() + index * sizeof(MemoryPointer);
+		}
+
+		inline unsigned long CountMax(void)
+		{
+			return (Symbol::heapEnd.Addr() - Symbol::heapTab.Addr()) / sizeof(MemoryPointer) - 1;
+		}
+
+		void Init(void)
+		{
+			new (&root) MemoryPointer(Symbol::heapStart.Addr(), Symbol::heapTab.Addr() - Symbol::heapStart.Addr(), 1, &root, &root);
+			Console::WriteMessage(Console::Style::INFO, "Heap:", "Started with %d kB starting at %p.", root.length >> 10, root.mem);
+		}
 
 		void AllocChunk(MemoryPointer* mp)
 		{
@@ -80,8 +109,10 @@ namespace Kernel
 			mpn->next->prev = mp;
 			mp->next = mpn->next;
 			count--;
-			if(mpn != &table[count])
-			{
+			MemoryPointer& last = MemPtr(count);
+			if(mpn != &last)
+				new (mpn) MemoryPointer(std::move(last));
+/*			{
 				mpn->mem = table[count].mem;
 				mpn->length = table[count].length;
 				mpn->free = table[count].free;
@@ -90,22 +121,19 @@ namespace Kernel
 				mpn->prev->next = mpn;
 				mpn->next->prev = mpn;
 			}
-			if(count % cpb == 0)
-				FreeBlock(tabaddr + (count / cpb) * bs);
+*/			if(count % cpb == 0)
+				FreeBlock(MemAddr(count));
 		}
 
 		void Split(MemoryPointer* mp, size_t n)
 		{
 			if(count % cpb == 0)
-				AllocBlock(tabaddr + (count / cpb) * bs);
-			table[count].mem = mp->mem + n;
-			table[count].length = mp->length - n;
-			table[count].free = mp->free;
-			table[count].prev = mp;
-			table[count].next = mp->next;
+				AllocBlock(MemAddr(count));
+			MemoryPointer& last = MemPtr(count);
+			new (&last) MemoryPointer(mp->mem + n, mp->length - n, mp->free, mp, mp->next);
 			mp->length = n;
-			mp->next->prev = &table[count];
-			mp->next = &table[count];
+			mp->next->prev = &last;
+			mp->next = &last;
 			count++;
 		}
 
@@ -139,7 +167,7 @@ namespace Kernel
 			size_t n = RoundUp(bytes, sizeof(int));
 			MemoryPointer* mp = &root;
 
-			if(count == cmax)
+			if(count == CountMax())
 				return(nullptr);
 
 			lock.Enter();
@@ -168,7 +196,7 @@ namespace Kernel
 			size_t n = RoundUp(bytes, sizeof(int));
 			MemoryPointer* mp = &root;
 
-			if(count == cmax)
+			if(count == CountMax())
 				return(nullptr);
 
 			lock.Enter();
@@ -201,7 +229,7 @@ namespace Kernel
 		{
 			MemoryPointer* mp = &root;
 
-			Console::WriteFormat("count = 0x%8x, cpb = 0x%8x, size = 0x%8x, total = 0x%8x\n", count, cpb, sizeof(MemoryPointer), cmax);
+			Console::WriteFormat("count = 0x%8x, cpb = 0x%8x, size = 0x%8x, total = 0x%8x\n", count, cpb, sizeof(MemoryPointer), CountMax());
 			Console::WriteLine("Heap map:");
 			lock.Enter();
 			do
