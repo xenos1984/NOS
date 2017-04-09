@@ -36,9 +36,9 @@ namespace Kernel
 				bitmap[n] &= ~(1UL << b);
 			}
 
-			void Free(Memory::PhysAddr first, Memory::PhysAddr length)
+			void Free(Memory::PhysAddr first, Memory::PhysAddr last)
 			{
-				for(Memory::PhysAddr addr = first; addr < first + length; addr += (1UL << Memory::MinPageBits))
+				for(Memory::PhysAddr addr = first; addr < last; addr += (1UL << Memory::MinPageBits))
 					Free(addr);
 			}
 
@@ -50,9 +50,9 @@ namespace Kernel
 				bitmap[n] |= 1UL << b;
 			}
 
-			void Reserve(Memory::PhysAddr first, Memory::PhysAddr length)
+			void Reserve(Memory::PhysAddr first, Memory::PhysAddr last)
 			{
-				for(Memory::PhysAddr addr = first; addr < first + length; addr += (1UL << Memory::MinPageBits))
+				for(Memory::PhysAddr addr = first; addr < last; addr += (1UL << Memory::MinPageBits))
 					Reserve(addr);
 			}
 
@@ -103,12 +103,9 @@ namespace Kernel
 			// Enter first zone properties.
 			new (&firstregion) Region(start, length, firstbitmap, zone, &firstregion, &firstregion);
 
-			// Mark all memory as allocated / reserved and let kernel free unused memory.
+			// Mark all memory as free and let kernel mark used memory before the first allocation.
 			for(i = 0; i < fbmlen; i++)
 				firstbitmap[i] = ~0UL;
-
-			// Free scratch area.
-			Free(Symbol::scratchStart.Addr() - Symbol::kernelOffset.Addr(), Symbol::scratchEnd.Addr() - Symbol::scratchStart.Addr());
 
 			Console::WriteMessage(Console::Style::INFO, "Chunker:", "Started with %d kB (%d kB free) starting at %p in zone %d.", length >> 10, (Symbol::scratchEnd.Addr() - Symbol::scratchStart.Addr()) >> 10, start, zone);
 		}
@@ -195,14 +192,14 @@ namespace Kernel
 				return false;
 		}
 
-		bool Free(Memory::PhysAddr first, Memory::PhysAddr length)
+		bool Free(Memory::PhysAddr first, Memory::PhysAddr last)
 		{
 			Region* r = FindRegion(first);
 
-			// Console::WriteFormat("Free memory from 0x%p to 0x%p\n", first, first + length);
+			// Console::WriteFormat("Free memory from 0x%p to 0x%p\n", first, last);
 			if(r != nullptr)
 			{
-				r->Free(first, length);
+				r->Free(first, last);
 				return true;
 			}
 			else
@@ -222,13 +219,13 @@ namespace Kernel
 				return false;
 		}
 
-		bool Reserve(Memory::PhysAddr first, Memory::PhysAddr length)
+		bool Reserve(Memory::PhysAddr first, Memory::PhysAddr last)
 		{
 			Region* r = FindRegion(first);
 
 			if(r != nullptr)
 			{
-				r->Reserve(first, length);
+				r->Reserve(first, last);
 				return true;
 			}
 			else
