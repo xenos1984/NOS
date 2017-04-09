@@ -46,15 +46,6 @@ namespace Kernel
 			}
 
 			Heap::Init();
-			Heap::ShowMap();
-			auto test = new int[256];
-			Heap::ShowMap();
-			auto test2 = new char[32];
-			Heap::ShowMap();
-			delete[] test;
-			Heap::ShowMap();
-			delete[] test2;
-			Heap::ShowMap();
 
 			return mbi;
 		}

@@ -54,7 +54,7 @@ void SECTION(".init.text") IOApicManager::InitAcpi(void)
 	unsigned int i, m, n;
 	IOApic* io;
 
-	if((n = acpi().GetIOApicCount()) == 0)
+	if((n = ACPI::GetIOApicCount()) == 0)
 		return;
 	io = (IOApic*) new char[n * sizeof(IOApic)];
 
@@ -64,7 +64,7 @@ void SECTION(".init.text") IOApicManager::InitAcpi(void)
 	m = 0;
 	for(i = 0; i < n; i++)
 	{
-		new (&io[i]) IOApic(acpi().GetIOApic(i)->Address, acpi().GetIOApic(i)->InterruptBase);
+		new (&io[i]) IOApic(ACPI::GetIOApic(i)->Address, ACPI::GetIOApic(i)->InterruptBase);
 		m += io[i].GetMaxEntry() + 1;
 	}
 

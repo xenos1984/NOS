@@ -67,7 +67,6 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, Multiboot::Inf
 		asm volatile ( "xsetbv" : : "a" (0x7), "d" (0x0), "c" (0x0) );
 	}
 	CR4::Write(cr4);
-	asm volatile ("hlt");
 
 #if defined CONFIG_SMP || defined CONFIG_ACPI
 	uint16_t segaddr = *(uint16_t*)(0x0000040e + Symbol::kernelOffset.Addr()); // EBDA
@@ -77,10 +76,10 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, Multiboot::Inf
 #endif
 
 #ifdef CONFIG_ACPI
-	if(ACPI::Init(physaddr, physaddr + 0x400) || ACPI::Init(0x000e0000, 0x00100000))
+	if(ACPI::SearchPointer(physaddr, physaddr + 0x400) || ACPI::SearchPointer(0x000e0000, 0x00100000))
 	{
 		I386TaskManager::InitAcpi();
-		new (sysclock_space) PITClock(cmos().GetTime(), acpi().GetISAIRQ(0));
+		new (sysclock_space) PITClock(cmos().GetTime(), ACPI::GetISAIRQ(0));
 	}
 	else
 #endif
@@ -96,6 +95,7 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, Multiboot::Inf
 		I386TaskManager::Init();
 		new (sysclock_space) PITClock(cmos().GetTime(), 0);
 	}
+	asm volatile ("hlt");
 
 	mbi->InitModules();
 }

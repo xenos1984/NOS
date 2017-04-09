@@ -85,18 +85,18 @@ void SECTION(".init.text") I386TaskManager::InitAcpi(void)
 	Processor* pr;
 	ACPI::LApic* ala;
 
-	if(acpi().GetProcessorCount() == 0)
+	if(ACPI::GetProcessorCount() == 0)
 	{
 		Init();
 		return;
 	}
 
-	new (taskman_space) I386TaskManager(acpi().GetProcessorCount());
+	new (taskman_space) I386TaskManager(ACPI::GetProcessorCount());
 	IOApicManager::InitAcpi();
 
 	for(i = 0; i < i386taskman().numcpus; i++)
 	{
-		ala = acpi().GetProcessor(i);
+		ala = ACPI::GetProcessor(i);
 		new (&(i386taskman().cpu[i])) Processor(ala);
 		pr = &(i386taskman().cpu[i]);
 		if(i == 0) // Hey, it's me!

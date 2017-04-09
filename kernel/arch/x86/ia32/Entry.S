@@ -73,6 +73,7 @@ Entry:
 
 	// Map IVT and BDA read only.
 	mappages 0x00000000, 0x00001000, 0x001
+	mappages 0x0009f000, 0x000a0000, 0x001
 
 	// Map VGA buffer read write (32 entries * 4kB = 128kB).
 	mappages 0x000a0000, 0x000c0000, 0x003

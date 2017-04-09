@@ -4,13 +4,13 @@
 #define __ARCH_X86_ACPI_H__
 
 #include <cstdint>
+#include <Memory.h>
 
 #ifdef CONFIG_ACPI
 namespace Kernel
 {
-	class ACPI
+	namespace ACPI
 	{
-	public:
 		/** Generic address structure. */
 		struct ExtendedAddress
 		{
@@ -388,30 +388,14 @@ namespace Kernel
 			uint8_t PageProtection;
 		} PACKED;
 
-	private:
-		int numcpus, numioapics, numirqsrcs, numnmisrcs, numlapicnmis, numlapicaddrs, numiosapics, numlsapics, numplatirqs, numx2apics, numx2apicnmis;
-
-		LApic** cpus;
-		IOApic** ioapics;
-		IrqSourceOverride** irqsrcs;
-		NMI** nmisrcs;
-		LApicNMI** lapicnmis;
-		LApicAddressOverride** lapicaddrs;
-		IOSApic** iosapics;
-		LSApic** lsapics;
-		PlatformInterrupt** platirqs;
-		X2Apic** x2apics;
-		X2ApicNMI** x2apicnmis;
-
 		void ParseFacs(Facs* facs);
 		void ParseMadt(MadTable* madt);
 		void ParseFadt(FadTable* fadt);
 		void ParseHpet(HpetTable* hpet);
 		void ParseTable(unsigned long phys);
 
-		ACPI(TableHeader* header, unsigned int rev);
+		void Init(TableHeader* header, unsigned int rev);
 
-	public:
 		// MADT entry types.
 		static const uint8_t ENTRY_LAPIC      = 0x00;
 		static const uint8_t ENTRY_IOAPIC     = 0x01;
@@ -427,7 +411,11 @@ namespace Kernel
 
 		static const uint8_t CPU_ENABLED      = 0x01;
 
-		static bool Init(unsigned long first, unsigned long last);
+		bool SearchPointer(Memory::PhysAddr first, Memory::PhysAddr last);
+
+		extern int numcpus, numioapics;
+		extern LApic** cpus;
+		extern IOApic** ioapics;
 
 		inline int GetProcessorCount(void)
 		{
@@ -452,9 +440,6 @@ namespace Kernel
 		int GetISAIRQ(int n);
 	};
 }
-
-extern char acpi_space[];
-inline Kernel::ACPI& acpi(void) { return(reinterpret_cast<Kernel::ACPI&>(acpi_space)); }
 #endif
 
 #endif
