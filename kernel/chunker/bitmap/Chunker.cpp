@@ -105,7 +105,7 @@ namespace Kernel
 
 			// Mark all memory as free and let kernel mark used memory before the first allocation.
 			for(i = 0; i < fbmlen; i++)
-				firstbitmap[i] = ~0UL;
+				firstbitmap[i] = 0UL;
 
 			Console::WriteMessage(Console::Style::INFO, "Chunker:", "Started with %d kB (%d kB free) starting at %p in zone %d.", length >> 10, length >> 10, start, zone);
 		}
