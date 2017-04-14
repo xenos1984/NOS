@@ -24,28 +24,64 @@ namespace Kernel
 
 		SECTION(".init.text") Info* Info::InitMemory(void)
 		{
-			Info* mbi = reinterpret_cast<Info*>(Pager::MapBootRegion(reinterpret_cast<Memory::PhysAddr>(this), sizeof(Info), Memory::MemType::KERNEL_RO));
-//			new (physmem_space) X86Pager(this);
+			Info* mbi;
 			MemoryMap* mmap;
 			MemoryMap* mmap0;
+			Memory::Zone zone;
 
+			// Map multiboot info.
+			mbi = reinterpret_cast<Info*>(Pager::MapBootRegion(reinterpret_cast<Memory::PhysAddr>(this), sizeof(Info), Memory::MemType::KERNEL_RO));
+
+			// If there is a memory map, map that as well.
+			if(mbi->Flags & FLAGS_MEMORY_MAP)
+				mmap0 = reinterpret_cast<MemoryMap*>(Pager::MapBootRegion(mbi->MemoryMapAddress, mbi->MemoryMapLength, Memory::MemType::KERNEL_RO));
+
+			// Check for memory hole below 16MB.
 			uint32_t mem = mbi->UpperMemory;
 			uint32_t length = (mem > (15UL << 10) ? 15UL << 20 : mem << 10);
+
+			// Give memory between 1MB and 16MB (or start of hole) to the chunker.
 			Chunker::Init(1UL << 20, length, Memory::Zone::DMA24);
 			Console::WriteFormat("Upper memory: %dkB\n", mem);
+
+			// Mark space occupied by the kernel as used.
+			Chunker::Reserve(1UL << 20, Symbol::kernelEnd.Addr() - Symbol::kernelOffset.Addr());
+
+			// Mark occupied if there is any multiboot information or modules in the area given to the chunker.
+			if(mbi->HasDrives() && (mbi->DrivesLength > 0))
+				Chunker::Reserve(mbi->DrivesAddress, mbi->DrivesAddress + mbi->DrivesLength);
+			if(mbi->HasMemMap() && (mbi->MemoryMapLength > 0))
+				Chunker::Reserve(mbi->MemoryMapAddress, mbi->MemoryMapAddress + mbi->MemoryMapLength);
+			if(mbi->HasLoaderName())
+				Chunker::Reserve(mbi->BootLoaderName, mbi->BootLoaderName + (1UL << Memory::MinPageBits));
+			if(mbi->HasCmdline())
+				Chunker::Reserve(mbi->CommandLine, mbi->CommandLine + (1UL << Memory::MinPageBits));
+			if(mbi->HasModules() && (mbi->ModuleCount > 0))
+				Chunker::Reserve(mbi->ModuleAddress, mbi->ModuleAddress + mbi->ModuleCount * sizeof(Module));
+
+			Heap::Init();
 
 			if(mbi->Flags & FLAGS_MEMORY_MAP)
 			{
 				Console::WriteFormat("Memory map of length 0x%8x at address 0x%8x\n", mbi->MemoryMapLength, mbi->MemoryMapAddress);
-				mmap0 = reinterpret_cast<MemoryMap*>(Pager::MapBootRegion(mbi->MemoryMapAddress, mbi->MemoryMapLength, Memory::MemType::KERNEL_RO));
 				for(mmap = mmap0; (uintptr_t)mmap - (uintptr_t)mmap0 < mbi->MemoryMapLength; mmap = (MemoryMap*)((uintptr_t)mmap + mmap->Size + 4))
 				{
 					Console::WriteFormat("Mem: 0x%16lx-0x%16lx, Type: 0x%2x\n", mmap->BaseAddr, mmap->BaseAddr + mmap->Length - 1, mmap->Type);
-					//x86pager().AddMemoryArea(mmap);
+					if(mmap->Type == 1)
+					{
+						if(mmap->BaseAddr < 0x00100000ULL)
+							zone = Memory::Zone::REAL;
+						else if(mmap->BaseAddr < 0x01000000ULL)
+							zone = Memory::Zone::DMA24;
+						else if(mmap->BaseAddr < 0x100000000ULL)
+							zone = Memory::Zone::DMA32;
+						else
+							zone = Memory::Zone::HIGH;
+						if(sizeof(Memory::PhysAddr) == 8 || zone != Memory::Zone::HIGH)
+							Chunker::AddRegion(mmap->BaseAddr, mmap->Length, zone);
+					}
 				}
 			}
-
-			Heap::Init();
 
 			return mbi;
 		}

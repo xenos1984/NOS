@@ -107,7 +107,7 @@ namespace Kernel
 			for(i = 0; i < fbmlen; i++)
 				firstbitmap[i] = ~0UL;
 
-			Console::WriteMessage(Console::Style::INFO, "Chunker:", "Started with %d kB (%d kB free) starting at %p in zone %d.", length >> 10, (Symbol::scratchEnd.Addr() - Symbol::scratchStart.Addr()) >> 10, start, zone);
+			Console::WriteMessage(Console::Style::INFO, "Chunker:", "Started with %d kB (%d kB free) starting at %p in zone %d.", length >> 10, length >> 10, start, zone);
 		}
 
 		void AddRegion(Memory::PhysAddr start, Memory::PhysAddr length, Memory::Zone zone)

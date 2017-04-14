@@ -113,9 +113,68 @@ namespace Kernel
 
 			Info(void) = delete;
 
-//			bool Check(void);
 			Info* InitMemory(void);
 			void InitModules(void);
+
+			inline bool HasMemInfo(void)
+			{
+				return Flags & FLAGS_MEMORY_INFO;
+			}
+
+			inline bool HasBootDev(void)
+			{
+				return Flags & FLAGS_BOOT_DEVICE;
+			}
+
+			inline bool HasCmdline(void)
+			{
+				return Flags & FLAGS_CMDLINE;
+			}
+
+			inline bool HasModules(void)
+			{
+				return Flags & FLAGS_MODULES;
+			}
+
+			inline bool HasSymsAout(void)
+			{
+				return Flags & FLAGS_SYMBOLS_AOUT;
+			}
+
+			inline bool HasSymsElf(void)
+			{
+				return Flags & FLAGS_SYMBOLS_ELF;
+			}
+
+			inline bool HasMemMap(void)
+			{
+				return Flags & FLAGS_MEMORY_MAP;
+			}
+
+			inline bool HasDrives(void)
+			{
+				return Flags & FLAGS_DRIVES;
+			}
+
+			inline bool HasConfig(void)
+			{
+				return Flags & FLAGS_CONFIG;
+			}
+
+			inline bool HasLoaderName(void)
+			{
+				return Flags & FLAGS_NAME;
+			}
+
+			inline bool HasApmTable(void)
+			{
+				return Flags & FLAGS_APM_TAB;
+			}
+
+			inline bool HasVbeInfo(void)
+			{
+				return Flags & FLAGS_VBE_INFO;
+			}
 		} PACKED;
 
 		bool CheckMagic(uint32_t magic);

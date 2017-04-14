@@ -125,9 +125,6 @@ SECTIONS
 		. += 4K;
 		tabBITS = .;
 		. += 128K;
-		scratchStart = .;
-		. += 256K;
-		scratchEnd = .;
 	}
 	kernelEnd = .;
 
