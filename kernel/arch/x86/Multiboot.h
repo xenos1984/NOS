@@ -4,6 +4,7 @@
 #define __ARCH_X86_MULTIBOOT_H__
 
 #include <cstdint>
+#include <Memory.h>
 
 namespace Kernel
 {
@@ -113,7 +114,6 @@ namespace Kernel
 
 			Info(void) = delete;
 
-			Info* InitMemory(void);
 			void InitModules(void);
 
 			inline bool HasMemInfo(void)
@@ -177,6 +177,7 @@ namespace Kernel
 			}
 		} PACKED;
 
+		Info* InitMemory(Memory::PhysAddr mbiphys);
 		bool CheckMagic(uint32_t magic);
 	}
 }

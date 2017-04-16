@@ -25,7 +25,7 @@
 
 using namespace Kernel;
 
-extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, Multiboot::Info* mbi)
+extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, uint32_t mbiphys)
 {
 	// Init console and show message.
 	Core::Welcome();
@@ -47,7 +47,7 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, Multiboot::Inf
 	kprocess().data.pgtab = (X86Pager::PageTable*)tabPGDIR;
 
 	// Init memory manager.
-	mbi = mbi->InitMemory();
+	Multiboot::Info* mbi = Multiboot::InitMemory(mbiphys);
 
 	// Init further hardware components.
 	new (cmos_space) Cmos;

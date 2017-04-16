@@ -22,7 +22,7 @@ namespace Kernel
 			return (magic == MAGIC);
 		}
 
-		SECTION(".init.text") Info* Info::InitMemory(void)
+		SECTION(".init.text") Info* InitMemory(Memory::PhysAddr mbiphys)
 		{
 			Info* mbi;
 			MemoryMap* mmap;
@@ -30,10 +30,10 @@ namespace Kernel
 			Memory::Zone zone;
 
 			// Map multiboot info.
-			mbi = reinterpret_cast<Info*>(Pager::MapBootRegion(reinterpret_cast<Memory::PhysAddr>(this), sizeof(Info), Memory::MemType::KERNEL_RO));
+			mbi = reinterpret_cast<Info*>(Pager::MapBootRegion(mbiphys, sizeof(Info), Memory::MemType::KERNEL_RO));
 
 			// If there is a memory map, map that as well.
-			if(mbi->Flags & FLAGS_MEMORY_MAP)
+			if(mbi->HasMemMap())
 				mmap0 = reinterpret_cast<MemoryMap*>(Pager::MapBootRegion(mbi->MemoryMapAddress, mbi->MemoryMapLength, Memory::MemType::KERNEL_RO));
 
 			// Check for memory hole below 16MB.
@@ -61,7 +61,7 @@ namespace Kernel
 
 			Heap::Init();
 
-			if(mbi->Flags & FLAGS_MEMORY_MAP)
+			if(mbi->HasMemMap())
 			{
 				Console::WriteFormat("Memory map of length 0x%8x at address 0x%8x\n", mbi->MemoryMapLength, mbi->MemoryMapAddress);
 				for(mmap = mmap0; (uintptr_t)mmap - (uintptr_t)mmap0 < mbi->MemoryMapLength; mmap = (MemoryMap*)((uintptr_t)mmap + mmap->Size + 4))
