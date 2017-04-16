@@ -115,6 +115,7 @@ namespace Kernel
 			Info(void) = delete;
 
 			void InitModules(void);
+			void MarkReserved(void);
 
 			inline bool HasMemInfo(void)
 			{

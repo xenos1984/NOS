@@ -48,17 +48,9 @@ namespace Kernel
 			Chunker::Reserve(1UL << 20, Symbol::kernelEnd.Addr() - Symbol::kernelOffset.Addr());
 
 			// Mark occupied if there is any multiboot information or modules in the area given to the chunker.
-			if(mbi->HasDrives() && (mbi->DrivesLength > 0))
-				Chunker::Reserve(mbi->DrivesAddress, mbi->DrivesAddress + mbi->DrivesLength);
-			if(mbi->HasMemMap() && (mbi->MemoryMapLength > 0))
-				Chunker::Reserve(mbi->MemoryMapAddress, mbi->MemoryMapAddress + mbi->MemoryMapLength);
-			if(mbi->HasLoaderName())
-				Chunker::Reserve(mbi->BootLoaderName, mbi->BootLoaderName + (1UL << Memory::MinPageBits));
-			if(mbi->HasCmdline())
-				Chunker::Reserve(mbi->CommandLine, mbi->CommandLine + (1UL << Memory::MinPageBits));
-			if(mbi->HasModules() && (mbi->ModuleCount > 0))
-				Chunker::Reserve(mbi->ModuleAddress, mbi->ModuleAddress + mbi->ModuleCount * sizeof(Module));
+			mbi->MarkReserved();
 
+			// Initialize heap.
 			Heap::Init();
 
 			if(mbi->HasMemMap())
@@ -78,12 +70,29 @@ namespace Kernel
 						else
 							zone = Memory::Zone::HIGH;
 						if(sizeof(Memory::PhysAddr) == 8 || zone != Memory::Zone::HIGH)
+						{
 							Chunker::AddRegion(mmap->BaseAddr, mmap->Length, zone);
+							mbi->MarkReserved();
+						}
 					}
 				}
 			}
 
 			return mbi;
+		}
+
+		SECTION(".init.text") void Info::MarkReserved(void)
+		{
+			if(HasDrives() && (DrivesLength > 0))
+				Chunker::Reserve(DrivesAddress, DrivesAddress + DrivesLength);
+			if(HasMemMap() && (MemoryMapLength > 0))
+				Chunker::Reserve(MemoryMapAddress, MemoryMapAddress + MemoryMapLength);
+			if(HasLoaderName())
+				Chunker::Reserve(BootLoaderName, BootLoaderName + (1UL << Memory::MinPageBits));
+			if(HasCmdline())
+				Chunker::Reserve(CommandLine, CommandLine + (1UL << Memory::MinPageBits));
+			if(HasModules() && (ModuleCount > 0))
+				Chunker::Reserve(ModuleAddress, ModuleAddress + ModuleCount * sizeof(Module));
 		}
 
 		SECTION(".init.text") void Info::InitModules(void)
