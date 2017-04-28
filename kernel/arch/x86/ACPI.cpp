@@ -3,10 +3,10 @@
 #include <new>
 #include INC_ARCH(ACPI.h)
 #include INC_ARCH(AML.h)
-#include INC_ARCH(X86Pager.h)
 #include INC_ARCH(Apic.h)
 #include INC_ARCH(IOApic.h)
 #include INC_ARCH(HPET.h)
+#include <Pager.h>
 #include <Console.h>
 #include <Symbol.h>
 
@@ -192,8 +192,8 @@ namespace Kernel
 
 		void SECTION(".init.text") ParseFadt(FadTable* fadt)
 		{
-			ParseFacs((Facs*)x86pager().PhysToVirt(fadt->FacsAddress));
-			AML::ParseTable((TableHeader*)x86pager().PhysToVirt(fadt->DsdtAddress));
+			ParseFacs((Facs*)Pager::MapBootRegion(fadt->FacsAddress, sizeof(Facs), Memory::MemType::KERNEL_RO));
+			AML::ParseTable((TableHeader*)Pager::MapBootRegion(fadt->DsdtAddress, sizeof(TableHeader), Memory::MemType::KERNEL_RO));
 		}
 
 		void SECTION(".init.text") ParseHpet(HpetTable* hpet)
@@ -204,7 +204,7 @@ namespace Kernel
 
 		void SECTION(".init.text") ParseTable(unsigned long phys)
 		{
-			TableHeader* header = (TableHeader*)x86pager().PhysToVirt(phys);
+			TableHeader* header = (TableHeader*)Pager::MapBootRegion(phys, sizeof(TableHeader), Memory::MemType::KERNEL_RO);
 			unsigned char checksum;
 			unsigned char* csptr;
 			unsigned long i;
@@ -228,13 +228,13 @@ namespace Kernel
 				AML::ParseTable(header);
 				break;
 			case 'F' | ('A' << 8) | ('C' << 16) | ('P' << 24):
-				ParseFadt((FadTable*)header);
+				ParseFadt((FadTable*)Pager::MapBootRegion(Pager::VirtToPhys(header), sizeof(FadTable), Memory::MemType::KERNEL_RO));
 				break;
 			case 'A' | ('P' << 8) | ('I' << 16) | ('C' << 24):
-				ParseMadt((MadTable*)header);
+				ParseMadt((MadTable*)Pager::MapBootRegion(Pager::VirtToPhys(header), sizeof(MadTable), Memory::MemType::KERNEL_RO));
 				break;
 			case 'H' | ('P' << 8) | ('E' << 16) | ('T' << 24):
-				ParseHpet((HpetTable*)header);
+				ParseHpet((HpetTable*)Pager::MapBootRegion(Pager::VirtToPhys(header), sizeof(HpetTable), Memory::MemType::KERNEL_RO));
 				break;
 			default:
 				break;
@@ -279,7 +279,7 @@ namespace Kernel
 					}
 					Console::WriteMessage(Console::Style::OK, "ACPI RSD pointer:", "Rev. %d found at 0x%8x", pointer->Revision, phys);
 					tab = ((pointer->Revision == 0) ? pointer->RsdtAddress : pointer->XsdtAddress);
-					header = (TableHeader*)x86pager().PhysToVirt(tab);
+					header = (TableHeader*)Pager::MapBootRegion(tab, sizeof(TableHeader), Memory::MemType::KERNEL_RO);
 					Console::WriteMessage(Console::Style::OK, "ACPI %4s:", "found at 0x%8x", (header->Signature).Bytes, tab);
 					checksum = 0;
 					csptr = (unsigned char*)header;

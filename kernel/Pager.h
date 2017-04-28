@@ -33,7 +33,7 @@ namespace Kernel
 
 		/** Get physical address to which a virtual address is mapped. */
 		Memory::PhysAddr VirtToPhys(uintptr_t virt);
-		Memory::PhysAddr VirtToPhys(void* virt);
+		inline Memory::PhysAddr VirtToPhys(void* virt) { return VirtToPhys((uintptr_t)virt); }
 	}
 }
 
