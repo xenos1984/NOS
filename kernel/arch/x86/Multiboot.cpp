@@ -3,10 +3,8 @@
 #include <Elf.h>
 #include <Console.h>
 #include <Symbol.h>
-#include INC_ARCH(X86Pager.h)
 #include INC_ARCH(Multiboot.h)
 #include <TaskManager.h>
-#include <PhysicalMemory.h>
 #include <Heap.h>
 #include <Chunker.h>
 #include <Pager.h>
