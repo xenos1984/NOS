@@ -1,11 +1,11 @@
 // Chunker.cpp - Physical memory manager aka "chunker" function implementations.
 
 #include <limits>
+#include <atomic>
 #include <new>
 #include <chunker/bitmap/Chunker.h>
 #include <Memory.h>
 #include <Symbol.h>
-#include <AtomicOps.h>
 #include <Console.h>
 
 namespace Kernel
@@ -14,26 +14,31 @@ namespace Kernel
 	{
 		struct Region
 		{
+			static const int bitwidth = std::numeric_limits<unsigned long>::digits;
+
 			Region* prev;
 			Region* next;
 			const Memory::PhysAddr start;
-			const Memory::PhysAddr length;
-			unsigned long* const bitmap;
+			const Memory::PhysAddr end;
+			std::atomic_ulong* const bitmap;
 			const Memory::Zone zone;
+			const unsigned long total;
+			std::atomic_ulong free;
 
-			constexpr Region(Memory::PhysAddr s, Memory::PhysAddr l, unsigned long* b, Memory::Zone z, Region* p = nullptr, Region* n = nullptr) : prev(p), next(n), start(s), length(l), bitmap(b), zone(z) {};
+			constexpr Region(Memory::PhysAddr s, Memory::PhysAddr l, std::atomic_ulong* b, Memory::Zone z, Region* p = nullptr, Region* n = nullptr) : prev(p), next(n), start(s), end(s + l), bitmap(b), zone(z), total(l >> Memory::MinPageBits), free(l >> Memory::MinPageBits) {};
 
 			bool Contains(Memory::PhysAddr addr) const
 			{
-				return(addr >= start && addr - start < length);
+				return(addr >= start && addr - start < end);
 			}
 
 			void Free(Memory::PhysAddr addr)
 			{
-				unsigned long n = ((addr - start) >> Memory::MinPageBits) / std::numeric_limits<unsigned long>::digits;
-				unsigned long b = ((addr - start) >> Memory::MinPageBits) % std::numeric_limits<unsigned long>::digits;
+				unsigned long n = ((addr - start) >> Memory::MinPageBits) / bitwidth;
+				unsigned long b = ((addr - start) >> Memory::MinPageBits) % bitwidth;
 
-				bitmap[n] &= ~(1UL << b);
+				if(bitmap[n].fetch_and(~(1UL << b)) & (1UL << b))
+					free++;
 			}
 
 			void Free(Memory::PhysAddr first, Memory::PhysAddr last)
@@ -44,10 +49,11 @@ namespace Kernel
 
 			void Reserve(Memory::PhysAddr addr)
 			{
-				unsigned long n = ((addr - start) >> Memory::MinPageBits) / std::numeric_limits<unsigned long>::digits;
-				unsigned long b = ((addr - start) >> Memory::MinPageBits) % std::numeric_limits<unsigned long>::digits;
+				unsigned long n = ((addr - start) >> Memory::MinPageBits) / bitwidth;
+				unsigned long b = ((addr - start) >> Memory::MinPageBits) % bitwidth;
 
-				bitmap[n] |= 1UL << b;
+				if(!(bitmap[n].fetch_or(1UL << b) & (1UL << b)))
+					free--;
 			}
 
 			void Reserve(Memory::PhysAddr first, Memory::PhysAddr last)
@@ -58,22 +64,32 @@ namespace Kernel
 
 			Memory::PhysAddr Alloc(void)
 			{
-				unsigned long n = (length >> Memory::MinPageBits) / std::numeric_limits<unsigned long>::digits;
-				unsigned long b = std::numeric_limits<unsigned long>::digits;
+				unsigned long n = total / bitwidth;
+				unsigned long b = bitwidth;
+				unsigned long x;
+
+				if(!free)
+					return 0;
 
 				while(n > 0)
 				{
 					n--;
 					if(bitmap[n] != ~0UL)
 					{
+						x = bitmap[n].exchange(~0UL);
+						if(x == ~0UL)
+							continue;
+
 						while(b > 0)
 						{
 							b--;
-							if(!(bitmap[n] & (1UL << b)))
+							if(!(x & (1UL << b)))
 							{
-								bitmap[n] |= 1UL << b;
-								// Console::WriteFormat("Alloc memory: base = 0x%p, n = 0x%x, b = 0x%x\n", start, n, b);
-								return start + ((n * std::numeric_limits<unsigned long>::digits + b) << Memory::MinPageBits);
+								x |= 1UL << b;
+								bitmap[n] = x;
+								free--;
+								// Console::WriteFormat("Alloc memory: base = 0x%p, n = 0x%x, b = 0x%x, free = %d\n", start, n, b, free.load());
+								return start + ((n * bitwidth + b) << Memory::MinPageBits);
 							}
 						}
 					}
@@ -84,9 +100,9 @@ namespace Kernel
 		};
 
 		static const unsigned int fbmlen = Memory::MaxInitPages / std::numeric_limits<unsigned long>::digits;
-		static unsigned long firstbitmap[fbmlen];
+		static std::atomic_ulong firstbitmap[fbmlen];
 
-		static Region firstregion = Region(0, 0, firstbitmap, static_cast<Memory::Zone>(0), &firstregion, &firstregion);
+		static Region firstregion {0, 0, firstbitmap, static_cast<Memory::Zone>(0), &firstregion, &firstregion};
 		static Region* regions[static_cast<int>(Memory::Zone::MAX) + 1];
 
 		void Init(Memory::PhysAddr start, Memory::PhysAddr length, Memory::Zone zone)
@@ -112,7 +128,7 @@ namespace Kernel
 
 		void AddRegion(Memory::PhysAddr start, Memory::PhysAddr length, Memory::Zone zone)
 		{
-			Region* r = new Region(start, length, new unsigned long[(length >> Memory::MinPageBits) / std::numeric_limits<unsigned long>::digits], zone);
+			Region* r = new Region(start, length, new std::atomic_ulong[(length >> Memory::MinPageBits) / std::numeric_limits<unsigned long>::digits], zone);
 			Region** rz = &regions[static_cast<int>(zone)];
 
 			if(*rz == nullptr)
