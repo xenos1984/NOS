@@ -30,10 +30,6 @@ namespace Kernel
 			// Map multiboot info.
 			mbi = reinterpret_cast<Info*>(Pager::MapBootRegion(mbiphys, sizeof(Info), Memory::MemType::KERNEL_RO));
 
-			// If there is a memory map, map that as well.
-			if(mbi->HasMemMap())
-				mmap0 = reinterpret_cast<MemoryMap*>(Pager::MapBootRegion(mbi->MemoryMapAddress, mbi->MemoryMapLength, Memory::MemType::KERNEL_RO));
-
 			// Check for memory hole below 16MB.
 			uint32_t mem = mbi->UpperMemory;
 			uint32_t length = (mem > (15UL << 10) ? 15UL << 20 : mem << 10);
@@ -51,9 +47,11 @@ namespace Kernel
 			// Initialize heap.
 			Heap::Init();
 
+			// If there is a memory map, map that as well.
 			if(mbi->HasMemMap())
 			{
 				Console::WriteFormat("Memory map of length 0x%8x at address 0x%8x\n", mbi->MemoryMapLength, mbi->MemoryMapAddress);
+				mmap0 = reinterpret_cast<MemoryMap*>(Pager::MapBootRegion(mbi->MemoryMapAddress, mbi->MemoryMapLength, Memory::MemType::KERNEL_RO));
 				for(mmap = mmap0; (uintptr_t)mmap - (uintptr_t)mmap0 < mbi->MemoryMapLength; mmap = (MemoryMap*)((uintptr_t)mmap + mmap->Size + 4))
 				{
 					Console::WriteFormat("Mem: 0x%16lx-0x%16lx, Type: 0x%2x\n", mmap->BaseAddr, mmap->BaseAddr + mmap->Length - 1, mmap->Type);
