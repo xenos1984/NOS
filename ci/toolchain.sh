@@ -13,6 +13,8 @@ echo "Latest binutils version: $binutils_version"
 
 if [ -d $prefix ]
 then
+	sudo ln -s -f $prefix/bin/* /usr/local/bin/
+
 	gcc_current=`$target-gcc -v 2>&1 | grep -o '[0-9]\+.[0-9]\+.[0-9]\+' | sort -V | tail -1`
 	binutils_current=`$target-ld -v 2>&1 | grep -o '[0-9]\+.[0-9]\+\(.[0-9]\+\)\?' | sort -V | tail -1`
 
