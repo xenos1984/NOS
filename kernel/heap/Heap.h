@@ -29,7 +29,7 @@ namespace Kernel
 
 		void AllocBlock(uintptr_t addr)
 		{
-			Memory::PhysAddr phys = Chunker::Alloc(static_cast<Memory::Zone>(0));
+			Memory::PhysAddr phys = Chunker::Alloc<Memory::MinPageBits>(static_cast<Memory::Zone>(0));
 			Pager::MapPage<Memory::MinPageBits>(phys, addr, Memory::MemType::KERNEL_RW);
 		}
 

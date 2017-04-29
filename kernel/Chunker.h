@@ -12,7 +12,7 @@ namespace Kernel
 		void Init(Memory::PhysAddr start, Memory::PhysAddr length, Memory::Zone zone);
 		void AddRegion(Memory::PhysAddr start, Memory::PhysAddr length, Memory::Zone zone);
 
-		Memory::PhysAddr Alloc(Memory::Zone zone = static_cast<Memory::Zone>(0));
+		template<Memory::PageBits bits> Memory::PhysAddr Alloc(Memory::Zone zone = static_cast<Memory::Zone>(0));
 		bool Free(Memory::PhysAddr addr);
 		bool Free(Memory::PhysAddr first, Memory::PhysAddr last);
 		bool Reserve(Memory::PhysAddr addr);

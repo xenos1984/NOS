@@ -126,7 +126,7 @@ namespace Kernel
 			static_assert(level > 0, "Top level page table cannot be created.");
 			static_assert(level < PAGE_LEVELS, "Table level exceeds number of paging levels.");
 
-			Memory::PhysAddr phys = Chunker::Alloc();
+			Memory::PhysAddr phys = Chunker::Alloc<Memory::MinPageBits>();
 			uintptr_t virt = PAGE_TABLE_ADDR[level + 1] + i * sizeof(PageTableLevel<level>);
 
 			Pager::MapPage<Memory::PGB_4K>(phys, virt, type);

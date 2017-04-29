@@ -144,7 +144,13 @@ namespace Kernel
 			}
 		}
 
-		Memory::PhysAddr Alloc(Memory::Zone zone)
+		template<Memory::PageBits bits> Memory::PhysAddr Alloc(Memory::Zone zone __attribute__((unused)))
+		{
+			static_assert(IsValidSize(bits), "invalid chunk size");
+			return 0;
+		}
+
+		template<> Memory::PhysAddr Alloc<Memory::MinPageBits>(Memory::Zone zone)
 		{
 			unsigned int i = static_cast<int>(zone);
 			Region* r;
