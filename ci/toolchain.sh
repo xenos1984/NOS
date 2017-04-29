@@ -1,12 +1,30 @@
-#!/bin/sh
+#!/bin/bash
 set -e
-
-binutils_version="2.27"
-gcc_version="6.3.0"
-newlib_version="2.4.0"
 
 target=$1
 prefix=~/cross/$target
+
+gcc_version=`wget -O - ftp://ftp.gnu.org/gnu/gcc/ | grep -o 'gcc-[0-9]\+.[0-9]\+.[0-9]\+' | sed 's/gcc-//' | sort -V | tail -n 1`
+binutils_version=`wget -O - ftp://ftp.gnu.org/gnu/binutils/ | grep -o 'binutils-[0-9]\+.[0-9]\+\(.[0-9]\+\)\?' | sed 's/binutils-//' | sort -V | tail -n 1`
+newlib_version="2.4.0"
+
+echo "Latest gcc version: $gcc_version"
+echo "Latest binutils version: $binutils_version"
+
+if [ -d $prefix ]
+then
+	gcc_current=`$target-gcc -v 2>&1 | grep -o '[0-9]\+.[0-9]\+.[0-9]\+' | sort -V | tail -1`
+	binutils_current=`$target-ld -v 2>&1 | grep -o '[0-9]\+.[0-9]\+\(.[0-9]\+\)\?' | sort -V | tail -1`
+
+	echo "Current gcc version: $gcc_current"
+	echo "Current binutils version: $binutils_current"
+
+	if [ $gcc_version != $gcc_current ] || [ $binutils_version != $binutils_current ]
+	then
+		echo "Need to update!"
+		rm -rf $prefix
+	fi
+fi
 
 if [ ! -d $prefix ]
 then
