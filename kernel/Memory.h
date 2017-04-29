@@ -1,7 +1,9 @@
-// Memory.h - General memory information.
+// Memory.h - General memory information and management.
 
 #ifndef __MEMORY_H__
 #define __MEMORY_H__
+
+#include <cstdint>
 
 namespace Kernel
 {
@@ -99,6 +101,9 @@ namespace Kernel
 		{
 			return((mask & (1UL << size)) != 0);
 		}
+
+		template<PageBits bits> bool AllocBlock(uintptr_t virt, MemType type);
+		template<PageBits bits> bool FreeBlock(uintptr_t virt);
 	}
 }
 

@@ -34,6 +34,7 @@ libkernel_a_SOURCES = \
 	Console.cpp \
 	Core.cpp \
 	IRQManager.cpp \
+	Memory.cpp \
 	Process.cpp \
 	TaskScheduler.cpp \
 	Thread.cpp \
