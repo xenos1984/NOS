@@ -12,7 +12,7 @@ namespace Kernel
 	{
 		SECTION(".init.text") void Init(unsigned long phys)
 		{
-			Chunker::Free(Pager::VirtToPhys((uintptr_t)apic_base));
+			Chunker::Free<Memory::PGB_4K>(Pager::VirtToPhys((uintptr_t)apic_base));
 			Pager::UnmapPage<Memory::PGB_4K>((uintptr_t)apic_base);
 			Pager::MapPage<Memory::PGB_4K>(phys, (uintptr_t)apic_base, Memory::MemType::KERNEL_RW);
 			apic_base[REG_SIVR] |= (1 << 8); // enable

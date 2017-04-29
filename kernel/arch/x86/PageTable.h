@@ -142,7 +142,7 @@ namespace Kernel
 
 			Memory::PhysAddr phys = Pointer().Phys();
 			Pager::UnmapPage<Memory::PGB_4K>((uintptr_t)this);
-			Chunker::Free(phys);
+			Chunker::Free<Memory::PGB_4K>(phys);
 		}
 
 		inline PageTableLevel<0>& PageTableTop(void)

@@ -150,6 +150,18 @@ namespace Kernel
 			return 0;
 		}
 
+		template<Memory::PageBits bits> bool Free(Memory::PhysAddr phys __attribute__((unused)))
+		{
+			static_assert(IsValidSize(bits), "invalid chunk size");
+			return false;
+		}
+
+		template<Memory::PageBits bits> bool Reserve(Memory::PhysAddr phys __attribute__((unused)))
+		{
+			static_assert(IsValidSize(bits), "invalid chunk size");
+			return false;
+		}
+
 		template<> Memory::PhysAddr Alloc<Memory::MinPageBits>(Memory::Zone zone)
 		{
 			unsigned int i = static_cast<int>(zone);
@@ -200,7 +212,7 @@ namespace Kernel
 			return nullptr;
 		}
 
-		bool Free(Memory::PhysAddr addr)
+		template<> bool Free<Memory::MinPageBits>(Memory::PhysAddr addr)
 		{
 			Region* r = FindRegion(addr);
 
@@ -228,7 +240,7 @@ namespace Kernel
 				return false;
 		}
 
-		bool Reserve(Memory::PhysAddr addr)
+		template<> bool Reserve<Memory::MinPageBits>(Memory::PhysAddr addr)
 		{
 			Region* r = FindRegion(addr);
 

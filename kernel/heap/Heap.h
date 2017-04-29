@@ -37,7 +37,7 @@ namespace Kernel
 		{
 			Memory::PhysAddr phys = Pager::VirtToPhys(addr);
 			Pager::UnmapPage<Memory::MinPageBits>(addr);
-			Chunker::Free(phys);
+			Chunker::Free<Memory::MinPageBits>(phys);
 		}
 
 		void AllocBlocks(uintptr_t addr, unsigned int count)
