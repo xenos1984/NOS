@@ -26,7 +26,11 @@ namespace Kernel
 
 			Pager::UnmapPage<bits>(virt);
 			Chunker::Free<bits>(phys);
+			return true;
 		}
+
+		template bool AllocBlock<MinPageBits>(uintptr_t virt, MemType type);
+		template bool FreeBlock<MinPageBits>(uintptr_t virt);
 	}
 }
 
