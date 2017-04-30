@@ -14,11 +14,6 @@ namespace Kernel
 {
 	namespace Pager
 	{
-		inline void Invalidate(uintptr_t virt)
-		{
-			asm volatile ("invlpg (%0)" : : "r"(virt));
-		}
-
 		template<Memory::PageBits bits> void MapPage(Memory::PhysAddr phys __attribute__((unused)), uintptr_t virt __attribute__((unused)), Memory::MemType type __attribute__((unused)))
 		{
 			static_assert(IsValidSize(bits), "invalid page size");

@@ -32,10 +32,13 @@
 
 using namespace Kernel;
 
-extern "C" void SECTION(".init.text") KernelEntry(unsigned long magic, Multiboot::Info* mbi)
+extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, uint32_t mbiphys)
 {
 	// Init console and show message.
 	Core::Welcome();
+
+	// Check multiboot magic.
+	Multiboot::CheckMagic(magic);
 
 	// Get basic CPU info.
 	new (bspcpu_space) CPU;
@@ -50,13 +53,9 @@ extern "C" void SECTION(".init.text") KernelEntry(unsigned long magic, Multiboot
 	kprocess().data.cr3 = CR3::Read();
 	kprocess().data.pgtab = (X86Pager::PageTable*)tabPML4T;
 
-	// Init physical memory manager.
-	uint32_t mem = ((Multiboot::Info*)(Symbol::kernelOffset.Addr() + (uintptr_t)mbi))->UpperMemory;
-	Chunker::Init(1UL << 20, (mem > (15UL << 10) ? 15UL << 20 : mem << 10), Memory::Zone::DMA24);
+	// Init memory manager.
+	Multiboot::Info* mbi = Multiboot::InitMemory(mbiphys);
 
-	new (physmem_space) X86Pager(mbi);
-	new (virtmem_space) VirtualMemory();
-	new (multiboot_space) Multiboot(magic, mbi);
 	new (cmos_space) Cmos;
 	new (pit_space) PIT;
 	new (irqman_space) PICManager();
@@ -78,11 +77,11 @@ extern "C" void SECTION(".init.text") KernelEntry(unsigned long magic, Multiboot
 #endif
 
 #ifdef CONFIG_ACPI
-	if(ACPI::Init(physaddr, physaddr + 0x400) || ACPI::Init(0x000e0000, 0x00100000))
+	if(ACPI::SearchPointer(physaddr, physaddr + 0x400) || ACPI::SearchPointer(0x000e0000, 0x00100000))
 	{
 		IOApicManager::InitAcpi();
 		X86_64TaskManager::InitAcpi();
-		new (sysclock_space) PITClock(cmos().GetTime(), acpi().GetISAIRQ(0));
+		new (sysclock_space) PITClock(cmos().GetTime(), ACPI::GetISAIRQ(0));
 	}
 	else
 #endif
@@ -100,7 +99,7 @@ extern "C" void SECTION(".init.text") KernelEntry(unsigned long magic, Multiboot
 		new (sysclock_space) PITClock(cmos().GetTime(), 0);
 	}
 
-	multiboot().StartModules();
+	mbi->InitModules();
 }
 
 extern "C" void FreeMemory(void)

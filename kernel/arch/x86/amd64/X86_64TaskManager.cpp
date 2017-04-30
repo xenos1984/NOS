@@ -75,20 +75,20 @@ void SECTION(".init.text") X86_64TaskManager::InitAcpi(void)
 	Processor* pr;
 	ACPI::LApic* ala;
 
-	if(acpi().GetProcessorCount() == 0)
+	if(ACPI::GetProcessorCount() == 0)
 	{
 		Init();
 		return;
 	}
 
-	new (taskman_space) X86_64TaskManager(acpi().GetProcessorCount());
+	new (taskman_space) X86_64TaskManager(ACPI::GetProcessorCount());
 
 	// temporarily restore identity mapping
 	*((unsigned long*)0xffffff7fbfdfe000) = *((unsigned long*)0xffffff7fbfdfeff8);
 	*((unsigned long*)0xffffff7fbfc00000) = *((unsigned long*)0xffffff7fbfc00ff0);
 	for(i = 0; i < x86_64taskman().numcpus; i++)
 	{
-		ala = acpi().GetProcessor(i);
+		ala = ACPI::GetProcessor(i);
 		new (&(x86_64taskman().cpu[i])) Processor(ala);
 		pr = &(x86_64taskman().cpu[i]);
 		if(i == 0) // Hey, it's me!

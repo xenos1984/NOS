@@ -1,6 +1,6 @@
 // Chunker.cpp - Physical memory manager aka "chunker" function implementations.
 
-#include <limits>
+//#include <limits>
 #include <atomic>
 #include <new>
 #include <chunker/bitmap/Chunker.h>
@@ -12,10 +12,10 @@ namespace Kernel
 {
 	namespace Chunker
 	{
+		static const int bitwidth = 8 * sizeof(unsigned long); //std::numeric_limits<unsigned long>::digits;
+
 		struct Region
 		{
-			static const int bitwidth = std::numeric_limits<unsigned long>::digits;
-
 			Region* prev;
 			Region* next;
 			const Memory::PhysAddr start;
@@ -99,7 +99,7 @@ namespace Kernel
 			}
 		};
 
-		static const unsigned int fbmlen = Memory::MaxInitPages / std::numeric_limits<unsigned long>::digits;
+		static const unsigned int fbmlen = Memory::MaxInitPages / bitwidth;
 		static std::atomic_ulong firstbitmap[fbmlen];
 
 		static Region firstregion {0, 0, firstbitmap, static_cast<Memory::Zone>(0), &firstregion, &firstregion};
@@ -128,7 +128,7 @@ namespace Kernel
 
 		void AddRegion(Memory::PhysAddr start, Memory::PhysAddr length, Memory::Zone zone)
 		{
-			Region* r = new Region(start, length, new std::atomic_ulong[(length >> Memory::MinPageBits) / std::numeric_limits<unsigned long>::digits], zone);
+			Region* r = new Region(start, length, new std::atomic_ulong[(length >> Memory::MinPageBits) / bitwidth], zone);
 			Region** rz = &regions[static_cast<int>(zone)];
 
 			if(*rz == nullptr)
