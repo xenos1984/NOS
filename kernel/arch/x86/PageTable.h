@@ -126,10 +126,8 @@ namespace Kernel
 			static_assert(level > 0, "Top level page table cannot be created.");
 			static_assert(level < PAGE_LEVELS, "Table level exceeds number of paging levels.");
 
-			Memory::PhysAddr phys = Chunker::Alloc<Memory::MinPageBits>();
 			uintptr_t virt = PAGE_TABLE_ADDR[level + 1] + i * sizeof(PageTableLevel<level>);
-
-			Pager::MapPage<Memory::PGB_4K>(phys, virt, type);
+			Memory::AllocBlock<Memory::PGB_4K>(virt, type);
 			new (reinterpret_cast<PageTableLevel<level>*>(virt)) PageTableLevel<level>;
 
 			return *reinterpret_cast<PageTableLevel<level>*>(virt);
@@ -140,9 +138,7 @@ namespace Kernel
 			static_assert(level > 0, "Top level page table cannot be destroyed.");
 			static_assert(level < PAGE_LEVELS, "Table level exceeds number of paging levels.");
 
-			Memory::PhysAddr phys = Pointer().Phys();
-			Pager::UnmapPage<Memory::PGB_4K>((uintptr_t)this);
-			Chunker::Free<Memory::PGB_4K>(phys);
+			Memory::FreeBlock<Memory::PGB_4K>(this);
 		}
 
 		inline PageTableLevel<0>& PageTableTop(void)

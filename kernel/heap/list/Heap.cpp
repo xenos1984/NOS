@@ -122,13 +122,13 @@ namespace Kernel
 				mpn->next->prev = mpn;
 			}
 */			if(count % cpb == 0)
-				FreeBlock(MemAddr(count));
+			Memory::FreeBlock<Memory::MinPageBits>(MemAddr(count));
 		}
 
 		void Split(MemoryPointer* mp, size_t n)
 		{
 			if(count % cpb == 0)
-				AllocBlock(MemAddr(count));
+				Memory::AllocBlock<Memory::MinPageBits>(MemAddr(count), Memory::MemType::KERNEL_RW);
 			MemoryPointer& last = MemPtr(count);
 			new (&last) MemoryPointer(mp->mem + n, mp->length - n, mp->free, mp, mp->next);
 			mp->length = n;

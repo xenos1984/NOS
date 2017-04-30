@@ -103,7 +103,9 @@ namespace Kernel
 		}
 
 		template<PageBits bits> bool AllocBlock(uintptr_t virt, MemType type);
+		template<PageBits bits> inline bool AllocBlock(void* virt, MemType type) { return AllocBlock<bits>((uintptr_t)virt, type); }
 		template<PageBits bits> bool FreeBlock(uintptr_t virt);
+		template<PageBits bits> inline bool FreeBlock(void* virt) { return FreeBlock<bits>((uintptr_t)virt); }
 	}
 }
 

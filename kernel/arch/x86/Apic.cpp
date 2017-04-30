@@ -2,7 +2,6 @@
 
 #include INC_ARCH(Apic.h)
 #include <Memory.h>
-#include <Chunker.h>
 #include <Pager.h>
 #include <Console.h>
 
@@ -12,8 +11,7 @@ namespace Kernel
 	{
 		SECTION(".init.text") void Init(unsigned long phys)
 		{
-			Chunker::Free<Memory::PGB_4K>(Pager::VirtToPhys((uintptr_t)apic_base));
-			Pager::UnmapPage<Memory::PGB_4K>((uintptr_t)apic_base);
+			Memory::FreeBlock<Memory::PGB_4K>((uintptr_t)apic_base);
 			Pager::MapPage<Memory::PGB_4K>(phys, (uintptr_t)apic_base, Memory::MemType::KERNEL_RW);
 			apic_base[REG_SIVR] |= (1 << 8); // enable
 			apic_base[REG_LDR] = 0xff000000;
