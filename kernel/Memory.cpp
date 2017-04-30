@@ -8,14 +8,14 @@ namespace Kernel
 {
 	namespace Memory
 	{
-		template<PageBits bits> bool AllocBlock(uintptr_t virt, MemType type)
+		template<PageBits bits> void* AllocBlock(uintptr_t virt, MemType type)
 		{
 			PhysAddr phys = Chunker::Alloc<bits>();
 			if(!phys)
-				return false;
+				return nullptr;
 
 			Pager::MapPage<bits>(phys, virt, type);
-			return true;
+			return (void*)virt;
 		}
 
 		template<PageBits bits> bool FreeBlock(uintptr_t virt)
@@ -29,7 +29,7 @@ namespace Kernel
 			return true;
 		}
 
-		template bool AllocBlock<MinPageBits>(uintptr_t virt, MemType type);
+		template void* AllocBlock<MinPageBits>(uintptr_t virt, MemType type);
 		template bool FreeBlock<MinPageBits>(uintptr_t virt);
 	}
 }
