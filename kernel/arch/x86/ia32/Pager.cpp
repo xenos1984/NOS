@@ -78,7 +78,7 @@ namespace Kernel
 		Memory::PageBits MappedSize(uintptr_t virt)
 		{
 			// Normalize address to smallest possible page size.
-			virt &= Memory::PGM_4K;
+			virt &= ~Memory::PGM_4K;
 
 			// Check top level page table first.
 			PageTableEntry& pte4m = PageTableTop().Entry(virt >> Memory::PGB_4M);
