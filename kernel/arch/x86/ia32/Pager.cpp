@@ -14,16 +14,6 @@ namespace Kernel
 {
 	namespace Pager
 	{
-		template<Memory::PageBits bits> void MapPage(Memory::PhysAddr phys __attribute__((unused)), uintptr_t virt __attribute__((unused)), Memory::MemType type __attribute__((unused)))
-		{
-			static_assert(IsValidSize(bits), "invalid page size");
-		}
-
-		template<Memory::PageBits bits> void UnmapPage(uintptr_t virt __attribute__((unused)))
-		{
-			static_assert(IsValidSize(bits), "invalid page size");
-		}
-
 		template<> void MapPage<Memory::PGB_4K>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type)
 		{
 			unsigned int tab = virt >> Memory::PGB_4M;
@@ -287,12 +277,6 @@ namespace Kernel
 				return ~0;
 
 			return pgent.Phys() | (addr & Memory::PGM_4K);
-		}
-
-		void Test(void)
-		{
-			MapPage<Memory::PGB_4K>(0x1000000, 0x2000000, Memory::MemType::KERNEL_RO);
-			MapPage<Memory::PGB_4M>(0x1000000, 0x00000000, Memory::MemType::KERNEL_EXEC);
 		}
 	}
 }

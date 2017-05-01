@@ -10,6 +10,16 @@ namespace Kernel
 	{
 		static uintptr_t VirtMapEnd = Symbol::kernelEnd.Addr();
 
+		template<Memory::PageBits bits> void MapPage(Memory::PhysAddr phys __attribute__((unused)), uintptr_t virt __attribute__((unused)), Memory::MemType type __attribute__((unused)))
+		{
+			static_assert(IsValidSize(bits), "invalid page size");
+		}
+
+		template<Memory::PageBits bits> void UnmapPage(uintptr_t virt __attribute__((unused)))
+		{
+			static_assert(IsValidSize(bits), "invalid page size");
+		}
+
 		void* MapBootRegion(Memory::PhysAddr start, Memory::PhysAddr length, Memory::MemType type)
 		{
 			Memory::PhysAddr first, last;
@@ -23,7 +33,7 @@ namespace Kernel
 
 			virt = VirtMapEnd + (start & Memory::PGM_4K);
 			VirtMapEnd += (last - first);
-			return (void*)virt;
+			return reinterpret_cast<void*>(virt);
 		}
 
 		void* MapBootString(Memory::PhysAddr start, Memory::MemType type)
