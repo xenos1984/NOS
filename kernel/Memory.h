@@ -44,7 +44,16 @@ namespace Kernel
 			PGB_128M,
 			PGB_256M,
 			PGB_512M,
-			PGB_1G
+			PGB_1G,
+			PGB_2G,
+			PGB_4G,
+			PGB_8G,
+			PGB_16G,
+			PGB_32G,
+			PGB_64G,
+			PGB_128G,
+			PGB_256G,
+			PGB_512G
 		};
 
 		enum PageSize : unsigned long
@@ -69,7 +78,16 @@ namespace Kernel
 			PGS_128M = 1ULL << PGB_128M,
 			PGS_256M = 1ULL << PGB_256M,
 			PGS_512M = 1ULL << PGB_512M,
-			PGS_1G = 1ULL << PGB_1G
+			PGS_1G = 1ULL << PGB_1G,
+			PGS_2G = 1ULL << PGB_2G,
+			PGS_4G = 1ULL << PGB_4G,
+			PGS_8G = 1ULL << PGB_8G,
+			PGS_16G = 1ULL << PGB_16G,
+			PGS_32G = 1ULL << PGB_32G,
+			PGS_64G = 1ULL << PGB_64G,
+			PGS_128G = 1ULL << PGB_128G,
+			PGS_256G = 1ULL << PGB_256G,
+			PGS_512G = 1ULL << PGB_512G
 		};
 
 		enum PageMask : unsigned long
@@ -94,7 +112,16 @@ namespace Kernel
 			PGM_128M = PGS_128M - 1,
 			PGM_256M = PGS_256M - 1,
 			PGM_512M = PGS_512M - 1,
-			PGM_1G = PGS_1G - 1
+			PGM_1G = PGS_1G - 1,
+			PGG_2G = PGS_2G - 1,
+			PGG_4G = PGS_4G - 1,
+			PGG_8G = PGS_8G - 1,
+			PGG_16G = PGS_16G - 1,
+			PGG_32G = PGS_32G - 1,
+			PGG_64G = PGS_64G - 1,
+			PGG_128G = PGS_128G - 1,
+			PGG_256G = PGS_256G - 1,
+			PGG_512G = PGS_512G - 1
 		};
 
 		constexpr bool IsValidSize(PageBits size, unsigned long mask)
