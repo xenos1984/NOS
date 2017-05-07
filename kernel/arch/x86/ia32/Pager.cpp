@@ -13,7 +13,7 @@
 namespace Kernel
 {
 	namespace Pager
-	{
+	{/*
 		template<> void MapPage<Memory::PGB_4K>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type)
 		{
 			unsigned int tab = virt >> Memory::PGB_4M;
@@ -74,7 +74,7 @@ namespace Kernel
 			pte.Clear();
 			Invalidate(virt);
 		}
-
+*/
 		Memory::PageBits MappedSize(uintptr_t virt)
 		{
 			// Normalize address to smallest possible page size.

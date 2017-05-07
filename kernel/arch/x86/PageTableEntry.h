@@ -5,6 +5,7 @@
 
 #include <type_traits>
 #include <Memory.h>
+#include <Pager.h>
 
 namespace Kernel
 {
@@ -67,10 +68,13 @@ namespace Kernel
 				return reinterpret_cast<PageTableEntry*>(REC_PAGE_TAB)[i];
 			}
 */
-			template<Memory::PageBits bits> PageTableEntry& Set(Memory::PhysAddr phys __attribute__((unused)), Memory::MemType type __attribute__((unused)))
+			template<Memory::PageBits bits> PageTableEntry& Set(Memory::PhysAddr phys, Memory::MemType type)
 			{
 				static_assert(IsValidSize(bits), "invalid page size");
-				raw = phys | TypeFlags(type) | (bits == Memory::PGB_4K ? 0 : PAGE_LARGE);
+				if(bits == Memory::PGB_4K)
+					raw = phys | TypeFlags(type);
+				else
+					raw = phys | TypeFlags(type) | PAGE_LARGE;
 				return *this;
 			}
 

@@ -6,14 +6,14 @@
 #include <Memory.h>
 #include <Chunker.h>
 #include <Console.h>
-#include INC_ARCH(PageTableEntry.h)
-#include INC_ARCH(PageTable.h)
+//#include INC_ARCH(PageTableEntry.h)
+//#include INC_ARCH(PageTable.h)
 #include INC_ARCH(ControlRegisters.h)
 
 namespace Kernel
 {
 	namespace Pager
-	{
+	{/*
 		template<> void MapPage<Memory::PGB_4K>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type)
 		{
 		}
@@ -67,7 +67,7 @@ namespace Kernel
 			if(pt.IsEmpty())
 				pt.Destroy();
 		}
-
+*/
 		Memory::PageBits MappedSize(uintptr_t virt)
 		{
 		}

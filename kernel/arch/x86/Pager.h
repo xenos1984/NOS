@@ -15,7 +15,7 @@ namespace Kernel
 
 		inline void Invalidate(uintptr_t virt)
 		{
-			asm volatile ("invlpg (%0)" : : "r"(virt));
+			asm volatile ("invlpg (%0)" : : "r"(virt) : "memory");
 		}
 	}
 }

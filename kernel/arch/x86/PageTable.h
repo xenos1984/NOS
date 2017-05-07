@@ -51,11 +51,13 @@ namespace Kernel
 		public:
 			/** Return i if this is the i'th table at this level. */
 			inline unsigned long Index(void);
+
 			/** Reference to the i'th table at this level. */
 			static inline PageTableLevel<level>& Table(unsigned long i);
 
 			/** Page table which contains the page table entry pointing to this page table. */
 			inline PageTableLevel<level - 1>& Parent(void);
+
 			/** Page table entry which points to this page table. */
 			inline PageTableEntry& Pointer(void);
 
@@ -64,6 +66,7 @@ namespace Kernel
 
 			/** Create new page table at this level. */
 			static PageTableLevel<level>& Create(unsigned long i, Memory::MemType);
+
 			/** Destroy a page table. */
 			void Destroy(void);
 		};
