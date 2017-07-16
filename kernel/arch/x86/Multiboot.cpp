@@ -29,14 +29,15 @@ namespace Kernel
 
 			// Map multiboot info.
 			mbi = reinterpret_cast<Info*>(Pager::MapBootRegion(mbiphys, sizeof(Info), Memory::MemType::KERNEL_RO));
+			Console::WriteFormat("Multiboot info mapped from 0x%8x to 0x%p.\n", mbiphys, mbi);
 
 			// Check for memory hole below 16MB.
 			uint32_t mem = mbi->UpperMemory;
 			uint32_t length = (mem > (15UL << 10) ? 15UL << 20 : mem << 10);
+			Console::WriteFormat("Upper memory: %dkB\n", mem);
 
 			// Give memory between 1MB and 16MB (or start of hole) to the chunker.
 			Chunker::Init(1UL << 20, length, Memory::Zone::DMA24);
-			Console::WriteFormat("Upper memory: %dkB\n", mem);
 
 			// Mark space occupied by the kernel as used.
 			Chunker::Reserve(1UL << 20, Symbol::kernelEnd.Addr() - Symbol::kernelOffset.Addr());

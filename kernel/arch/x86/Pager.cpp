@@ -4,99 +4,12 @@
 #include <new>
 #include <Pager.h>
 #include <Symbol.h>
-#include INC_ARCH(PageTable.h)
 
 namespace Kernel
 {
 	namespace Pager
 	{
 		static uintptr_t VirtMapEnd = Symbol::kernelEnd.Addr();
-
-		/** Determine which attributes to set for the page table mapping this page. */
-		Memory::MemType ParentType(Memory::MemType type)
-		{
-			switch(type)
-			{
-			case Memory::MemType::KERNEL_EXEC:
-			case Memory::MemType::KERNEL_RO:
-			case Memory::MemType::KERNEL_RW:
-				return Memory::MemType::KERNEL_RW;
-				break;
-			case Memory::MemType::USER_EXEC:
-			case Memory::MemType::USER_RO:
-			case Memory::MemType::USER_RW:
-			case Memory::MemType::USER_COW:
-			case Memory::MemType::USER_DEMAND:
-				return Memory::MemType::USER_RW;
-				break;
-			default:
-				return Memory::MemType::KERNEL_RW;
-			}
-		}
-
-		template<Memory::PageBits bits> constexpr unsigned int PageSizeLevel = ~0;
-
-#ifdef ARCH_X86_IA32
-#ifdef CONFIG_PAE
-		template<> constexpr unsigned int PageSizeLevel<Memory::PGB_4K> = 2;
-		template<> constexpr unsigned int PageSizeLevel<Memory::PGB_2M> = 1;
-#else
-		template<> constexpr unsigned int PageSizeLevel<Memory::PGB_4K> = 1;
-		template<> constexpr unsigned int PageSizeLevel<Memory::PGB_4M> = 0;
-#endif
-#endif
-#ifdef ARCH_X86_AMD64
-		template<> constexpr unsigned int PageSizeLevel<Memory::PGB_4K> = 3;
-		template<> constexpr unsigned int PageSizeLevel<Memory::PGB_2M> = 2;
-		template<> constexpr unsigned int PageSizeLevel<Memory::PGB_1G> = 1;
-#endif
-
-		template<Memory::PageBits bits> void MapPage(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type)
-		{
-			static_assert(IsValidSize(bits), "invalid page size");
-			static_assert(PageSizeLevel<bits> < PAGE_LEVELS, "page table level too large");
-
-			unsigned long tab = (virt & 0xffffffffffffULL) >> (bits + PAGE_BITS[PageSizeLevel<bits>]);
-			unsigned long entry = (virt >> bits) & ((1 << PAGE_BITS[PageSizeLevel<bits>]) - 1);
-
-			if(!PageTableLevel<PageSizeLevel<bits>>::Exists(tab))
-				PageTableLevel<PageSizeLevel<bits>>::Create(tab, ParentType(type));
-
-			PageTableEntry& pte = PageTableLevel<PageSizeLevel<bits>>::Table(tab).Entry(entry);
-			pte.Set<bits>(phys, type);
-			Invalidate(virt);
-		}
-
-		template<Memory::PageBits bits> void UnmapPage(uintptr_t virt)
-		{
-			static_assert(IsValidSize(bits), "invalid page size");
-			static_assert(PageSizeLevel<bits> < PAGE_LEVELS, "page table level too large");
-
-			unsigned int tab = (virt & 0xffffffffffffUL) >> (bits + PAGE_BITS[PageSizeLevel<bits>]);
-			unsigned long entry = (virt >> bits) & ((1 << PAGE_BITS[PageSizeLevel<bits>]) - 1);
-
-			PageTableLevel<PageSizeLevel<bits>>& pt = PageTableLevel<PageSizeLevel<bits>>::Table(tab);
-			PageTableEntry& pte = pt.Entry(entry);
-			pte.Clear();
-			Invalidate(virt);
-
-			if(pt.IsEmpty())
-				pt.Destroy();
-		}
-
-		template void MapPage<Memory::PGB_4K>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type);
-		template void UnmapPage<Memory::PGB_4K>(uintptr_t virt);
-#if (defined ARCH_X86_IA32) && (!defined CONFIG_PAE)
-		template void MapPage<Memory::PGB_4M>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type);
-		template void UnmapPage<Memory::PGB_4M>(uintptr_t virt);
-#else
-		template void MapPage<Memory::PGB_2M>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type);
-		template void UnmapPage<Memory::PGB_2M>(uintptr_t virt);
-#ifdef ARCH_X86_AMD64
-		template void MapPage<Memory::PGB_1G>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type);
-		template void UnmapPage<Memory::PGB_1G>(uintptr_t virt);
-#endif
-#endif
 /*
 		template<unsigned int level, Memory::PageBits ts, Memory::PageBits es> static inline void MapPageAt(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type)
 		{

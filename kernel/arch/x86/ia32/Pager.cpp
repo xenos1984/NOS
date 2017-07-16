@@ -75,6 +75,16 @@ namespace Kernel
 			Invalidate(virt);
 		}
 */
+		template void MapPage<Memory::PGB_4K>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type);
+		template void UnmapPage<Memory::PGB_4K>(uintptr_t virt);
+#ifdef CONFIG_PAE
+		template void MapPage<Memory::PGB_2M>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type);
+		template void UnmapPage<Memory::PGB_2M>(uintptr_t virt);
+#else
+		template void MapPage<Memory::PGB_4M>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type);
+		template void UnmapPage<Memory::PGB_4M>(uintptr_t virt);
+#endif
+
 		Memory::PageBits MappedSize(uintptr_t virt)
 		{
 			// Normalize address to smallest possible page size.
