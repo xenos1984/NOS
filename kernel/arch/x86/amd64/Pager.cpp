@@ -144,7 +144,7 @@ namespace Kernel
 					return false;
 
 				// Check entries at 1GB level.
-				PageDirPtr& pt1 = PageDirPtr::Table(plv0);
+				PageDirPtr& pt1 = PageDirPtr::Table(addr >> Memory::PGB_512G);
 				do
 				{
 					plv1 = (addr >> Memory::PGB_1G) & 0x1ff;
@@ -161,7 +161,7 @@ namespace Kernel
 					}
 
 					// Otherwise, check for 2MB page mappings.
-					PageDir& pt2 = PageDir::Table(plv1);
+					PageDir& pt2 = PageDir::Table(addr >> Memory::PGB_1G);
 					do
 					{
 						plv2 = (addr >> Memory::PGB_2M) & 0x1ff;
@@ -178,7 +178,7 @@ namespace Kernel
 						}
 
 						// Otherwise, check for 4kB page mappings.
-						PageTab& pt3 = PageTab::Table(plv2);
+						PageTab& pt3 = PageTab::Table(addr >> Memory::PGB_2M);
 						do
 						{
 							plv3 = (addr >> Memory::PGB_4K) & 0x1ff;
@@ -230,7 +230,7 @@ namespace Kernel
 					return false;
 
 				// Check entries at 1GB level.
-				PageDirPtr& pt1 = PageDirPtr::Table(plv0);
+				PageDirPtr& pt1 = PageDirPtr::Table(addr >> Memory::PGB_512G);
 				do
 				{
 					plv1 = (addr >> Memory::PGB_1G) & 0x1ff;
@@ -251,7 +251,7 @@ namespace Kernel
 						return false;
 
 					// Check entries at 2MB level.
-					PageDir& pt2 = PageDir::Table(plv1);
+					PageDir& pt2 = PageDir::Table(addr >> Memory::PGB_1G);
 					do
 					{
 						plv2 = (addr >> Memory::PGB_2M) & 0x1ff;
@@ -272,7 +272,7 @@ namespace Kernel
 							return false;
 
 						// Check entries at 4kB level.
-						PageTab& pt3 = PageTab::Table(plv2);
+						PageTab& pt3 = PageTab::Table(addr >> Memory::PGB_2M);
 						do
 						{
 							plv3 = (addr >> Memory::PGB_4K) & 0x1ff;
