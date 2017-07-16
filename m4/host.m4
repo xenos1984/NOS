@@ -66,7 +66,7 @@ AC_DEFUN([NOS_SET_HOST], [
 
 AC_DEFUN([NOS_SET_FLAGS], [
 	CFLAGS="${CFLAGS} -ffreestanding -fno-leading-underscore -Wall -Wextra -Wpedantic"
-	CXXFLAGS="${CFLAGS} -fno-rtti -fno-exceptions -std=c++14"
+	CXXFLAGS="${CFLAGS} -fno-rtti -fno-exceptions -std=c++17"
 	LDFLAGS="${LDFLAGS} -nostartfiles -nostdlib -fno-rtti -fno-exceptions"
 ])
 
@@ -75,10 +75,10 @@ AC_DEFUN([NOS_PROG_OBJCOPY], [
 	AC_CACHE_CHECK([whether objcopy generates $host_bfd],
 		[ac_cv_objcopy_supports_host_bfd],
 		[if test "$NOS_OBJCOPY" --info 2>&1 < /dev/null | grep "$host_bfd" > /dev/null; then
-		 	ac_cv_objcopy_supports_host_bfd=no
-		 else
-		 	ac_cv_objcopy_supports_host_bfd=yes
-		 fi]
+			ac_cv_objcopy_supports_host_bfd=no
+		else
+			ac_cv_objcopy_supports_host_bfd=yes
+		fi]
 	)
 	if test ac_cv_objcopy_supports_host_bfd = no; then
 		AC_MSG_ERROR([unsupported host BFD])
