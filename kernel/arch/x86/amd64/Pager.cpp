@@ -297,7 +297,7 @@ namespace Kernel
 		{
 			uintptr_t diff;
 
-//			Console::WriteFormat("Map 0x%8x bytes from 0x%8x to 0x%8x.\n", length, phys, virt);
+//			Console::WriteFormat("Map 0x%16lx bytes from 0x%16lx to 0x%16lx.\n", length, phys, virt);
 
 			// Check alignment of supplied memory location.
 			if(phys & Memory::PGM_4K)

@@ -26,7 +26,7 @@ PHDRS
 
 SECTIONS
 {
-	.init (initStart + SIZEOF_HEADERS) : AT(ADDR(.init) - kernelOffset)
+	.init.text (initStart + SIZEOF_HEADERS) : AT(ADDR(.init.text) - kernelOffset)
 	{
 		. = ALIGN(16);
 		mb_address = .;
@@ -39,9 +39,18 @@ SECTIONS
 		LONG(kernelEnd - kernelOffset);
 		LONG(Entry - kernelOffset);
 
+		initTextStart = .;
 		*(.init.text)
+		. = ALIGN(4K);
+		initTextEnd = .;
+	} :init
+
+	.init.data : AT(ADDR(.init.data) - kernelOffset)
+	{
+		initDataStart = .;
 		*(.init.data)
 		. = ALIGN(4K);
+		initDataEnd = .;
 	} :init
 	initEnd = .;
 
@@ -54,29 +63,14 @@ SECTIONS
 	} :user
 	userEnd = userStart + SIZEOF(.user);
 
-	dynsymStart = userEnd;
-	.dynsym (dynsymStart) : AT(ADDR(.dynsym) - kernelOffset)
-	{
-		kernelElfDynsym = .;
-		*(.dynsym)
-	} :kernel
-	dynsymEnd = .;
-	dynstrStart = .;
-	.dynstr : AT(ADDR(.dynstr) - kernelOffset)
-	{
-		kernelElfDynstr = .;
-		*(.dynstr)
-	}
-	dynsymEnd = .;
-	hashStart = .;
-	.hash : AT(ADDR(.hash) - kernelOffset)
-	{
-		kernelElfHash = .;
-		*(.hash)
-	}
-	hashEnd = .;
+	kernelElfDynsym = userEnd;
+	textStart = userEnd;
+	.dynsym (userEnd) : AT(ADDR(.dynsym) - kernelOffset) { *(.dynsym) } :kernel
+	kernelElfDynstr = .;
+	.dynstr : AT(ADDR(.dynstr) - kernelOffset) { *(.dynstr) }
+	kernelElfHash = .;
+	.hash : AT(ADDR(.hash) - kernelOffset) { *(.hash) }
 
-	textStart = .;
 	.text : AT(ADDR(.text) - kernelOffset)
 	{
 		*(.text)
@@ -85,6 +79,7 @@ SECTIONS
 		*(.rodata*)
 		*(.gnu.linkonce.t.*)
 		*(.gnu.linkonce.r.*)
+		. = ALIGN(4K);
 	}
 	textEnd = .;
 

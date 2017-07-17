@@ -13,6 +13,35 @@
 
 #include <arch/x86/amd64/Entry.h>
 
+.macro mappages from to flags
+	movl $((\to - \from) >> 12), %ecx
+	movl $(\from | \flags), %eax
+	movl $(tabPGTAB - KERNEL_OFFSET + (\from >> 9)), %edi
+1:
+	stosl
+	addl $0x1000, %eax
+	movl $0, (%edi)
+	addl $4, %edi
+	loop 1b
+.endm
+
+.macro mappages2 from to flags
+	movl $\to, %ecx
+	subl $\from, %ecx
+	shrl $12, %ecx
+	movl $\from, %eax
+	movl %eax, %edi
+	orl $\flags, %eax
+	shrl $9, %edi
+	addl $(tabPGTAB - KERNEL_OFFSET), %edi
+1:
+	stosl
+	addl $0x1000, %eax
+	movl $0, (%edi)
+	addl $4, %edi
+	loop 1b
+.endm
+
 .section .init.text
 .code32
 .type no_long_mode, @function
@@ -97,16 +126,27 @@ Entry:
 	// enter PML4 as second but last PDP, causing a chain reaction to mirror the tables into virtual memory
 	movl $(tabPML4T - KERNEL_OFFSET + 3), (tabPML4T - KERNEL_OFFSET + 0xff0)
 
-	// fill page table to map the first 2MB identically and mirror them to KERNEL_OFFSET
-	movl $0x200, %ecx
-	movl $0x00000003, %eax
-	movl $(tabPGTAB - KERNEL_OFFSET), %edi
-1:
-	stosl
-	addl $0x1000, %eax
-	movl $0, (%edi)
-	addl $4, %edi
-	loop 1b
+	// Map IVT and BDA read only.
+	mappages 0x00000000, 0x00001000, 0x001
+	mappages 0x0009f000, 0x000a0000, 0x001
+
+	// Map VGA buffer read write (32 entries * 4kB = 128kB).
+	mappages 0x000a0000, 0x000c0000, 0x003
+
+	// Map BIOS read only (32 entries * 4kB = 128kB).
+	mappages 0x000e0000, 0x00100000, 0x001
+
+	// Map text part of startup section.
+	mappages2 (initStart - KERNEL_OFFSET), (initTextEnd - KERNEL_OFFSET), 0x001
+
+	// Map data part of startup section.
+	mappages2 (initDataStart - KERNEL_OFFSET), (initDataEnd - KERNEL_OFFSET), 0x003
+
+	// Map text part of kernel.
+	mappages2 (textStart - KERNEL_OFFSET), (textEnd - KERNEL_OFFSET), 0x001
+
+	// Map data part of kernel.
+	mappages2 (dataStart - KERNEL_OFFSET), (kernelEnd - KERNEL_OFFSET), 0x003
 
 	// enable pae + pse + pge
 	movl %cr4, %eax
