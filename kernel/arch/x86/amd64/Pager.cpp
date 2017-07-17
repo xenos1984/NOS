@@ -78,7 +78,7 @@ namespace Kernel
 		Memory::PageBits MappedSize(uintptr_t virt)
 		{
 			// Normalize address to smallest possible page size and remove sign extension.
-			virt &= 0x0000ffffffffffff & ~Memory::PGM_4K;
+			virt &= 0xffffffffffffULL & ~Memory::PGM_4K;
 
 			// Check top level page table first.
 			PageTableEntry& pte512g = PageTableTop().Entry(virt >> Memory::PGB_512G);
@@ -122,7 +122,7 @@ namespace Kernel
 
 		bool IsMapped(uintptr_t virt, size_t length)
 		{
-			virt &= 0x0000ffffffffffff; // Remove sign extension.
+			virt &= 0xffffffffffffULL; // Remove sign extension.
 
 			unsigned int plv0, plv1, plv2, plv3;
 			uintptr_t addr;
@@ -201,7 +201,7 @@ namespace Kernel
 
 		bool IsUnmapped(uintptr_t virt, size_t length)
 		{
-			virt &= 0x0000ffffffffffff; // Remove sign extension.
+			virt &= 0xffffffffffffULL; // Remove sign extension.
 
 			unsigned int plv0, plv1, plv2, plv3;
 			uintptr_t addr;
@@ -367,7 +367,7 @@ namespace Kernel
 
 		Memory::PhysAddr VirtToPhys(uintptr_t addr)
 		{
-			addr &= 0x0000ffffffffffff; // Remove sign extension.
+			addr &= 0xffffffffffffULL; // Remove sign extension.
 
 			PageTableEntry& pte0 = PageTableTop().Entry(addr >> Memory::PGB_512G);
 			if(!pte0.IsPresent())
