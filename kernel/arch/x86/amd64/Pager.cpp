@@ -189,11 +189,11 @@ namespace Kernel
 
 							addr += Memory::PGS_4K;
 						}
-						while((addr < end) && (plv3 < 0x200));
+						while((addr < end) && (addr & Memory::PGM_2M));
 					}
-					while((addr < end) && (plv2 < 0x200));
+					while((addr < end) && (addr & Memory::PGM_1G));
 				}
-				while((addr < end) && (plv1 < 0x200));
+				while((addr < end) && (addr & Memory::PGM_512G));
 			}
 
 			return true;
@@ -283,11 +283,11 @@ namespace Kernel
 
 							addr += Memory::PGS_4K;
 						}
-						while((addr < end) && (plv3 < 0x200));
+						while((addr < end) && (addr & Memory::PGM_2M));
 					}
-					while((addr < end) && (plv2 < 0x200));
+					while((addr < end) && (addr & Memory::PGM_1G));
 				}
-				while((addr < end) && (plv1 < 0x200));
+				while((addr < end) && (addr & Memory::PGM_512G));
 			}
 
 			return true;
