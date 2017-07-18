@@ -5,6 +5,8 @@
 #include INC_SUBARCH(X86_64TaskManager.h)
 #include <Thread.h>
 #include <Process.h>
+#include <Memory.h>
+#include <Pager.h>
 #include INC_ARCH(Processor.h)
 #include INC_ARCH(ControlRegisters.h)
 #include INC_ARCH(MSR.h)
@@ -19,7 +21,6 @@
 #include INC_ARCH(ACPI.h)
 #include INC_ARCH(SMP.h)
 #include INC_ARCH(DescriptorTable.h)
-#include <VirtualMemory.h>
 #include <Symbol.h>
 #include <TaskScheduler.h>
 #include <Console.h>
@@ -43,7 +44,7 @@ SECTION(".init.text") X86_64TaskManager::X86_64TaskManager(unsigned int nc)
 
 	for(i = 0; i < numcpus; i++)
 	{
-		tss = (TSS*)(physmem().AllocBlocks((void*)(TSS_LIN_ADDR + i * TSS_LENGTH), 1));
+		tss = (TSS*)Memory::AllocBlock<Memory::PGB_4K>(TSS_LIN_ADDR + i * TSS_LENGTH, Memory::MemType::KERNEL_RW);
 		tss->iobase = 0x1000;
 		tabGDT.CreateTSS(FIRST_TSS + i, (void*)(TSS_LIN_ADDR + i * TSS_LENGTH), 0x1000); // TSS_LENGTH);
 	}
@@ -59,7 +60,7 @@ void SECTION(".init.text") X86_64TaskManager::Init(void)
 	x86_64taskman().bsp = x86_64taskman().cpu;
 	SetTaskReg(FIRST_TSS << 4);
 	MSR::Write(MSR::KERNEL_GS_BASE, 0);
-	physmem().MapToLinear((void*)((unsigned long)&bspStack - Symbol::kernelOffset.Addr() - STACK_SIZE), (void*)STACK_LIN_ADDR, STACK_SIZE / 0x1000);
+	Pager::Map((unsigned long)&bspStack - Symbol::kernelOffset.Addr() - STACK_SIZE, STACK_LIN_ADDR, STACK_SIZE, Memory::MemType::KERNEL_RW);
 	asm volatile("addq %0, %%rsp" : : "r"(STACK_LIN_ADDR + STACK_SIZE - (unsigned long)&bspStack));
 
 	Apic::Init();
@@ -96,7 +97,7 @@ void SECTION(".init.text") X86_64TaskManager::InitAcpi(void)
 			x86_64taskman().bsp = pr;
 			SetTaskReg(FIRST_TSS << 4);
 			MSR::Write(MSR::KERNEL_GS_BASE, 0);
-			physmem().MapToLinear((void*)((unsigned long)&bspStack - Symbol::kernelOffset.Addr() - STACK_SIZE), (void*)STACK_LIN_ADDR, STACK_SIZE / 0x1000);
+			Pager::Map((unsigned long)&bspStack - Symbol::kernelOffset.Addr() - STACK_SIZE, STACK_LIN_ADDR, STACK_SIZE, Memory::MemType::KERNEL_RW);
 			asm volatile("addq %0, %%rsp" : : "r"(STACK_LIN_ADDR + STACK_SIZE - (unsigned long)&bspStack));
 		}
 		else if(ala->Flags & ACPI::CPU_ENABLED)
@@ -133,7 +134,7 @@ void SECTION(".init.text") X86_64TaskManager::InitSmp(void)
 			x86_64taskman().bsp = pr;
 			SetTaskReg((FIRST_TSS + i) << 4);
 			MSR::Write(MSR::KERNEL_GS_BASE, 0);
-			physmem().MapToLinear((void*)((unsigned long)&bspStack - Symbol::kernelOffset.Addr() - STACK_SIZE), (void*)(STACK_LIN_ADDR + i * STACK_SIZE), STACK_SIZE / 0x1000);
+			Pager::Map((unsigned long)&bspStack - Symbol::kernelOffset.Addr() - STACK_SIZE, STACK_LIN_ADDR, STACK_SIZE, Memory::MemType::KERNEL_RW);
 			asm volatile("addq %0, %%rsp" : : "r"(STACK_LIN_ADDR + (i + 1) * STACK_SIZE - (unsigned long)&bspStack));
 		}
 		else if(sc->Flags & SMP::CPU_ENABLED)

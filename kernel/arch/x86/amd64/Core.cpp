@@ -98,6 +98,7 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, uint32_t mbiph
 		X86_64TaskManager::Init();
 		new (sysclock_space) PITClock(cmos().GetTime(), 0);
 	}
+	asm volatile ("hlt");
 
 	mbi->InitModules();
 }
