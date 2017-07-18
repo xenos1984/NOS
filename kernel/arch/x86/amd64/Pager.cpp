@@ -379,13 +379,13 @@ namespace Kernel
 			if(pte1.IsLarge())
 				return pte1.Phys() | (addr & Memory::PGM_1G);
 
-			PageTableEntry& pte2 = PageDirPtr::Table(addr >> Memory::PGB_1G).Entry((addr >> Memory::PGB_2M) & 0x1ff);
+			PageTableEntry& pte2 = PageDir::Table(addr >> Memory::PGB_1G).Entry((addr >> Memory::PGB_2M) & 0x1ff);
 			if(!pte2.IsPresent())
 				return ~0;
 			if(pte2.IsLarge())
 				return pte2.Phys() | (addr & Memory::PGM_2M);
 
-			PageTableEntry& pte3 = PageDirPtr::Table(addr >> Memory::PGB_2M).Entry((addr >> Memory::PGB_4K) & 0x1ff);
+			PageTableEntry& pte3 = PageTab::Table(addr >> Memory::PGB_2M).Entry((addr >> Memory::PGB_4K) & 0x1ff);
 			if(!pte3.IsPresent())
 				return ~0;
 
