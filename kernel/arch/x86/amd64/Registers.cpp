@@ -1,5 +1,7 @@
 // Registers.cpp - Register dump pushed on interrupt / exception.
 
+#include <cstdint>
+#include <Memory.h>
 #include INC_SUBARCH(Registers.h)
 #include INC_ARCH(ControlRegisters.h)
 #include <Console.h>
@@ -27,6 +29,9 @@ void SelectorErrorCode::Dump(void)
 
 void PageFaultErrorCode::Dump(void)
 {
-	Console::WriteFormat("CR2 = 0x%16lx; %s, %s,\n", CR2::Read(), (Present ? "protection violation" : "non-present page"), (WriteAccess ? "write" : "read"));
+	uint64_t cr2 = CR2::Read();
+
+	Console::WriteFormat("CR2 = 0x%16lx; %s, %s,\n", cr2, (Present ? "protection violation" : "non-present page"), (WriteAccess ? "write" : "read"));
 	Console::WriteFormat("%s, %s, %s\n", (UserMode ? "user" : "supervisor"), (ReservedBits ? "reserved bits" : "no reserved bits"), (InstructionFetch ? "instruction fetch" : "data access"));
+	Console::WriteFormat("Faulting page: %d / %d / %d / %d\n", (cr2 >> Memory::PGB_512G) & 0x1ff, (cr2 >> Memory::PGB_1G) & 0x1ff, (cr2 >> Memory::PGB_2M) & 0x1ff, (cr2 >> Memory::PGB_4K) & 0x1ff);
 }
