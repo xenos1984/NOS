@@ -128,14 +128,20 @@ namespace Kernel
 		{
 			return((mask & (1UL << size)) != 0);
 		}
-
-		template<PageBits bits> void* AllocBlock(uintptr_t virt, MemType type);
-		template<PageBits bits> inline void* AllocBlock(void* virt, MemType type) { return AllocBlock<bits>((uintptr_t)virt, type); }
-		template<PageBits bits> bool FreeBlock(uintptr_t virt);
-		template<PageBits bits> inline bool FreeBlock(void* virt) { return FreeBlock<bits>((uintptr_t)virt); }
 	}
 }
 
 #include INC_ARCH(Memory.h)
+
+namespace Kernel
+{
+	namespace Memory
+	{
+		template<PageBits bits> void* AllocBlock(uintptr_t virt, MemType type, Memory::Zone zone = static_cast<Memory::Zone>(0));
+		template<PageBits bits> inline void* AllocBlock(void* virt, MemType type, Memory::Zone zone = static_cast<Memory::Zone>(0)) { return AllocBlock<bits>((uintptr_t)virt, type, zone); }
+		template<PageBits bits> bool FreeBlock(uintptr_t virt);
+		template<PageBits bits> inline bool FreeBlock(void* virt) { return FreeBlock<bits>((uintptr_t)virt); }
+	}
+}
 
 #endif

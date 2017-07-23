@@ -46,7 +46,7 @@ SECTION(".init.text") X86_64TaskManager::X86_64TaskManager(unsigned int nc)
 	{
 		tss = (TSS*)Memory::AllocBlock<Memory::PGB_4K>(TSS_LIN_ADDR + i * TSS_LENGTH, Memory::MemType::KERNEL_RW);
 		tss->iobase = 0x1000;
-		tabGDT.CreateTSS(FIRST_TSS + i, (void*)(TSS_LIN_ADDR + i * TSS_LENGTH), 0x1000); // TSS_LENGTH);
+		tabGDT.CreateTSS(FIRST_TSS + i, (void*)(TSS_LIN_ADDR + i * TSS_LENGTH), 0x1000);
 	}
 }
 
@@ -205,7 +205,7 @@ Process* X86_64TaskManager::CreateProcess(Elf* elf)
 
 	p = new Process;
 	p->data.pgtab = x86pager().CreateContext();
-	p->data.cr3 = x86pager().VirtToPhys(p->data.pgtab);
+	p->data.cr3 = Pager::VirtToPhys(p->data.pgtab);
 	context = x86pager().SwitchContext(p->data.cr3);
 
 	for(j = 0; j < elf->GetHeader()->PHNum; j++)

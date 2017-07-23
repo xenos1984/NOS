@@ -8,9 +8,9 @@ namespace Kernel
 {
 	namespace Memory
 	{
-		template<PageBits bits> void* AllocBlock(uintptr_t virt, MemType type)
+		template<PageBits bits> void* AllocBlock(uintptr_t virt, MemType type, Zone zone)
 		{
-			PhysAddr phys = Chunker::Alloc<bits>();
+			PhysAddr phys = Chunker::Alloc<bits>(zone);
 			if(!phys)
 				return nullptr;
 
@@ -29,7 +29,7 @@ namespace Kernel
 			return true;
 		}
 
-		template void* AllocBlock<MinPageBits>(uintptr_t virt, MemType type);
+		template void* AllocBlock<MinPageBits>(uintptr_t virt, MemType type, Zone zone);
 		template bool FreeBlock<MinPageBits>(uintptr_t virt);
 	}
 }
