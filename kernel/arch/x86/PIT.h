@@ -17,23 +17,29 @@ namespace Kernel
 	private:
 		AtomicLock lock;
 
-		static const uint8_t baseaddr = 0x40;
-		static const uint8_t control = 0x43;
+		enum PortAddr : uint8_t
+		{
+			baseaddr = 0x40,
+			control = 0x43
+		};
 
-		static const uint8_t MODE_BINARY      = 0x00;
-		static const uint8_t MODE_BCD         = 0x01;
+		enum TimerMode : uint8_t
+		{
+			MODE_BINARY      = 0x00,
+			MODE_BCD         = 0x01,
 
-		static const uint8_t MODE_TERM_COUNT  = 0x00;
-		static const uint8_t MODE_ONE_SHOT    = 0x02;
-		static const uint8_t MODE_RATE        = 0x04;
-		static const uint8_t MODE_SQUARE      = 0x06;
-		static const uint8_t MODE_SOFT_STROBE = 0x08;
-		static const uint8_t MODE_HARD_STROBE = 0x0a;
+			MODE_TERM_COUNT  = 0x00,
+			MODE_ONE_SHOT    = 0x02,
+			MODE_RATE        = 0x04,
+			MODE_SQUARE      = 0x06,
+			MODE_SOFT_STROBE = 0x08,
+			MODE_HARD_STROBE = 0x0a,
 
-		static const uint8_t MODE_LATCHING    = 0x00;
-		static const uint8_t MODE_LSB_ONLY    = 0x10;
-		static const uint8_t MODE_MSB_ONLY    = 0x20;
-		static const uint8_t MODE_LSB_MSB     = 0x30;
+			MODE_LATCHING    = 0x00,
+			MODE_LSB_ONLY    = 0x10,
+			MODE_MSB_ONLY    = 0x20,
+			MODE_LSB_MSB     = 0x30
+		};
 
 	public:
 		PIT(void);

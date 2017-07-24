@@ -20,22 +20,25 @@ namespace Kernel
 
 		inline static _psg& _p(void) { return(*(_psg*)0xff8800); };
 
-		static const uint8_t PER_A_LOW     = 0x0;
-		static const uint8_t PER_A_HIGH    = 0x1;
-		static const uint8_t PER_B_LOW     = 0x2;
-		static const uint8_t PER_B_HIGH    = 0x3;
-		static const uint8_t PER_C_LOW     = 0x4;
-		static const uint8_t PER_C_HIGH    = 0x5;
-		static const uint8_t NOISE         = 0x6;
-		static const uint8_t MIXER         = 0x7;
-		static const uint8_t AMP_A         = 0x8;
-		static const uint8_t AMP_B         = 0x9;
-		static const uint8_t AMP_C         = 0xa;
-		static const uint8_t PER_HULL_LOW  = 0xb;
-		static const uint8_t PER_HULL_HIGH = 0xc;
-		static const uint8_t SHAPE_HULL    = 0xd;
-		static const uint8_t IO_A          = 0xe;
-		static const uint8_t IO_B          = 0xf;
+		enum RegIndex : uint8_t
+		{
+			PER_A_LOW     = 0x0,
+			PER_A_HIGH    = 0x1,
+			PER_B_LOW     = 0x2,
+			PER_B_HIGH    = 0x3,
+			PER_C_LOW     = 0x4,
+			PER_C_HIGH    = 0x5,
+			NOISE         = 0x6,
+			MIXER         = 0x7,
+			AMP_A         = 0x8,
+			AMP_B         = 0x9,
+			AMP_C         = 0xa,
+			PER_HULL_LOW  = 0xb,
+			PER_HULL_HIGH = 0xc,
+			SHAPE_HULL    = 0xd,
+			IO_A          = 0xe,
+			IO_B          = 0xf
+		};
 
 	public:
 		inline static void Test(void)

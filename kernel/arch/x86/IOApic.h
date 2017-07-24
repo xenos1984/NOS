@@ -16,27 +16,33 @@ namespace Kernel
 		unsigned int irqbase, irqcount;
 		AtomicLock lock;
 
-		static const int APICID  = 0x00;
-		static const int APICVER = 0x01;
-		static const int APICARB = 0x02;
-		static const int REDTBL  = 0x10;
+		enum RegIndex : int
+		{
+			APICID  = 0x00,
+			APICVER = 0x01,
+			APICARB = 0x02,
+			REDTBL  = 0x10
+		};
 
 	public:
-		static const uint32_t INT_MASK      = 0x10000; /**< Interrupt masked */
-		static const uint32_t INT_LEVELTRIG = 0x08000; /**< Level trigger mode */
-		static const uint32_t INT_EDGETRIG  = 0x00000; /**< Edge trigger mode */
-		static const uint32_t REMOTE_IRR    = 0x04000; /**< Interrupt accept */
-		static const uint32_t INT_POL_LOW   = 0x02000; /**< Interrupt polarity low */
-		static const uint32_t INT_POL_HIGH  = 0x00000; /**< Interrupt polarity high */
-		static const uint32_t INT_PENDING   = 0x01000; /**< Interrupt pending */
-		static const uint32_t DEST_LOGICAL  = 0x00800; /**< Logical address mode */
-		static const uint32_t DEST_PHYSICAL = 0x00000; /**< Physical address mode */
-		static const uint32_t DM_FIXED      = 0x00000; /**< Fixed */
-		static const uint32_t DM_LOWPRI     = 0x00100; /**< Lowest priority */
-		static const uint32_t DM_SMI        = 0x00200; /**< System management interrupt */
-		static const uint32_t DM_NMI        = 0x00400; /**< Non-maskable interrupt */
-		static const uint32_t DM_INIT       = 0x00500; /**< INIT */
-		static const uint32_t DM_EXTINT     = 0x00700; /**< External interrupt */
+		enum RegValue : uint32_t
+		{
+			INT_MASK      = 0x10000, /**< Interrupt masked */
+			INT_LEVELTRIG = 0x08000, /**< Level trigger mode */
+			INT_EDGETRIG  = 0x00000, /**< Edge trigger mode */
+			REMOTE_IRR    = 0x04000, /**< Interrupt accept */
+			INT_POL_LOW   = 0x02000, /**< Interrupt polarity low */
+			INT_POL_HIGH  = 0x00000, /**< Interrupt polarity high */
+			INT_PENDING   = 0x01000, /**< Interrupt pending */
+			DEST_LOGICAL  = 0x00800, /**< Logical address mode */
+			DEST_PHYSICAL = 0x00000, /**< Physical address mode */
+			DM_FIXED      = 0x00000, /**< Fixed */
+			DM_LOWPRI     = 0x00100, /**< Lowest priority */
+			DM_SMI        = 0x00200, /**< System management interrupt */
+			DM_NMI        = 0x00400, /**< Non-maskable interrupt */
+			DM_INIT       = 0x00500, /**< INIT */
+			DM_EXTINT     = 0x00700  /**< External interrupt */
+		};
 
 		IOApic(unsigned long addr, unsigned int base);
 

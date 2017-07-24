@@ -27,26 +27,34 @@ namespace Kernel
 	class Cmos
 	{
 	private:
-		static const uint8_t REG_SEC      = 0x00; /**< Seconds */
-		static const uint8_t REG_AL_SEC   = 0x01; /**< Alarm seconds */
-		static const uint8_t REG_MIN      = 0x02; /**< Minutes */
-		static const uint8_t REG_AL_MIN   = 0x03; /**< Alarm minutes */
-		static const uint8_t REG_HOUR     = 0x04; /**< Hours */
-		static const uint8_t REG_AL_HOUR  = 0x05; /**< Alarm hours */
-		static const uint8_t REG_DOW      = 0x06; /**< Day of week */
-		static const uint8_t REG_DAY      = 0x07; /**< Day of month */
-		static const uint8_t REG_MONTH    = 0x08; /**< Month */
-		static const uint8_t REG_YEAR     = 0x09; /**< Year */
-		static const uint8_t REG_STATUS_A = 0x0a; /**< Status A */
-		static const uint8_t REG_STATUS_B = 0x0b; /**< Status B */
-		static const uint8_t REG_STATUS_C = 0x0c; /**< Status C */
-		static const uint8_t REG_STATUS_D = 0x0d; /**< Status D */
-		static const uint8_t REG_POST     = 0x0e; /**< POST status */
-		static const uint8_t REG_SHUTDOWN = 0x0f; /**< Shutdown status */
-		static const uint8_t REG_CENT     = 0x32; /**< Century */
+		enum RegIndex : uint8_t
+		{
+			REG_SEC      = 0x00, /**< Seconds */
+			REG_AL_SEC   = 0x01, /**< Alarm seconds */
+			REG_MIN      = 0x02, /**< Minutes */
+			REG_AL_MIN   = 0x03, /**< Alarm minutes */
+			REG_HOUR     = 0x04, /**< Hours */
+			REG_AL_HOUR  = 0x05, /**< Alarm hours */
+			REG_DOW      = 0x06, /**< Day of week */
+			REG_DAY      = 0x07, /**< Day of month */
+			REG_MONTH    = 0x08, /**< Month */
+			REG_YEAR     = 0x09, /**< Year */
+			REG_STATUS_A = 0x0a, /**< Status A */
+			REG_STATUS_B = 0x0b, /**< Status B */
+			REG_STATUS_C = 0x0c, /**< Status C */
+			REG_STATUS_D = 0x0d, /**< Status D */
+			REG_POST     = 0x0e, /**< POST status */
+			REG_SHUTDOWN = 0x0f, /**< Shutdown status */
+			REG_CENT     = 0x32  /**< Century */
+		};
 
 		AtomicLock lock;
-		static const uint8_t CMOS_ADDR = 0x70, CMOS_DATA = 0x71;
+
+		enum RegAddr : uint8_t
+		{
+			CMOS_ADDR = 0x70,
+			CMOS_DATA = 0x71
+		};
 
 		uint8_t ReadRegister(uint8_t reg);
 		void WriteRegister(uint8_t reg, uint8_t value);
@@ -54,43 +62,46 @@ namespace Kernel
 	public:
 		Cmos(void);
 
-		// Shutdown status codes
-		static const uint8_t SH_NORMAL     = 0x00; /**< Normal */
-		static const uint8_t SH_RM_INIT    = 0x01; /**< Real mode init */
-		static const uint8_t SH_JMP_BOOT   = 0x04; /**< Jump to bootstrap */
-		static const uint8_t SH_EOI_JMP467 = 0x05; /**< Signal EOI to PIC, clear keyboard, jump to [40:67h] */
-		static const uint8_t SH_RET_INT15  = 0x07; /**< Return to INT 15h, func 87h */
-		static const uint8_t SH_RET_POST   = 0x08; /**< Return to POST */
-		static const uint8_t SH_JMP467     = 0x0a; /**< Jump to [40:67h] */
-		static const uint8_t SH_IRET467    = 0x0b; /**< IRET to [40:67h] */
-		static const uint8_t SH_RET467     = 0x0c; /**< Return to [40:67h] */
+		enum RegValue : uint8_t
+		{
+			// Shutdown status codes
+			SH_NORMAL     = 0x00, /**< Normal */
+			SH_RM_INIT    = 0x01, /**< Real mode init */
+			SH_JMP_BOOT   = 0x04, /**< Jump to bootstrap */
+			SH_EOI_JMP467 = 0x05, /**< Signal EOI to PIC, clear keyboard, jump to [40:67h] */
+			SH_RET_INT15  = 0x07, /**< Return to INT 15h, func 87h */
+			SH_RET_POST   = 0x08, /**< Return to POST */
+			SH_JMP467     = 0x0a, /**< Jump to [40:67h] */
+			SH_IRET467    = 0x0b, /**< IRET to [40:67h] */
+			SH_RET467     = 0x0c, /**< Return to [40:67h] */
 
-		// POST status codes
-		static const uint8_t POST_POWER    = 0x80; /**< Power failure */
-		static const uint8_t POST_CHECKSUM = 0x40; /**< Checksum OK */
-		static const uint8_t POST_CONFIG   = 0x20; /**< Invalid config */
-		static const uint8_t POST_MEMDIFF  = 0x10; /**< Memory size different from entry */
-		static const uint8_t POST_HDD      = 0x08; /**< HDD init failure */
-		static const uint8_t POST_CLOCK    = 0x04; /**< RTC failure */
+			// POST status codes
+			POST_POWER    = 0x80, /**< Power failure */
+			POST_CHECKSUM = 0x40, /**< Checksum OK */
+			POST_CONFIG   = 0x20, /**< Invalid config */
+			POST_MEMDIFF  = 0x10, /**< Memory size different from entry */
+			POST_HDD      = 0x08, /**< HDD init failure */
+			POST_CLOCK    = 0x04, /**< RTC failure */
 
-		// Status register A
-		static const uint8_t A_UPDATE      = 0x80; /**< Update in progress */
+			// Status register A
+			A_UPDATE      = 0x80, /**< Update in progress */
 
-		// Status register B
-		static const uint8_t B_HALTED      = 0x80; /**< RTC halted */
-		static const uint8_t B_SQUARE      = 0x08; /**< Enable square wave output */
-		static const uint8_t B_BCD         = 0x04; /**< Time and date BCD coded */
-		static const uint8_t B_24H         = 0x02; /**< 24 hour mode */
-		static const uint8_t B_DAYLIGHT    = 0x01; /**< Daylight saving time */
+			// Status register B
+			B_HALTED      = 0x80, /**< RTC halted */
+			B_SQUARE      = 0x08, /**< Enable square wave output */
+			B_BCD         = 0x04, /**< Time and date BCD coded */
+			B_24H         = 0x02, /**< 24 hour mode */
+			B_DAYLIGHT    = 0x01, /**< Daylight saving time */
 
-		// Status register B & C interrupt flags
-		static const uint8_t IRQ_PENDING   = 0x80; /**< IRQ pending */
-		static const uint8_t IRQ_PER       = 0x40; /**< Periodic interrupt */
-		static const uint8_t IRQ_ALARM     = 0x20; /**< Alarm interrupt */
-		static const uint8_t IRQ_UPDATE    = 0x10; /**< Update interrupt */
+			// Status register B & C interrupt flags
+			IRQ_PENDING   = 0x80, /**< IRQ pending */
+			IRQ_PER       = 0x40, /**< Periodic interrupt */
+			IRQ_ALARM     = 0x20, /**< Alarm interrupt */
+			IRQ_UPDATE    = 0x10, /**< Update interrupt */
 
-		// Status register D
-		static const uint8_t D_VALID       = 0x80; /**< RTC data valid */
+			// Status register D
+			D_VALID       = 0x80  /**< RTC data valid */
+		};
 
 		READ_WRITE_REG(Second, REG_SEC);
 		READ_WRITE_REG(Minute, REG_MIN);

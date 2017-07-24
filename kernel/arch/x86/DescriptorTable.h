@@ -66,18 +66,21 @@ namespace Kernel
 #endif
 		} PACKED;
 
-		static const uint32_t D_TSSA286    = 0x1; /**< Task State Segment (286 style, available) */
-		static const uint32_t D_LDT        = 0x2; /**< Local Descriptor Table */
-		static const uint32_t D_TSSB286    = 0x3; /**< Task State Segment (286 style, busy) */
-		static const uint32_t D_CALL286    = 0x4; /**< Call Gate (286 style) */
-		static const uint32_t D_TASK       = 0x5; /**< Task Gate */
-		static const uint32_t D_INT286     = 0x6; /**< Interrupt Gate (286 style) */
-		static const uint32_t D_TRAP286    = 0x7; /**< Trap Gate (286 style) */
-		static const uint32_t D_TSSA386    = 0x9; /**< Task State Segment (386 style, available) */
-		static const uint32_t D_TSSB386    = 0xb; /**< Task State Segment (386 style, busy) */
-		static const uint32_t D_CALL386    = 0xc; /**< Call Gate (386 style) */
-		static const uint32_t D_INT386     = 0xe; /**< Interrupt Gate (386 style) */
-		static const uint32_t D_TRAP386    = 0xf; /**< Trap Gate (386 style) */
+		enum DescType : uint32_t
+		{
+			D_TSSA286    = 0x1, /**< Task State Segment (286 style, available) */
+			D_LDT        = 0x2, /**< Local Descriptor Table */
+			D_TSSB286    = 0x3, /**< Task State Segment (286 style, busy) */
+			D_CALL286    = 0x4, /**< Call Gate (286 style) */
+			D_TASK       = 0x5, /**< Task Gate */
+			D_INT286     = 0x6, /**< Interrupt Gate (286 style) */
+			D_TRAP286    = 0x7, /**< Trap Gate (286 style) */
+			D_TSSA386    = 0x9, /**< Task State Segment (386 style, available) */
+			D_TSSB386    = 0xb, /**< Task State Segment (386 style, busy) */
+			D_CALL386    = 0xc, /**< Call Gate (386 style) */
+			D_INT386     = 0xe, /**< Interrupt Gate (386 style) */
+			D_TRAP386    = 0xf  /**< Trap Gate (386 style) */
+		};
 
 		Segment& Seg(int n);
 		System& Sys(int n);

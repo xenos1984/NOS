@@ -55,27 +55,33 @@ namespace Kernel
 		}
 
 	public:
-		static const uint8_t OP_FALSE = 0;
-		static const uint8_t OP_S_AND_D = 1;
-		static const uint8_t OP_S_AND_NOT_D = 2;
-		static const uint8_t OP_S = 3;
-		static const uint8_t OP_NOT_S_AND_D = 4;
-		static const uint8_t OP_D = 5;
-		static const uint8_t OP_S_XOR_D = 6;
-		static const uint8_t OP_S_OR_D = 7;
-		static const uint8_t OP_NOT_S_AND_NOT_D = 8;
-		static const uint8_t OP_S_EQ_D = 9;
-		static const uint8_t OP_NOT_D = 10;
-		static const uint8_t OP_S_OR_NOT_D = 11;
-		static const uint8_t OP_NOT_S = 12;
-		static const uint8_t OP_NOT_S_OR_D = 13;
-		static const uint8_t OP_NOT_S_OR_NOT_D = 14;
-		static const uint8_t OP_TRUE = 15;
+		enum BitOps : uint8_t
+		{
+			OP_FALSE = 0,
+			OP_S_AND_D = 1,
+			OP_S_AND_NOT_D = 2,
+			OP_S = 3,
+			OP_NOT_S_AND_D = 4,
+			OP_D = 5,
+			OP_S_XOR_D = 6,
+			OP_S_OR_D = 7,
+			OP_NOT_S_AND_NOT_D = 8,
+			OP_S_EQ_D = 9,
+			OP_NOT_D = 10,
+			OP_S_OR_NOT_D = 11,
+			OP_NOT_S = 12,
+			OP_NOT_S_OR_D = 13,
+			OP_NOT_S_OR_NOT_D = 14,
+			OP_TRUE = 15
+		};
 
-		static const uint8_t HOP_TRUE = 0;
-		static const uint8_t HOP_H = 1;
-		static const uint8_t HOP_S = 2;
-		static const uint8_t HOP_S_AND_H = 3;
+		enum HalftoneOps : uint8_t
+		{
+			HOP_TRUE = 0,
+			HOP_H = 1,
+			HOP_S = 2,
+			HOP_S_AND_H = 3
+		};
 
 		static void BitBlt(bool wait, void* source, void* dest, int16_t xs, int16_t ys, int16_t xd, int16_t yd, uint16_t xc, uint16_t yc, uint8_t cop = OP_S, uint8_t chop = HOP_S, uint16_t* const ht = nullptr, uint16_t em1 = 0xffff, uint16_t em2 = 0xffff, uint16_t em3 = 0xffff);
 	};
