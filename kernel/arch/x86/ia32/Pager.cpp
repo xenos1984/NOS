@@ -13,68 +13,7 @@
 namespace Kernel
 {
 	namespace Pager
-	{/*
-		template<> void MapPage<Memory::PGB_4K>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type)
-		{
-			unsigned int tab = virt >> Memory::PGB_4M;
-			unsigned int entry = (virt >> Memory::PGB_4K) & 0x3ff;
-			Memory::MemType tabtype;
-
-			if(!PageTab::Exists(tab))
-			{
-				switch(type)
-				{
-				case Memory::MemType::KERNEL_EXEC:
-				case Memory::MemType::KERNEL_RO:
-				case Memory::MemType::KERNEL_RW:
-					tabtype = Memory::MemType::KERNEL_RW;
-					break;
-				case Memory::MemType::USER_EXEC:
-				case Memory::MemType::USER_RO:
-				case Memory::MemType::USER_RW:
-				case Memory::MemType::USER_COW:
-				case Memory::MemType::USER_DEMAND:
-					tabtype = Memory::MemType::USER_RW;
-					break;
-				default:
-					tabtype = Memory::MemType::KERNEL_RW;
-				}
-				PageTab::Create(tab, tabtype);
-			}
-
-			PageTableEntry& pte = PageTab::Table(tab).Entry(entry);
-			pte.Set<Memory::PGB_4K>(phys, type);
-			Invalidate(virt);
-		}
-
-		template<> void MapPage<Memory::PGB_4M>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type)
-		{
-			PageTableEntry& pte = PageTableTop().Entry(virt >> Memory::PGB_4M);
-			pte.Set<Memory::PGB_4M>(phys, type);
-			Invalidate(virt);
-		}
-
-		template<> void UnmapPage<Memory::PGB_4K>(uintptr_t virt)
-		{
-			unsigned int tab = virt >> Memory::PGB_4M;
-			unsigned int entry = (virt >> Memory::PGB_4K) & 0x3ff;
-
-			PageTab& pt = PageTab::Table(tab);
-			PageTableEntry& pte = pt.Entry(entry);
-			pte.Clear();
-			Invalidate(virt);
-
-			if(pt.IsEmpty())
-				pt.Destroy();
-		}
-
-		template<> void UnmapPage<Memory::PGB_4M>(uintptr_t virt)
-		{
-			PageTableEntry& pte = PageTableTop().Entry(virt >> Memory::PGB_4M);
-			pte.Clear();
-			Invalidate(virt);
-		}
-*/
+	{
 		template void MapPage<Memory::PGB_4K>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type);
 		template void UnmapPage<Memory::PGB_4K>(uintptr_t virt);
 #ifdef CONFIG_PAE
