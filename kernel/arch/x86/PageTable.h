@@ -120,7 +120,7 @@ namespace Kernel
 			return Table(i).Pointer().IsPresent();
 		}
 
-		template<> bool PageTableLevel<0>::Exists(unsigned long i __attribute__((unused)))
+		template<> inline bool PageTableLevel<0>::Exists(unsigned long i __attribute__((unused)))
 		{
 			return true;
 		}
@@ -209,59 +209,6 @@ namespace Kernel
 		template<> constexpr unsigned int PageSizeLevel<Memory::PGB_4K> = 3;
 		template<> constexpr unsigned int PageSizeLevel<Memory::PGB_2M> = 2;
 		template<> constexpr unsigned int PageSizeLevel<Memory::PGB_1G> = 1;
-#endif
-
-		template<Memory::PageBits bits> void MapPage(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type)
-		{
-			static_assert(IsValidSize(bits), "invalid page size");
-			static_assert(PageSizeLevel<bits> < PAGE_LEVELS, "page table level too large");
-
-			unsigned long tab = (virt & 0xffffffffffffULL) >> (bits + PAGE_BITS[PageSizeLevel<bits>]);
-			unsigned long entry = (virt >> bits) & ((1 << PAGE_BITS[PageSizeLevel<bits>]) - 1);
-
-			if(!PageTableLevel<PageSizeLevel<bits>>::Exists(tab))
-				PageTableLevel<PageSizeLevel<bits>>::Create(tab, ParentType(type));
-
-			PageTableEntry& pte = PageTableLevel<PageSizeLevel<bits>>::Table(tab).Entry(entry);
-			pte.Set<bits>(phys, type);
-			Invalidate(virt);
-		}
-
-		template<Memory::PageBits bits> void UnmapPage(uintptr_t virt)
-		{
-			static_assert(IsValidSize(bits), "invalid page size");
-			static_assert(PageSizeLevel<bits> < PAGE_LEVELS, "page table level too large");
-
-			unsigned int tab = (virt & 0xffffffffffffULL) >> (bits + PAGE_BITS[PageSizeLevel<bits>]);
-			unsigned long entry = (virt >> bits) & ((1 << PAGE_BITS[PageSizeLevel<bits>]) - 1);
-
-			PageTableLevel<PageSizeLevel<bits>>& pt = PageTableLevel<PageSizeLevel<bits>>::Table(tab);
-			PageTableEntry& pte = pt.Entry(entry);
-			pte.Clear();
-			Invalidate(virt);
-
-			if(pt.IsEmpty())
-				pt.Destroy();
-		}
-
-#if (defined ARCH_X86_IA32) && (!defined CONFIG_PAE)
-		template<> void MapPage<Memory::PGB_4M>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type)
-		{
-			unsigned long entry = virt >> Memory::PGB_4M;
-
-			PageTableEntry& pte = PageTableTop().Entry(entry);
-			pte.Set<Memory::PGB_4M>(phys, type);
-			Invalidate(virt);
-		}
-
-		template<> void UnmapPage<Memory::PGB_4M>(uintptr_t virt)
-		{
-			unsigned long entry = virt >> Memory::PGB_4M;
-
-			PageTableEntry& pte = PageTableTop().Entry(entry);
-			pte.Clear();
-			Invalidate(virt);
-		}
 #endif
 	}
 }

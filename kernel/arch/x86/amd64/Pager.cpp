@@ -14,13 +14,6 @@ namespace Kernel
 {
 	namespace Pager
 	{
-		template void MapPage<Memory::PGB_4K>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type);
-		template void UnmapPage<Memory::PGB_4K>(uintptr_t virt);
-		template void MapPage<Memory::PGB_2M>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type);
-		template void UnmapPage<Memory::PGB_2M>(uintptr_t virt);
-		template void MapPage<Memory::PGB_1G>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type);
-		template void UnmapPage<Memory::PGB_1G>(uintptr_t virt);
-
 		Memory::PageBits MappedSize(uintptr_t virt)
 		{
 			// Normalize address to smallest possible page size and remove sign extension.
