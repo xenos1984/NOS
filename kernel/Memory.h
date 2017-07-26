@@ -14,9 +14,11 @@ namespace Kernel
 			KERNEL_EXEC,
 			KERNEL_RO,
 			KERNEL_RW,
+			KERNEL_PAGETAB,
 			USER_EXEC,
 			USER_RO,
 			USER_RW,
+			USER_PAGETAB,
 			USER_COW,
 			USER_DEMAND
 		};

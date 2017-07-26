@@ -180,14 +180,16 @@ namespace Kernel
 			case Memory::MemType::KERNEL_EXEC:
 			case Memory::MemType::KERNEL_RO:
 			case Memory::MemType::KERNEL_RW:
-				return Memory::MemType::KERNEL_RW;
+			case Memory::MemType::KERNEL_PAGETAB:
+				return Memory::MemType::KERNEL_PAGETAB;
 				break;
 			case Memory::MemType::USER_EXEC:
 			case Memory::MemType::USER_RO:
 			case Memory::MemType::USER_RW:
+			case Memory::MemType::USER_PAGETAB:
 			case Memory::MemType::USER_COW:
 			case Memory::MemType::USER_DEMAND:
-				return Memory::MemType::USER_RW;
+				return Memory::MemType::USER_PAGETAB;
 				break;
 			default:
 				return Memory::MemType::KERNEL_RW;

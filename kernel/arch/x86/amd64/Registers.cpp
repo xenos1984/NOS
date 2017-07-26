@@ -4,6 +4,7 @@
 #include <Memory.h>
 #include INC_SUBARCH(Registers.h)
 #include INC_ARCH(ControlRegisters.h)
+#include INC_ARCH(PageTable.h)
 #include <Console.h>
 
 using namespace Kernel;
@@ -34,4 +35,22 @@ void PageFaultErrorCode::Dump(void)
 	Console::WriteFormat("CR2 = 0x%16lx; %s, %s,\n", cr2, (Present ? "protection violation" : "non-present page"), (WriteAccess ? "write" : "read"));
 	Console::WriteFormat("%s, %s, %s\n", (UserMode ? "user" : "supervisor"), (ReservedBits ? "reserved bits" : "no reserved bits"), (InstructionFetch ? "instruction fetch" : "data access"));
 	Console::WriteFormat("Faulting page: %d / %d / %d / %d\n", (cr2 >> Memory::PGB_512G) & 0x1ff, (cr2 >> Memory::PGB_1G) & 0x1ff, (cr2 >> Memory::PGB_2M) & 0x1ff, (cr2 >> Memory::PGB_4K) & 0x1ff);
+
+	Pager::PageTableEntry& pte0 = Pager::PageTableTop().Entry((cr2 >> Memory::PGB_512G) & 0x1ff);
+	Console::WriteFormat("Page level 0: 0x%16lx\n", pte0.Raw());
+	if(pte0.IsPresent())
+	{
+		Pager::PageTableEntry& pte1 = Pager::PageDirPtr::Table((cr2 >> Memory::PGB_512G) & 0x1ff).Entry((cr2 >> Memory::PGB_1G) & 0x1ff);
+		Console::WriteFormat("Page level 1: 0x%16lx\n", pte1.Raw());
+		if(pte1.IsPresent() && !pte1.IsLarge())
+		{
+			Pager::PageTableEntry& pte2 = Pager::PageDir::Table((cr2 >> Memory::PGB_1G) & 0x3ffff).Entry((cr2 >> Memory::PGB_2M) & 0x1ff);
+			Console::WriteFormat("Page level 2: 0x%16lx\n", pte2.Raw());
+			if(pte2.IsPresent() && !pte2.IsLarge())
+			{
+				Pager::PageTableEntry& pte3 = Pager::PageTab::Table((cr2 >> Memory::PGB_2M) & 0x7ffffff).Entry((cr2 >> Memory::PGB_4K) & 0x1ff);
+				Console::WriteFormat("Page level 3: 0x%16lx\n", pte3.Raw());
+			}
+		}
+	}
 }

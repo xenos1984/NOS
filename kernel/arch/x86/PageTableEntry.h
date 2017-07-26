@@ -47,11 +47,15 @@ namespace Kernel
 					return PAGE_PRESENT | PAGE_GLOBAL;
 				case Memory::MemType::KERNEL_RW:
 					return PAGE_PRESENT | PAGE_WRITEABLE | PAGE_GLOBAL;
+				case Memory::MemType::KERNEL_PAGETAB:
+					return PAGE_PRESENT | PAGE_WRITEABLE;
 				case Memory::MemType::USER_EXEC:
 					return PAGE_PRESENT | PAGE_USER;
 				case Memory::MemType::USER_RO:
 					return PAGE_PRESENT | PAGE_USER;
 				case Memory::MemType::USER_RW:
+					return PAGE_PRESENT | PAGE_WRITEABLE | PAGE_USER;
+				case Memory::MemType::USER_PAGETAB:
 					return PAGE_PRESENT | PAGE_WRITEABLE | PAGE_USER;
 				case Memory::MemType::USER_COW:
 					return PAGE_PRESENT | PAGE_USER;
@@ -76,6 +80,15 @@ namespace Kernel
 				else
 					raw = phys | TypeFlags(type) | PAGE_LARGE;
 				return *this;
+			}
+
+#if defined ARCH_X86_AMD64 || defined CONFIG_PAE
+			uint64_t Raw(void) const
+#else
+			uint32_t Raw(void) const
+#endif
+			{
+				return raw;
 			}
 
 			Memory::PhysAddr Phys(void) const
