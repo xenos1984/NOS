@@ -167,35 +167,6 @@ namespace Kernel
 		typedef PageTableLevel<3> PageTab;
 #endif
 
-		inline void Invalidate(uintptr_t virt)
-		{
-			asm volatile ("invlpg (%0)" : : "r"(virt) : "memory");
-		}
-
-		/** Determine which attributes to set for the page table mapping this page. */
-		static constexpr Memory::MemType ParentType(Memory::MemType type)
-		{
-			switch(type)
-			{
-			case Memory::MemType::KERNEL_EXEC:
-			case Memory::MemType::KERNEL_RO:
-			case Memory::MemType::KERNEL_RW:
-			case Memory::MemType::KERNEL_PAGETAB:
-				return Memory::MemType::KERNEL_PAGETAB;
-				break;
-			case Memory::MemType::USER_EXEC:
-			case Memory::MemType::USER_RO:
-			case Memory::MemType::USER_RW:
-			case Memory::MemType::USER_PAGETAB:
-			case Memory::MemType::USER_COW:
-			case Memory::MemType::USER_DEMAND:
-				return Memory::MemType::USER_PAGETAB;
-				break;
-			default:
-				return Memory::MemType::KERNEL_RW;
-			}
-		}
-
 		template<Memory::PageBits bits> constexpr unsigned int PageSizeLevel = ~0;
 
 #ifdef ARCH_X86_IA32
