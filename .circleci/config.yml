@@ -24,23 +24,22 @@ jobs:
                 keys:
                     - nos-source-{{ checksum ".circle-sha" }}
             - run: ./configure --host=i686-pc-elf
-            - run: make 2>&1 | tee build.txt
-            - run: mv config.log config.txt
+            - run: make 2>&1 | tee build.log
             - store_artifacts:
-                path: config.txt
-                destination: i686-pc-elf
+                path: config.log
+                destination: i686-pc-elf/config.txt
             - store_artifacts:
-                path: build.txt
-                destination: i686-pc-elf
+                path: build.log
+                destination: i686-pc-elf/build.txt
             - store_artifacts:
                 path: kernel/arch/x86/Kernel.elf
-                destination: i686-pc-elf
+                destination: i686-pc-elf/Kernel.elf
             - store_artifacts:
                 path: drivers/pc/floppy/Floppy.elf
-                destination: i686-pc-elf
+                destination: i686-pc-elf/Floppy.elf
             - store_artifacts:
                 path: images/x86/NOS.iso
-                destination: i686-pc-elf
+                destination: i686-pc-elf/NOS.iso
 
     build_x86_64:
         docker:
@@ -52,23 +51,22 @@ jobs:
                 keys:
                     - nos-source-{{ checksum ".circle-sha" }}
             - run: ./configure --host=x86_64-pc-elf
-            - run: make 2>&1 | tee build.txt
-            - run: mv config.log config.txt
+            - run: make 2>&1 | tee build.log
             - store_artifacts:
-                path: config.txt
-                destination: x86_64-pc-elf
+                path: config.log
+                destination: x86_64-pc-elf/config.txt
             - store_artifacts:
-                path: build.txt
-                destination: x86_64-pc-elf
+                path: build.log
+                destination: x86_64-pc-elf/build.txt
             - store_artifacts:
                 path: kernel/arch/x86/Kernel.elf
-                destination: x86_64-pc-elf
+                destination: x86_64-pc-elf/Kernel.elf
             - store_artifacts:
                 path: drivers/pc/floppy/Floppy.elf
-                destination: x86_64-pc-elf
+                destination: x86_64-pc-elf/Floppy.elf
             - store_artifacts:
                 path: images/x86/NOS.iso
-                destination: x86_64-pc-elf
+                destination: x86_64-pc-elf/NOS.iso
 
 workflows:
     version: 2
