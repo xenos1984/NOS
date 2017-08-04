@@ -74,5 +74,6 @@ Kernel_elf_LDFLAGS = \
 	-Wl,-shared,-soname=Kernel.elf \
 	-T ${subarch_subdir}/ldscript \
 	-T ../../exports.lds \
-	-Wl,-Map,Kernel.map
+	-Wl,-Map,Kernel.map \
+	-Wl,-u,Entry
 
