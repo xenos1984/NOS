@@ -40,6 +40,60 @@ jobs:
             - store_artifacts:
                 path: images/x86/NOS.iso
                 destination: i686-pc-elf/NOS.iso
+            - run: make clean
+            - run: ./configure --host=i686-pc-elf --disable-smp
+            - run: make 2>&1 | tee build.log
+            - store_artifacts:
+                path: config.log
+                destination: i686-pc-elf-sp/config.txt
+            - store_artifacts:
+                path: build.log
+                destination: i686-pc-elf-sp/build.txt
+            - store_artifacts:
+                path: kernel/arch/x86/Kernel.elf
+                destination: i686-pc-elf-sp/Kernel.elf
+            - store_artifacts:
+                path: drivers/pc/floppy/Floppy.elf
+                destination: i686-pc-elf-sp/Floppy.elf
+            - store_artifacts:
+                path: images/x86/NOS.iso
+                destination: i686-pc-elf-sp/NOS.iso
+            - run: make clean
+            - run: ./configure --host=i686-pc-elf --disable-acpi
+            - run: make 2>&1 | tee build.log
+            - store_artifacts:
+                path: config.log
+                destination: i686-pc-elf-noacpi/config.txt
+            - store_artifacts:
+                path: build.log
+                destination: i686-pc-elf-noacpi/build.txt
+            - store_artifacts:
+                path: kernel/arch/x86/Kernel.elf
+                destination: i686-pc-elf-noacpi/Kernel.elf
+            - store_artifacts:
+                path: drivers/pc/floppy/Floppy.elf
+                destination: i686-pc-elf-noacpi/Floppy.elf
+            - store_artifacts:
+                path: images/x86/NOS.iso
+                destination: i686-pc-elf-noacpi/NOS.iso
+            - run: make clean
+            - run: ./configure --host=i686-pc-elf --disable-smp --disable-acpi
+            - run: make 2>&1 | tee build.log
+            - store_artifacts:
+                path: config.log
+                destination: i686-pc-elf-sp-noacpi/config.txt
+            - store_artifacts:
+                path: build.log
+                destination: i686-pc-elf-sp-noacpi/build.txt
+            - store_artifacts:
+                path: kernel/arch/x86/Kernel.elf
+                destination: i686-pc-elf-sp-noacpi/Kernel.elf
+            - store_artifacts:
+                path: drivers/pc/floppy/Floppy.elf
+                destination: i686-pc-elf-sp-noacpi/Floppy.elf
+            - store_artifacts:
+                path: images/x86/NOS.iso
+                destination: i686-pc-elf-sp-noacpi/NOS.iso
 
     build_x86_64:
         docker:
@@ -67,6 +121,60 @@ jobs:
             - store_artifacts:
                 path: images/x86/NOS.iso
                 destination: x86_64-pc-elf/NOS.iso
+            - run: make clean
+            - run: ./configure --host=x86_64-pc-elf --disable-smp
+            - run: make 2>&1 | tee build.log
+            - store_artifacts:
+                path: config.log
+                destination: x86_64-pc-elf-sp/config.txt
+            - store_artifacts:
+                path: build.log
+                destination: x86_64-pc-elf-sp/build.txt
+            - store_artifacts:
+                path: kernel/arch/x86/Kernel.elf
+                destination: x86_64-pc-elf-sp/Kernel.elf
+            - store_artifacts:
+                path: drivers/pc/floppy/Floppy.elf
+                destination: x86_64-pc-elf-sp/Floppy.elf
+            - store_artifacts:
+                path: images/x86/NOS.iso
+                destination: x86_64-pc-elf-sp/NOS.iso
+            - run: make clean
+            - run: ./configure --host=x86_64-pc-elf --disable-acpi
+            - run: make 2>&1 | tee build.log
+            - store_artifacts:
+                path: config.log
+                destination: x86_64-pc-elf-noacpi/config.txt
+            - store_artifacts:
+                path: build.log
+                destination: x86_64-pc-elf-noacpi/build.txt
+            - store_artifacts:
+                path: kernel/arch/x86/Kernel.elf
+                destination: x86_64-pc-elf-noacpi/Kernel.elf
+            - store_artifacts:
+                path: drivers/pc/floppy/Floppy.elf
+                destination: x86_64-pc-elf-noacpi/Floppy.elf
+            - store_artifacts:
+                path: images/x86/NOS.iso
+                destination: x86_64-pc-elf-noacpi/NOS.iso
+            - run: make clean
+            - run: ./configure --host=x86_64-pc-elf --disable-smp --disable-acpi
+            - run: make 2>&1 | tee build.log
+            - store_artifacts:
+                path: config.log
+                destination: x86_64-pc-elf-sp-noacpi/config.txt
+            - store_artifacts:
+                path: build.log
+                destination: x86_64-pc-elf-sp-noacpi/build.txt
+            - store_artifacts:
+                path: kernel/arch/x86/Kernel.elf
+                destination: x86_64-pc-elf-sp-noacpi/Kernel.elf
+            - store_artifacts:
+                path: drivers/pc/floppy/Floppy.elf
+                destination: x86_64-pc-elf-sp-noacpi/Floppy.elf
+            - store_artifacts:
+                path: images/x86/NOS.iso
+                destination: x86_64-pc-elf-sp-noacpi/NOS.iso
 
 workflows:
     version: 2
