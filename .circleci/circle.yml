@@ -1,0 +1,84 @@
+version: 2
+
+jobs:
+    autogen:
+        docker:
+            - image: xenos1984/cross-source:latest
+        working_directory: ~/nos
+        steps:
+            - checkout
+            - run: ./autogen.sh
+            - run: echo $CIRCLE_SHA1 > .circle-sha
+            - save_cache:
+                key: nos-source-{{ checksum ".circle-sha" }}
+                paths:
+                    - ~/nos
+
+    build_i686:
+        docker:
+            - image: xenos1984/cross-i686-pc-elf:latest
+        working_directory: ~/nos
+        steps:
+            - run: echo $CIRCLE_SHA1 > .circle-sha
+            - restore_cache:
+                keys:
+                    - nos-source-{{ checksum ".circle-sha" }}
+            - run: ./configure --host=i686-pc-elf
+            - run: make 2>&1 | tee build.txt
+            - run: mv config.log config.txt
+            - store_artifacts:
+                path: config.txt
+                destination: i686-pc-elf
+            - store_artifacts:
+                path: build.txt
+                destination: i686-pc-elf
+            - store_artifacts:
+                path: kernel/arch/x86/Kernel.elf
+                destination: i686-pc-elf
+            - store_artifacts:
+                path: drivers/pc/floppy/Floppy.elf
+                destination: i686-pc-elf
+            - store_artifacts:
+                path: images/x86/NOS.iso
+                destination: i686-pc-elf
+
+    build_x86_64:
+        docker:
+            - image: xenos1984/cross-x86_64-pc-elf:latest
+        working_directory: ~/nos
+        steps:
+            - run: echo $CIRCLE_SHA1 > .circle-sha
+            - restore_cache:
+                keys:
+                    - nos-source-{{ checksum ".circle-sha" }}
+            - run: ./configure --host=x86_64-pc-elf
+            - run: make 2>&1 | tee build.txt
+            - run: mv config.log config.txt
+            - store_artifacts:
+                path: config.txt
+                destination: x86_64-pc-elf
+            - store_artifacts:
+                path: build.txt
+                destination: x86_64-pc-elf
+            - store_artifacts:
+                path: kernel/arch/x86/Kernel.elf
+                destination: x86_64-pc-elf
+            - store_artifacts:
+                path: drivers/pc/floppy/Floppy.elf
+                destination: x86_64-pc-elf
+            - store_artifacts:
+                path: images/x86/NOS.iso
+                destination: x86_64-pc-elf
+
+workflows:
+    version: 2
+    build:
+        jobs:
+            - autogen
+            - build_i686:
+                requires:
+                    - autogen
+            - build_x86_64:
+                requires:
+                    - autogen
+
