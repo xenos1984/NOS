@@ -119,14 +119,14 @@ void SECTION(".init.text") X86_64TaskManager::InitSmp(void)
 	Processor* pr;
 	SMP::Cpu* sc;
 
-	new (taskman_space) X86_64TaskManager(smp().GetProcessorCount());
+	new (taskman_space) X86_64TaskManager(SMP::GetProcessorCount());
 
 	// temporarily restore identity mapping
 	*((unsigned long*)0xffffff7fbfdfe000) = *((unsigned long*)0xffffff7fbfdfeff8);
 	*((unsigned long*)0xffffff7fbfc00000) = *((unsigned long*)0xffffff7fbfc00ff0);
 	for(i = 0; i < x86_64taskman().numcpus; i++)
 	{
-		sc = smp().GetProcessor(i);
+		sc = SMP::GetProcessor(i);
 		new (&(x86_64taskman().cpu[i])) Processor(sc);
 		pr = &(x86_64taskman().cpu[i]);
 		if(sc->Flags & SMP::CPU_BSP) // Hey, it's me!

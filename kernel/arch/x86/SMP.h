@@ -4,13 +4,13 @@
 #define __ARCH_X86_SMP_H__
 
 #include <cstdint>
+#include <Memory.h>
 
 #ifdef CONFIG_SMP
 namespace Kernel
 {
-	class SMP
+	namespace SMP
 	{
-	public:
 		/** SMP floating pointer structure. */
 		struct FloatingPointer
 		{
@@ -114,20 +114,8 @@ namespace Kernel
 			uint32_t RangeList; /**< Predefined address range list. */
 		} PACKED;
 
-	private:
-		int numcpus, numbuses, numioapics, numints, numlints;
-		Cpu** cpus;
-		Bus** buses;
-		IOApic** ioapics;
-		Interrupt** ints;
-		Interrupt** lints;
+		void Init(FloatingPointer* sfp);
 
-		FloatingPointer* pointer;
-		ConfigTable* table;
-
-		SMP(FloatingPointer* sfp);
-
-	public:
 		static const uint32_t POINTER_MAGIC  = 0x5f504d5f; //'_MP_'
 		static const uint32_t TABLE_MAGIC    = 0x504d4350; //'PCMP'
 
@@ -150,7 +138,12 @@ namespace Kernel
 
 		static const uint8_t IMCR_PRESENT    = 0x80;
 
-		static bool Init(unsigned long first, unsigned long last);
+		bool SearchPointer(Memory::PhysAddr first, Memory::PhysAddr last);
+
+		extern int numcpus, numioapics;
+		extern Cpu** cpus;
+		extern IOApic** ioapics;
+		extern FloatingPointer* pointer;
 
 		inline int GetProcessorCount(void)
 		{
@@ -181,8 +174,4 @@ namespace Kernel
 	};
 }
 #endif
-
-extern char smp_space[];
-inline Kernel::SMP& smp(void) { return(reinterpret_cast<Kernel::SMP&>(smp_space)); }
-
 #endif

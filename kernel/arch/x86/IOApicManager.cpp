@@ -25,13 +25,13 @@ void SECTION(".init.text") IOApicManager::InitSmp(void)
 	unsigned int i, m, n;
 	IOApic* io;
 
-	n = smp().GetIOApicCount();
+	n = SMP::GetIOApicCount();
 	io = (IOApic*) new char[n * sizeof(IOApic)];
 
 	Port::WriteU8(0x21, 0xff);
 	Port::WriteU8(0xa1, 0xff);
 
-	if(smp().HasIMCR())
+	if(SMP::HasIMCR())
 	{
 		Port::WriteU8(0x22, 0x70);
 		Port::WriteU8(0x23, 0x01);
@@ -40,7 +40,7 @@ void SECTION(".init.text") IOApicManager::InitSmp(void)
 	m = 0;
 	for(i = 0; i < n; i++)
 	{
-		new (&io[i]) IOApic(smp().GetIOApic(i)->Address, m);
+		new (&io[i]) IOApic(SMP::GetIOApic(i)->Address, m);
 		m += io[i].GetMaxEntry() + 1;
 	}
 

@@ -10,11 +10,11 @@
 #include <Console.h>
 #include <Symbol.h>
 
+#ifdef CONFIG_ACPI
 namespace Kernel
 {
 	namespace ACPI
 	{
-
 		int numcpus, numioapics, numirqsrcs, numnmisrcs, numlapicnmis, numlapicaddrs, numiosapics, numlsapics, numplatirqs, numx2apics, numx2apicnmis;
 
 		LApic** cpus;
@@ -28,8 +28,6 @@ namespace Kernel
 		PlatformInterrupt** platirqs;
 		X2Apic** x2apics;
 		X2ApicNMI** x2apicnmis;
-
-#ifdef CONFIG_ACPI
 
 		SECTION(".init.text") void Init(TableHeader* header, unsigned int rev)
 		{
@@ -308,7 +306,7 @@ namespace Kernel
 			}
 			return(n);
 		}
-#endif
 	}
 }
+#endif
 

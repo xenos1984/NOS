@@ -86,11 +86,11 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, uint32_t mbiph
 	else
 #endif
 #ifdef CONFIG_SMP
-	if(SMP::Init(physaddr, physaddr + 0x400) || SMP::Init(0x000f0000, 0x00100000))
+	if(SMP::SearchPointer(physaddr, physaddr + 0x400) || SMP::SearchPointer(0x000f0000, 0x00100000))
 	{
 		IOApicManager::InitSmp();
 		X86_64TaskManager::InitSmp();
-		new (sysclock_space) PITClock(cmos().GetTime(), smp().GetISAIRQ(0));
+		new (sysclock_space) PITClock(cmos().GetTime(), SMP::GetISAIRQ(0));
 	}
 	else
 #endif

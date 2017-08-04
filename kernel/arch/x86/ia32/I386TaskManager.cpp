@@ -125,12 +125,12 @@ void SECTION(".init.text") I386TaskManager::InitSmp(void)
 	Processor* pr;
 	SMP::Cpu* sc;
 
-	new (taskman_space) I386TaskManager(smp().GetProcessorCount());
+	new (taskman_space) I386TaskManager(SMP::GetProcessorCount());
 	IOApicManager::InitSmp();
 
 	for(i = 0; i < i386taskman().numcpus; i++)
 	{
-		sc = smp().GetProcessor(i);
+		sc = SMP::GetProcessor(i);
 		new (&(i386taskman().cpu[i])) Processor(sc);
 		pr = &(i386taskman().cpu[i]);
 		if(sc->Flags & SMP::CPU_BSP) // Hey, it's me!
