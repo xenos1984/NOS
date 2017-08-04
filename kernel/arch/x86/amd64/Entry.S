@@ -314,6 +314,7 @@ apentry:
 
 // need them here since APs can't access .data from real mode
 
+.section .init.text
 .type pGDT32, @object
 pGDT32 : .word GDT_LENGTH
          .long tabGDT - KERNEL_OFFSET

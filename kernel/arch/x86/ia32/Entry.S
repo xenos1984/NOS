@@ -235,6 +235,7 @@ apentry:
 
 // need them here since APs can't access .data from real mode
 
+.section .init.text
 .type pIDT, @object
 pIDT: .word IDT_LENGTH   // limit of 256 IDT slots
       .long tabIDT       // starting at tabIDT
