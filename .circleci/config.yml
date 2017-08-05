@@ -23,77 +23,14 @@ jobs:
             - restore_cache:
                 keys:
                     - nos-source-{{ checksum ".circle-sha" }}
-            - run: ./configure --host=i686-pc-elf
-            - run: make 2>&1 | tee build.log
-            - store_artifacts:
-                path: config.log
-                destination: i686-pc-elf/config.txt
-            - store_artifacts:
-                path: build.log
-                destination: i686-pc-elf/build.txt
-            - store_artifacts:
-                path: kernel/arch/x86/Kernel.elf
-                destination: i686-pc-elf/Kernel.elf
-            - store_artifacts:
-                path: drivers/pc/floppy/Floppy.elf
-                destination: i686-pc-elf/Floppy.elf
-            - store_artifacts:
-                path: images/x86/NOS.iso
-                destination: i686-pc-elf/NOS.iso
-            - run: make clean
-            - run: ./configure --host=i686-pc-elf --disable-smp
-            - run: make 2>&1 | tee build.log
-            - store_artifacts:
-                path: config.log
-                destination: i686-pc-elf-sp/config.txt
-            - store_artifacts:
-                path: build.log
-                destination: i686-pc-elf-sp/build.txt
-            - store_artifacts:
-                path: kernel/arch/x86/Kernel.elf
-                destination: i686-pc-elf-sp/Kernel.elf
-            - store_artifacts:
-                path: drivers/pc/floppy/Floppy.elf
-                destination: i686-pc-elf-sp/Floppy.elf
-            - store_artifacts:
-                path: images/x86/NOS.iso
-                destination: i686-pc-elf-sp/NOS.iso
-            - run: make clean
-            - run: ./configure --host=i686-pc-elf --disable-acpi
-            - run: make 2>&1 | tee build.log
-            - store_artifacts:
-                path: config.log
-                destination: i686-pc-elf-noacpi/config.txt
-            - store_artifacts:
-                path: build.log
-                destination: i686-pc-elf-noacpi/build.txt
-            - store_artifacts:
-                path: kernel/arch/x86/Kernel.elf
-                destination: i686-pc-elf-noacpi/Kernel.elf
-            - store_artifacts:
-                path: drivers/pc/floppy/Floppy.elf
-                destination: i686-pc-elf-noacpi/Floppy.elf
-            - store_artifacts:
-                path: images/x86/NOS.iso
-                destination: i686-pc-elf-noacpi/NOS.iso
-            - run: make clean
-            - run: ./configure --host=i686-pc-elf --disable-smp --disable-acpi
-            - run: make 2>&1 | tee build.log
-            - store_artifacts:
-                path: config.log
-                destination: i686-pc-elf-sp-noacpi/config.txt
-            - store_artifacts:
-                path: build.log
-                destination: i686-pc-elf-sp-noacpi/build.txt
-            - store_artifacts:
-                path: kernel/arch/x86/Kernel.elf
-                destination: i686-pc-elf-sp-noacpi/Kernel.elf
-            - store_artifacts:
-                path: drivers/pc/floppy/Floppy.elf
-                destination: i686-pc-elf-sp-noacpi/Floppy.elf
-            - store_artifacts:
-                path: images/x86/NOS.iso
-                destination: i686-pc-elf-sp-noacpi/NOS.iso
+            - run: .circleci/build_x86.sh i686-pc-elf mp-acpi
+            - run: .circleci/build_x86.sh i686-pc-elf mp-noacpi --disable-acpi
+            - run: .circleci/build_x86.sh i686-pc-elf sp-acpi --disable-smp
+            - run: .circleci/build_x86.sh i686-pc-elf sp-noacpi --disable-smp --disable-acpi
+            - save_cache:
+                key: nos-i686-pc-elf-{{ checksum ".circle-sha" }}
+                paths:
+                    - ~/i686-pc-elf
 
     build_x86_64:
         docker:
@@ -104,77 +41,33 @@ jobs:
             - restore_cache:
                 keys:
                     - nos-source-{{ checksum ".circle-sha" }}
-            - run: ./configure --host=x86_64-pc-elf
-            - run: make 2>&1 | tee build.log
+            - run: .circleci/build_x86.sh x86_64-pc-elf mp-acpi
+            - run: .circleci/build_x86.sh x86_64-pc-elf mp-noacpi --disable-acpi
+            - run: .circleci/build_x86.sh x86_64-pc-elf sp-acpi --disable-smp
+            - run: .circleci/build_x86.sh x86_64-pc-elf sp-noacpi --disable-smp --disable-acpi
+            - save_cache:
+                key: nos-x86_64-pc-elf-{{ checksum ".circle-sha" }}
+                paths:
+                    - ~/x86_64-pc-elf
+
+    collect:
+        docker:
+            - image: xenos1984/cross-source:latest
+        working_directory: ~/nos
+        steps:
+            - run: echo $CIRCLE_SHA1 > .circle-sha
+            - restore_cache:
+                keys:
+                    - nos-i686-pc-elf-{{ checksum ".circle-sha" }}
+            - restore_cache:
+                keys:
+                    - nos-x86_64-pc-elf-{{ checksum ".circle-sha" }}
             - store_artifacts:
-                path: config.log
-                destination: x86_64-pc-elf/config.txt
+                path: ~/i686-pc-elf
+                destination: i686-pc-elf
             - store_artifacts:
-                path: build.log
-                destination: x86_64-pc-elf/build.txt
-            - store_artifacts:
-                path: kernel/arch/x86/Kernel.elf
-                destination: x86_64-pc-elf/Kernel.elf
-            - store_artifacts:
-                path: drivers/pc/floppy/Floppy.elf
-                destination: x86_64-pc-elf/Floppy.elf
-            - store_artifacts:
-                path: images/x86/NOS.iso
-                destination: x86_64-pc-elf/NOS.iso
-            - run: make clean
-            - run: ./configure --host=x86_64-pc-elf --disable-smp
-            - run: make 2>&1 | tee build.log
-            - store_artifacts:
-                path: config.log
-                destination: x86_64-pc-elf-sp/config.txt
-            - store_artifacts:
-                path: build.log
-                destination: x86_64-pc-elf-sp/build.txt
-            - store_artifacts:
-                path: kernel/arch/x86/Kernel.elf
-                destination: x86_64-pc-elf-sp/Kernel.elf
-            - store_artifacts:
-                path: drivers/pc/floppy/Floppy.elf
-                destination: x86_64-pc-elf-sp/Floppy.elf
-            - store_artifacts:
-                path: images/x86/NOS.iso
-                destination: x86_64-pc-elf-sp/NOS.iso
-            - run: make clean
-            - run: ./configure --host=x86_64-pc-elf --disable-acpi
-            - run: make 2>&1 | tee build.log
-            - store_artifacts:
-                path: config.log
-                destination: x86_64-pc-elf-noacpi/config.txt
-            - store_artifacts:
-                path: build.log
-                destination: x86_64-pc-elf-noacpi/build.txt
-            - store_artifacts:
-                path: kernel/arch/x86/Kernel.elf
-                destination: x86_64-pc-elf-noacpi/Kernel.elf
-            - store_artifacts:
-                path: drivers/pc/floppy/Floppy.elf
-                destination: x86_64-pc-elf-noacpi/Floppy.elf
-            - store_artifacts:
-                path: images/x86/NOS.iso
-                destination: x86_64-pc-elf-noacpi/NOS.iso
-            - run: make clean
-            - run: ./configure --host=x86_64-pc-elf --disable-smp --disable-acpi
-            - run: make 2>&1 | tee build.log
-            - store_artifacts:
-                path: config.log
-                destination: x86_64-pc-elf-sp-noacpi/config.txt
-            - store_artifacts:
-                path: build.log
-                destination: x86_64-pc-elf-sp-noacpi/build.txt
-            - store_artifacts:
-                path: kernel/arch/x86/Kernel.elf
-                destination: x86_64-pc-elf-sp-noacpi/Kernel.elf
-            - store_artifacts:
-                path: drivers/pc/floppy/Floppy.elf
-                destination: x86_64-pc-elf-sp-noacpi/Floppy.elf
-            - store_artifacts:
-                path: images/x86/NOS.iso
-                destination: x86_64-pc-elf-sp-noacpi/NOS.iso
+                path: ~/x86_64-pc-elf
+                destination: x86_64-pc-elf
 
 workflows:
     version: 2
@@ -187,4 +80,8 @@ workflows:
             - build_x86_64:
                 requires:
                     - autogen
+            - collect:
+                requires:
+                    - build_i686
+                    - build_x86_64
 
