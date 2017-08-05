@@ -42,6 +42,49 @@ namespace Kernel
 			}
 		};
 
+		template <class T> class ExtObject
+		{
+		public:
+			inline constexpr uintptr_t Addr(void) const
+			{
+				return (uintptr_t)this;
+			}
+
+			inline void* Ptr(void) const
+			{
+				return const_cast<void*>((void*)this);
+			}
+
+			inline T* operator->(void) const
+			{
+				return (T*)this;
+			}
+		};
+
+		template <class T> class ConstObject
+		{
+		private:
+			const uintptr_t addr;
+
+		public:
+			constexpr ConstObject(uintptr_t a) : addr(a) {}
+
+			inline constexpr uintptr_t Addr(void) const
+			{
+				return addr;
+			}
+
+			inline void* Ptr(void) const
+			{
+				return (void*)addr;
+			}
+
+			inline T* operator->(void) const
+			{
+				return (T*)addr;
+			}
+		};
+
 		extern "C" const ExtSymbol textStart;
 		extern "C" const ExtSymbol textEnd;
 		extern "C" const ExtSymbol dataStart;
