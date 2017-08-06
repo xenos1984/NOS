@@ -5,6 +5,7 @@
 #include <Pager.h>
 #include <Symbol.h>
 #include INC_ARCH(PageTable.h)
+#include INC_ARCH(ControlRegisters.h)
 
 namespace Kernel
 {
@@ -118,6 +119,16 @@ namespace Kernel
 		{
 			PageTableLevel<0>* pt = new PageTableLevel<0>;
 			return pt;
+		}
+
+		Memory::PhysAddr SwitchContext(Memory::PhysAddr phys)
+		{
+			Memory::PhysAddr old;
+
+			old = CR3::Read();
+			CR3::Write((old & Memory::PGM_4K) | phys);
+
+			return(old & ~Memory::PGM_4K);
 		}
 
 		void* MapBootRegion(Memory::PhysAddr start, Memory::PhysAddr length, Memory::MemType type)
