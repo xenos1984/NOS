@@ -109,7 +109,7 @@ void SECTION(".init.text") I386TaskManager::InitAcpi(void)
 			asm volatile("addl %0, %%esp" : : "r"(STACK_LIN_ADDR + STACK_SIZE - (uintptr_t)&bspStack));
 		}
 		else if(ala->Flags & ACPI::CPU_ENABLED)
-			pr->Startup(STACK_SIZE + (unsigned long)(physmem().AllocBlocks((void*)(STACK_LIN_ADDR + i * STACK_SIZE), STACK_SIZE / 0x1000)));
+			pr->Startup(STACK_SIZE + (uintptr_t)(Memory::AllocBlocks<Memory::PGB_4K>(STACK_LIN_ADDR + i * STACK_SIZE, STACK_SIZE >> Memory::PGB_4K)));
 	}
 
 	Apic::SetTimerVector(0x40);
@@ -141,7 +141,7 @@ void SECTION(".init.text") I386TaskManager::InitSmp(void)
 			asm volatile("addl %0, %%esp" : : "r"(STACK_LIN_ADDR + (i + 1) * STACK_SIZE - (uintptr_t)&bspStack));
 		}
 		else if(sc->Flags & SMP::CPU_ENABLED)
-			pr->Startup(STACK_SIZE + (unsigned long)(physmem().AllocBlocks((void*)(STACK_LIN_ADDR + i * STACK_SIZE), STACK_SIZE / 0x1000)));
+			pr->Startup(STACK_SIZE + (uintptr_t)(Memory::AllocBlocks<Memory::PGB_4K>(STACK_LIN_ADDR + i * STACK_SIZE, STACK_SIZE >> Memory::PGB_4K)));
 	}
 
 	Apic::SetTimerVector(0x40);

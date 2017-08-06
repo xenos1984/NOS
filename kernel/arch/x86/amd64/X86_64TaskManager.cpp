@@ -101,7 +101,7 @@ void SECTION(".init.text") X86_64TaskManager::InitAcpi(void)
 			asm volatile("addq %0, %%rsp" : : "r"(STACK_LIN_ADDR + STACK_SIZE - (unsigned long)&bspStack));
 		}
 		else if(ala->Flags & ACPI::CPU_ENABLED)
-			pr->Startup(STACK_SIZE + (unsigned long)(physmem().AllocBlocks((void*)(STACK_LIN_ADDR + i * STACK_SIZE), STACK_SIZE / 0x1000)));
+			pr->Startup(STACK_SIZE + (uintptr_t)(Memory::AllocBlocks<Memory::PGB_4K>(STACK_LIN_ADDR + i * STACK_SIZE, STACK_SIZE >> Memory::PGB_4K)));
 	}
 	*((unsigned long*)0xffffff7fbfc00000) = 0;
 	*((unsigned long*)0xffffff7fbfdfe000) = 0;
@@ -138,7 +138,7 @@ void SECTION(".init.text") X86_64TaskManager::InitSmp(void)
 			asm volatile("addq %0, %%rsp" : : "r"(STACK_LIN_ADDR + (i + 1) * STACK_SIZE - (unsigned long)&bspStack));
 		}
 		else if(sc->Flags & SMP::CPU_ENABLED)
-			pr->Startup(STACK_SIZE + (unsigned long)(physmem().AllocBlocks((void*)(STACK_LIN_ADDR + i * STACK_SIZE), STACK_SIZE / 0x1000)));
+			pr->Startup(STACK_SIZE + (uintptr_t)(Memory::AllocBlocks<Memory::PGB_4K>(STACK_LIN_ADDR + i * STACK_SIZE, STACK_SIZE >> Memory::PGB_4K)));
 	}
 	*((unsigned long*)0xffffff7fbfc00000) = 0;
 	*((unsigned long*)0xffffff7fbfdfe000) = 0;
