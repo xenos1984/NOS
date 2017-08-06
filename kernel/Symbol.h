@@ -50,9 +50,9 @@ namespace Kernel
 				return (uintptr_t)this;
 			}
 
-			inline void* Ptr(void) const
+			inline T* Ptr(void) const
 			{
-				return const_cast<void*>((void*)this);
+				return (T*)this;
 			}
 
 			inline T* operator->(void) const
@@ -74,9 +74,9 @@ namespace Kernel
 				return addr;
 			}
 
-			inline void* Ptr(void) const
+			inline T* Ptr(void) const
 			{
-				return (void*)addr;
+				return (T*)addr;
 			}
 
 			inline T* operator->(void) const
