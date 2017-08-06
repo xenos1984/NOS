@@ -108,10 +108,15 @@ namespace Kernel
 		template void UnmapPage<Memory::PGB_1G>(uintptr_t virt);
 #endif
 
+		template<> PageTableLevel<0>::PageTableLevel(void)
+		{
+			for(int i = 1 << (PAGE_BITS[0] - 1); i < (1 << PAGE_BITS[0]); i++)
+				entry[i] = PageTableTop().Entry(i);
+		}
+
 		PageTableLevel<0>* CreateContext(void)
 		{
 			PageTableLevel<0>* pt = new PageTableLevel<0>;
-
 			return pt;
 		}
 

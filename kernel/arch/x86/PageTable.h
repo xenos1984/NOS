@@ -34,7 +34,7 @@ namespace Kernel
 		/** Page table with a fixed number of entries. */
 		template<unsigned int size> class alignas(size * sizeof(PageTableEntry)) PageTableSize
 		{
-		private:
+		protected:
 			/** Array of page table entries, default constructed. */
 			PageTableEntry entry[size] = {PageTableEntry{}};
 
@@ -50,6 +50,8 @@ namespace Kernel
 		template<unsigned int level> class PageTableLevel : public PageTableSize<1 << PAGE_BITS[level]>
 		{
 		public:
+			PageTableLevel(void) {};
+
 			/** Return i if this is the i'th table at this level. */
 			inline unsigned long Index(void);
 
