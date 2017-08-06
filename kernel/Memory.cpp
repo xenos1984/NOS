@@ -29,8 +29,37 @@ namespace Kernel
 			return true;
 		}
 
+		template<PageBits bits> void* AllocBlocks(uintptr_t virt, unsigned int n, MemType type, Zone zone)
+		{
+			for(uintptr_t addr = virt; addr < virt + (((uintptr_t)n) << bits); addr += 1ULL << bits)
+			{
+				if(AllocBlock<bits>(addr, type, zone) == nullptr)
+				{
+					while(addr > virt)
+					{
+						addr -= 1ULL << bits;
+						FreeBlock<bits>(addr);
+					}
+
+					return nullptr;
+				}
+			}
+			return (void*)virt;
+		}
+
+		template<PageBits bits> bool FreeBlocks(uintptr_t virt, unsigned int n)
+		{
+			bool ok = true;
+			for(uintptr_t addr = virt; addr < virt + (((uintptr_t)n) << bits); addr += 1ULL << bits)
+				ok = FreeBlock<bits>(addr) && ok;
+			return ok;
+		}
+
 		template void* AllocBlock<MinPageBits>(uintptr_t virt, MemType type, Zone zone);
 		template bool FreeBlock<MinPageBits>(uintptr_t virt);
+
+		template void* AllocBlocks<MinPageBits>(uintptr_t virt, unsigned int n, MemType type, Zone zone);
+		template bool FreeBlocks<MinPageBits>(uintptr_t virt, unsigned int n);
 	}
 }
 

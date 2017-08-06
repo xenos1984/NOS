@@ -80,7 +80,7 @@ namespace Kernel
 				upper = RoundDown(mp->next->mem, bs);
 
 			if(upper > lower)
-				AllocBlocks(lower, (upper - lower) / bs);
+				Memory::AllocBlocks<Memory::MinPageBits>(lower, (upper - lower) / bs);
 		}
 
 		void FreeChunk(MemoryPointer* mp)
@@ -98,7 +98,7 @@ namespace Kernel
 				upper = RoundDown(mp->next->mem, bs);
 
 			if(upper > lower)
-				FreeBlocks(lower, (upper - lower) / bs);
+				Memory::FreeBlocks<Memory::MinPageBits>(lower, (upper - lower) / bs);
 		}
 
 		void Merge(MemoryPointer* mp)

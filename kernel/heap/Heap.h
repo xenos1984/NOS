@@ -25,24 +25,6 @@ namespace Kernel
 		{
 			return align - 1 - ((addr - 1) & (align - 1));
 		}
-
-		void AllocBlocks(uintptr_t addr, unsigned int count)
-		{
-			for(unsigned int i = 0; i < count; i++)
-			{
-				Memory::AllocBlock<Memory::MinPageBits>(addr, Memory::MemType::KERNEL_RW);
-				addr += (1 << Memory::MinPageBits);
-			}
-		}
-
-		void FreeBlocks(uintptr_t addr, unsigned int count)
-		{
-			for(unsigned int i = 0; i < count; i++)
-			{
-				Memory::FreeBlock<Memory::MinPageBits>(addr);
-				addr += (1 << Memory::MinPageBits);
-			}
-		}
 	}
 }
 
