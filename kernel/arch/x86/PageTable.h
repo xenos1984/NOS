@@ -32,7 +32,7 @@ namespace Kernel
 #endif
 
 		/** Page table with a fixed number of entries. */
-		template<unsigned int size> class PageTableSize
+		template<unsigned int size> class alignas(size * sizeof(PageTableEntry)) PageTableSize
 		{
 		private:
 			/** Array of page table entries, default constructed. */
