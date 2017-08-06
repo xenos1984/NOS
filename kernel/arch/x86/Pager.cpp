@@ -108,6 +108,13 @@ namespace Kernel
 		template void UnmapPage<Memory::PGB_1G>(uintptr_t virt);
 #endif
 
+		PageTableLevel<0>* CreateContext(void)
+		{
+			PageTableLevel<0>* pt = new PageTableLevel<0>;
+
+			return pt;
+		}
+
 		void* MapBootRegion(Memory::PhysAddr start, Memory::PhysAddr length, Memory::MemType type)
 		{
 			Memory::PhysAddr first, last;
