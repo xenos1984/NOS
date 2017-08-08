@@ -16,16 +16,19 @@ namespace Kernel
 	{
 #ifdef ARCH_X86_IA32
 #ifdef CONFIG_PAE
+		static constexpr unsigned int PAGE_RECURSIVE = 511;
 		static constexpr unsigned int PAGE_LEVELS = 3;
 		static constexpr unsigned int PAGE_BITS[] = {2, 9, 9};
 		static constexpr uintptr_t PAGE_TABLE_ADDR[] = {0xfffffff8, 0xffffffe0, 0xffffc000, 0xff800000};
 #else
+		static constexpr unsigned int PAGE_RECURSIVE = 1023;
 		static constexpr unsigned int PAGE_LEVELS = 2;
 		static constexpr unsigned int PAGE_BITS[] = {10, 10};
 		static constexpr uintptr_t PAGE_TABLE_ADDR[] = {0xfffffffc, 0xfffff000, 0xffc00000};
 #endif
 #endif
 #ifdef ARCH_X86_AMD64
+		static constexpr unsigned int PAGE_RECURSIVE = 510;
 		static constexpr unsigned int PAGE_LEVELS = 4;
 		static constexpr unsigned int PAGE_BITS[] = {9, 9, 9, 9};
 		static constexpr uintptr_t PAGE_TABLE_ADDR[] = {0xffffff7fbfdfeff0, 0xffffff7fbfdfe000, 0xffffff7fbfc00000, 0xffffff7f80000000, 0xffffff0000000000};

@@ -113,6 +113,7 @@ namespace Kernel
 		{
 			for(int i = 1 << (PAGE_BITS[0] - 1); i < (1 << PAGE_BITS[0]); i++)
 				entry[i] = PageTableTop().Entry(i);
+			entry[PAGE_RECURSIVE].Set<Memory::PGB_4K>(VirtToPhys(this), Memory::MemType::KERNEL_PAGETAB);
 		}
 
 		PageTableLevel<0>* CreateContext(void)
