@@ -42,6 +42,73 @@ namespace Kernel
 			}
 		}
 
+		template<unsigned int level> PageTableLevel<level>& PageTableLevel<level>::Create(unsigned long i, Memory::MemType type)
+		{
+			static_assert(level > 0, "Top level page table cannot be created.");
+			static_assert(level < PAGE_LEVELS, "Table level exceeds number of paging levels.");
+
+			uintptr_t virt = PAGE_TABLE_ADDR[level + 1] + i * sizeof(PageTableLevel<level>);
+			Memory::AllocBlock<Memory::PGB_4K>(virt, type);
+			new (reinterpret_cast<PageTableLevel<level>*>(virt)) PageTableLevel<level>;
+
+			return *reinterpret_cast<PageTableLevel<level>*>(virt);
+		}
+
+		template<unsigned int level> void PageTableLevel<level>::Destroy(void)
+		{
+			static_assert(level > 0, "Top level page table cannot be destroyed.");
+			static_assert(level < PAGE_LEVELS - 1, "Table level exceeds number of paging levels.");
+
+			for(int i = 0; i < (1 << PAGE_BITS[level]); i++)
+			{
+				if(this->entry[i].IsPresent())
+				{
+					if(this->entry[i].IsLarge())
+					{
+						Chunker::Free<PageLevelSize<level>>(this->entry[i].Phys());
+					}
+					else
+					{
+						PageTableLevel<level + 1>::Table((Index() << PAGE_BITS[level]) + i).Destroy();
+						Chunker::Free<Memory::PGB_4K>(this->entry[i].Phys());
+					}
+					this->entry[i].Clear();
+				}
+			}
+		}
+
+		template<> void PageTableLevel<0>::Destroy(void)
+		{
+			for(int i = 0; i < (1 << PAGE_BITS[0]); i++)
+			{
+				if(this->entry[i].IsPresent())
+				{
+					if(this->entry[i].IsLarge())
+					{
+						Chunker::Free<PageLevelSize<0>>(this->entry[i].Phys());
+					}
+					else
+					{
+						PageTableLevel<1>::Table((Index() << PAGE_BITS[0]) + i).Destroy();
+						Chunker::Free<Memory::PGB_4K>(this->entry[i].Phys());
+					}
+					this->entry[i].Clear();
+				}
+			}
+		}
+
+		template<> void PageTableLevel<PAGE_LEVELS - 1>::Destroy(void)
+		{
+			for(int i = 0; i < (1 << PAGE_BITS[PAGE_LEVELS - 1]); i++)
+			{
+				if(this->entry[i].IsPresent())
+				{
+					Chunker::Free<PageLevelSize<0>>(this->entry[i].Phys());
+					this->entry[i].Clear();
+				}
+			}
+		}
+
 		template<Memory::PageBits bits> void MapPage(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type)
 		{
 			static_assert(IsValidSize(bits), "invalid page size");
@@ -72,7 +139,7 @@ namespace Kernel
 			Invalidate(virt);
 
 			if(pt.IsEmpty())
-				pt.Destroy();
+				Memory::FreeBlock<Memory::PGB_4K>(&pt);
 		}
 
 #if (defined ARCH_X86_IA32) && (!defined CONFIG_PAE)
@@ -130,6 +197,16 @@ namespace Kernel
 			CR3::Write((old & Memory::PGM_4K) | phys);
 
 			return(old & ~Memory::PGM_4K);
+		}
+
+		void DeleteContext(PageTableLevel<0>* pt)
+		{
+			Memory::PhysAddr cr3;
+
+			cr3 = SwitchContext(VirtToPhys(pt));
+			PageTableTop().Destroy();
+			SwitchContext(cr3);
+			delete pt;
 		}
 
 		void* MapBootRegion(Memory::PhysAddr start, Memory::PhysAddr length, Memory::MemType type)

@@ -34,6 +34,40 @@ namespace Kernel
 		static constexpr uintptr_t PAGE_TABLE_ADDR[] = {0xffffff7fbfdfeff0, 0xffffff7fbfdfe000, 0xffffff7fbfc00000, 0xffffff7f80000000, 0xffffff0000000000};
 #endif
 
+		template<Memory::PageBits bits> constexpr unsigned int PageSizeLevel = ~0;
+
+#ifdef ARCH_X86_IA32
+#ifdef CONFIG_PAE
+		template<> constexpr unsigned int PageSizeLevel<Memory::PGB_4K> = 2;
+		template<> constexpr unsigned int PageSizeLevel<Memory::PGB_2M> = 1;
+#else
+		template<> constexpr unsigned int PageSizeLevel<Memory::PGB_4K> = 1;
+		template<> constexpr unsigned int PageSizeLevel<Memory::PGB_4M> = 0;
+#endif
+#endif
+#ifdef ARCH_X86_AMD64
+		template<> constexpr unsigned int PageSizeLevel<Memory::PGB_4K> = 3;
+		template<> constexpr unsigned int PageSizeLevel<Memory::PGB_2M> = 2;
+		template<> constexpr unsigned int PageSizeLevel<Memory::PGB_1G> = 1;
+#endif
+
+		template<unsigned int> constexpr Memory::PageBits PageLevelSize = Memory::PGB_INV;
+
+#ifdef ARCH_X86_IA32
+#ifdef CONFIG_PAE
+		template<> constexpr Memory::PageBits PageLevelSize<2> = Memory::PGB_4K;
+		template<> constexpr Memory::PageBits PageLevelSize<1> = Memory::PGB_2M;
+#else
+		template<> constexpr Memory::PageBits PageLevelSize<1> = Memory::PGB_4K;
+		template<> constexpr Memory::PageBits PageLevelSize<0> = Memory::PGB_4M;
+#endif
+#endif
+#ifdef ARCH_X86_AMD64
+		template<> constexpr Memory::PageBits PageLevelSize<3> = Memory::PGB_4K;
+		template<> constexpr Memory::PageBits PageLevelSize<2> = Memory::PGB_2M;
+		template<> constexpr Memory::PageBits PageLevelSize<1> = Memory::PGB_1G;
+#endif
+
 		/** Page table with a fixed number of entries. */
 		template<unsigned int size> class alignas(size * sizeof(PageTableEntry)) PageTableSize
 		{
@@ -130,26 +164,6 @@ namespace Kernel
 			return true;
 		}
 
-		template<unsigned int level> PageTableLevel<level>& PageTableLevel<level>::Create(unsigned long i, Memory::MemType type)
-		{
-			static_assert(level > 0, "Top level page table cannot be created.");
-			static_assert(level < PAGE_LEVELS, "Table level exceeds number of paging levels.");
-
-			uintptr_t virt = PAGE_TABLE_ADDR[level + 1] + i * sizeof(PageTableLevel<level>);
-			Memory::AllocBlock<Memory::PGB_4K>(virt, type);
-			new (reinterpret_cast<PageTableLevel<level>*>(virt)) PageTableLevel<level>;
-
-			return *reinterpret_cast<PageTableLevel<level>*>(virt);
-		}
-
-		template<unsigned int level> void PageTableLevel<level>::Destroy(void)
-		{
-			static_assert(level > 0, "Top level page table cannot be destroyed.");
-			static_assert(level < PAGE_LEVELS, "Table level exceeds number of paging levels.");
-
-			Memory::FreeBlock<Memory::PGB_4K>(this);
-		}
-
 		inline PageTableLevel<0>& PageTableTop(void)
 		{
 			return PageTableLevel<0>::Table(0);
@@ -170,23 +184,6 @@ namespace Kernel
 		typedef PageTableLevel<1> PageDirPtr;
 		typedef PageTableLevel<2> PageDir;
 		typedef PageTableLevel<3> PageTab;
-#endif
-
-		template<Memory::PageBits bits> constexpr unsigned int PageSizeLevel = ~0;
-
-#ifdef ARCH_X86_IA32
-#ifdef CONFIG_PAE
-		template<> constexpr unsigned int PageSizeLevel<Memory::PGB_4K> = 2;
-		template<> constexpr unsigned int PageSizeLevel<Memory::PGB_2M> = 1;
-#else
-		template<> constexpr unsigned int PageSizeLevel<Memory::PGB_4K> = 1;
-		template<> constexpr unsigned int PageSizeLevel<Memory::PGB_4M> = 0;
-#endif
-#endif
-#ifdef ARCH_X86_AMD64
-		template<> constexpr unsigned int PageSizeLevel<Memory::PGB_4K> = 3;
-		template<> constexpr unsigned int PageSizeLevel<Memory::PGB_2M> = 2;
-		template<> constexpr unsigned int PageSizeLevel<Memory::PGB_1G> = 1;
 #endif
 	}
 }
