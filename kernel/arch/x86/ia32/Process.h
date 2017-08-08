@@ -3,13 +3,13 @@
 #ifndef __ARCH_X86_IA32_PROCESS_H__
 #define __ARCH_X86_IA32_PROCESS_H__
 
-#include INC_ARCH(X86Pager.h)
+#include INC_ARCH(Pager.h)
 
 namespace Kernel
 {
 	struct ProcessData
 	{
-		X86Pager::PageTable* pgtab;
+		Pager::PageTableLevel<0>* pgtab;
 		uint32_t cr3;
 	} PACKED;
 }

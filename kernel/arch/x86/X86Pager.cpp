@@ -9,6 +9,7 @@
 #include <Heap.h>
 #include <Console.h>
 
+#if 0
 using namespace Kernel;
 
 char physmem_space[sizeof(X86Pager)];
@@ -550,3 +551,4 @@ void X86Pager::DeleteContext(PageTable* pg)
 	CR3::Write(cr3);
 	Heap::Free(pg);
 }
+#endif

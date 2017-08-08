@@ -97,7 +97,7 @@ namespace Kernel
 			if((Flags & FLAGS_MODULES) && (ModuleCount > 0))
 			{
 				Console::WriteMessage(Console::Style::INFO, "Boot modules:", "Found %d modules @ 0x%8x.", ModuleCount, ModuleAddress);
-				Module* mbm = (Module*)x86pager().MapTempRegion(ModuleAddress, ModuleCount * sizeof(Module));
+				Module* mbm = (Module*)Pager::MapBootRegion(ModuleAddress, ModuleCount * sizeof(Module), Memory::MemType::KERNEL_RO);
 				for(unsigned int i = 0; i < ModuleCount; i++)
 				{
 					Console::WriteMessage(Console::Style::INFO, "Boot module:", "0x%8x - 0x%8x", mbm[i].ModStart, mbm[i].ModEnd);
@@ -110,7 +110,7 @@ namespace Kernel
 
 		SECTION(".init.text") bool Module::Start(void)
 		{
-			Elf* elf = (Elf*)x86pager().MapTempRegion(ModStart, ModEnd - ModStart + 1);
+			Elf* elf = (Elf*)Pager::MapBootRegion(ModStart, ModEnd - ModStart + 1, Memory::MemType::KERNEL_RO);
 			Elf::Header* ehdr = elf->GetHeader();
 
 			if(ehdr->Magic[0] != Elf::ELF_MAG0 || ehdr->Magic[1] != Elf::ELF_MAG1 || ehdr->Magic[2] != Elf::ELF_MAG2 || ehdr->Magic[3] != Elf::ELF_MAG3)

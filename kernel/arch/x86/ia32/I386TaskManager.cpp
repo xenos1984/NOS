@@ -16,7 +16,7 @@
 #include INC_SUBARCH(Entry.h)
 #include INC_ARCH(DescriptorTable.h)
 #include INC_ARCH(Interrupt.h)
-#include INC_ARCH(X86Pager.h)
+//#include INC_ARCH(X86Pager.h)
 #include INC_ARCH(IOApic.h)
 #include INC_ARCH(Cmos.h)
 #include INC_ARCH(ACPI.h)
@@ -206,24 +206,24 @@ Process* I386TaskManager::CreateProcess(Elf* elf)
 	char* str;
 
 	p = new Process;
-	p->data.pgtab = x86pager().CreateContext();
-	p->data.cr3 = x86pager().VirtToPhys(p->data.pgtab);
-	context = x86pager().SwitchContext(p->data.cr3);
+	p->data.pgtab = Pager::CreateContext();
+	p->data.cr3 = Pager::VirtToPhys(p->data.pgtab);
+	context = Pager::SwitchContext(p->data.cr3);
 
 	for(j = 0; j < elf->GetHeader()->PHNum; j++)
 	{
 		if(ph[j].Type != Elf::PT_LOAD)
 			continue;
 
-		base = (ph[j].VirtAddress / X86Pager::PAGE_SIZE) * X86Pager::PAGE_SIZE;
-		length = (ph[j].MemSize + (ph[j].VirtAddress - base) - 1) / X86Pager::PAGE_SIZE + 1;
+		base = ph[j].VirtAddress & ~Memory::PGM_4K;
+		length = ((ph[j].MemSize + (ph[j].VirtAddress - base) - 1) >> Memory::PGB_4K) + 1;
 
 		for(k = 0; k < length; k++)
 		{
-			if(!physmem().VirtExists((void*)(base + k * X86Pager::PAGE_SIZE)))
+			if(Pager::MappedSize(base + (k << Memory::PGB_4K)) == Memory::PGB_INV)
 			{
-				physmem().AllocBlocks((void*)(base + k * X86Pager::PAGE_SIZE), 1);
-				p->memory.FetchAndAdd(X86Pager::PAGE_SIZE);
+				Memory::AllocBlock<Memory::PGB_4K>(base + (k << Memory::PGB_4K), Memory::MemType::USER_RW);
+				p->memory.FetchAndAdd(Memory::PGS_4K);
 			}
 		}
 
@@ -273,7 +273,7 @@ Process* I386TaskManager::CreateProcess(Elf* elf)
 		} */
 	}
 
-	x86pager().SwitchContext(context);
+	Pager::SwitchContext(context);
 
 	tasksched().CreateProcess(p);
 	CreateThread(p, (void*)elf->GetHeader()->Entry, (void*)0);
@@ -303,7 +303,7 @@ void I386TaskManager::DeleteThread(Thread* t)
 
 void I386TaskManager::DeleteProcess(Process* p)
 {
-	x86pager().DeleteContext(p->data.pgtab);
+	Pager::DeleteContext(p->data.pgtab);
 	delete p;
 }
 

@@ -11,7 +11,7 @@
 #include <Chunker.h>
 #include <Process.h>
 #include <Console.h>
-#include INC_ARCH(X86Pager.h)
+#include INC_ARCH(Pager.h)
 #include INC_SUBARCH(Entry.h)
 #include INC_ARCH(DescriptorTable.h)
 #include INC_ARCH(Cmos.h)
@@ -51,7 +51,7 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, uint32_t mbiph
 	// Fill kernel process structure with elementary data.
 	new (kprocess_space) Process;
 	kprocess().data.cr3 = CR3::Read();
-	kprocess().data.pgtab = (X86Pager::PageTable*)tabPML4T;
+	kprocess().data.pgtab = (Pager::PageTableLevel<0>*)Symbol::tabPML4T.Ptr();
 
 	// Init memory manager.
 	Multiboot::Info* mbi = Multiboot::InitMemory(mbiphys);
@@ -105,7 +105,7 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, uint32_t mbiph
 
 extern "C" void FreeMemory(void)
 {
-	physmem().CleanInit();
+	Pager::FreeBootMemory();
 }
 
 #if defined CONFIG_SMP || defined CONFIG_ACPI

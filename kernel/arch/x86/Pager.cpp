@@ -65,31 +65,12 @@ namespace Kernel
 				{
 					if(this->entry[i].IsLarge())
 					{
-						Chunker::Free<PageLevelSize<level>>(this->entry[i].Phys());
+						// TODO: Unmap pages that are larger than the chunker supports.
+						//Chunker::Free<PageLevelSize<level>>(this->entry[i].Phys());
 					}
 					else
 					{
 						PageTableLevel<level + 1>::Table((Index() << PAGE_BITS[level]) + i).Destroy();
-						Chunker::Free<Memory::PGB_4K>(this->entry[i].Phys());
-					}
-					this->entry[i].Clear();
-				}
-			}
-		}
-
-		template<> void PageTableLevel<0>::Destroy(void)
-		{
-			for(int i = 0; i < (1 << PAGE_BITS[0]); i++)
-			{
-				if(this->entry[i].IsPresent())
-				{
-					if(this->entry[i].IsLarge())
-					{
-						Chunker::Free<PageLevelSize<0>>(this->entry[i].Phys());
-					}
-					else
-					{
-						PageTableLevel<1>::Table((Index() << PAGE_BITS[0]) + i).Destroy();
 						Chunker::Free<Memory::PGB_4K>(this->entry[i].Phys());
 					}
 					this->entry[i].Clear();
@@ -103,7 +84,27 @@ namespace Kernel
 			{
 				if(this->entry[i].IsPresent())
 				{
-					Chunker::Free<PageLevelSize<0>>(this->entry[i].Phys());
+					Chunker::Free<PageLevelSize<PAGE_LEVELS - 1>>(this->entry[i].Phys());
+					this->entry[i].Clear();
+				}
+			}
+		}
+
+		template<> void PageTableLevel<0>::Destroy(void)
+		{
+			for(int i = 0; i < (1 << PAGE_BITS[0]); i++)
+			{
+				if(this->entry[i].IsPresent())
+				{
+					if(this->entry[i].IsLarge())
+					{
+						//Chunker::Free<PageLevelSize<0>>(this->entry[i].Phys());
+					}
+					else
+					{
+						PageTableLevel<1>::Table((Index() << PAGE_BITS[0]) + i).Destroy();
+						Chunker::Free<Memory::PGB_4K>(this->entry[i].Phys());
+					}
 					this->entry[i].Clear();
 				}
 			}

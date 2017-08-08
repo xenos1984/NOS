@@ -21,6 +21,11 @@ namespace Kernel
 		static constexpr ConstSymbol heapEnd         = ConstSymbol(0xfffffffeffffffffUL);
 
 		static constexpr ConstSymbol kernelOffset    = ConstSymbol(0xffffffff80000000UL);
+
+		extern "C" const ExtSymbol tabPGTAB;
+		extern "C" const ExtSymbol tabPGDIR;
+		extern "C" const ExtSymbol tabPGDIP;
+		extern "C" const ExtSymbol tabPML4T;
 	}
 }
 
