@@ -40,7 +40,6 @@ libx86_a_SOURCES = \
 	Symbol.h \
 	SysCall.h \
 	Thread.h \
-	X86Pager.h \
 	\
 	ACPI.cpp \
 	AML.cpp \
@@ -61,8 +60,7 @@ libx86_a_SOURCES = \
 	PIT.cpp \
 	PITClock.cpp \
 	Processor.cpp \
-	SMP.cpp \
-	X86Pager.cpp
+	SMP.cpp
 
 noinst_PROGRAMS = Kernel.elf
 
