@@ -168,9 +168,9 @@ namespace Kernel
 #if (defined CONFIG_PAE) || (defined ARCH_X86_AMD64)
 		template void MapPage<Memory::PGB_2M>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type);
 		template void UnmapPage<Memory::PGB_2M>(uintptr_t virt);
-#else
-		template void MapPage<Memory::PGB_4M>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type);
-		template void UnmapPage<Memory::PGB_4M>(uintptr_t virt);
+//#else
+//		template void MapPage<Memory::PGB_4M>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type);
+//		template void UnmapPage<Memory::PGB_4M>(uintptr_t virt);
 #endif
 #ifdef ARCH_X86_AMD64
 		template void MapPage<Memory::PGB_1G>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type);

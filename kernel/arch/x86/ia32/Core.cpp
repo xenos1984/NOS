@@ -8,7 +8,7 @@
 #include <Chunker.h>
 #include <Process.h>
 #include <Console.h>
-#include INC_ARCH(Pager.h)
+#include <Pager.h>
 #include INC_SUBARCH(Entry.h)
 #include INC_ARCH(DescriptorTable.h)
 #include INC_ARCH(Cmos.h)
@@ -95,7 +95,8 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, uint32_t mbiph
 		I386TaskManager::Init();
 		new (sysclock_space) PITClock(cmos().GetTime(), 0);
 	}
-	asm volatile ("hlt");
+
+	Pager::Map(Symbol::userStart.Addr() - Symbol::kernelOffset.Addr(), Symbol::libraryStart.Addr(), Symbol::userEnd.Addr() - Symbol::userStart.Addr(), Memory::MemType::USER_EXEC);
 
 	mbi->InitModules();
 }
