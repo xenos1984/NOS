@@ -309,31 +309,49 @@ namespace Kernel
 		// Section types
 		enum SectionType : uint32_t
 		{
-			SHT_NULL     = 0x00000000, /**< No section. */
-			SHT_PROGBITS = 0x00000001, /**< Program defined section (code, data...). */
-			SHT_SYMTAB   = 0x00000002, /**< Symbol table. */
-			SHT_STRTAB   = 0x00000003, /**< String table. */
-			SHT_RELA     = 0x00000004, /**< Relocation table with explicit addends. */
-			SHT_HASH     = 0x00000005, /**< Hash table. */
-			SHT_DYNAMIC  = 0x00000006, /**< Information for dynamic linking. */
-			SHT_NOTE     = 0x00000007, /**< Note. */
-			SHT_NOBITS   = 0x00000008, /**< Empty, program defined section. */
-			SHT_REL      = 0x00000009, /**< Relocation table. */
-			SHT_SHLIB    = 0x0000000a, /**< Reserved. */
-			SHT_DYNSYM   = 0x0000000b, /**< Dynamic symbol table. */
-			SHT_LOPROC   = 0x70000000, /**< Processor specific. */
-			SHT_HIPROC   = 0x7fffffff, /**< Processor specific. */
-			SHT_LOUSER   = 0x80000000, /**< User defined. */
-			SHT_HIUSER   = 0xffffffff  /**< User defined. */
+			SHT_NULL          = 0x00000000, /**< No section. */
+			SHT_PROGBITS      = 0x00000001, /**< Program defined section (code, data...). */
+			SHT_SYMTAB        = 0x00000002, /**< Symbol table. */
+			SHT_STRTAB        = 0x00000003, /**< String table. */
+			SHT_RELA          = 0x00000004, /**< Relocation table with explicit addends. */
+			SHT_HASH          = 0x00000005, /**< Hash table. */
+			SHT_DYNAMIC       = 0x00000006, /**< Information for dynamic linking. */
+			SHT_NOTE          = 0x00000007, /**< Note. */
+			SHT_NOBITS        = 0x00000008, /**< Empty, program defined section. */
+			SHT_REL           = 0x00000009, /**< Relocation table. */
+			SHT_SHLIB         = 0x0000000a, /**< Reserved. */
+			SHT_DYNSYM        = 0x0000000b, /**< Dynamic symbol table. */
+			SHT_INIT_ARRAY    = 0x0000000e, /**< Initialization section. */
+			SHT_FINI_ARRAY    = 0x0000000f, /**< Termination section. */
+			SHT_PREINIT_ARRAY = 0x00000010, /**< Pre-initialization section. */
+			SHT_GROUP         = 0x00000011, /**< Section group. */
+			SHT_SYMTAB_SHNDX  = 0x00000012, /**< Extended section index. */
+			SHT_LOOS          = 0x60000000, /**< OS specific. */
+			SHT_HIOS          = 0x6fffffff, /**< OS specific. */
+			SHT_LOPROC        = 0x70000000, /**< Processor specific. */
+			SHT_HIPROC        = 0x7fffffff, /**< Processor specific. */
+			SHT_LOUSER        = 0x80000000, /**< User defined. */
+			SHT_HIUSER        = 0xffffffff  /**< User defined. */
 		};
 
-		// Section attribute files
+		// Section attribute flags
 		enum SectionAttribute : uint32_t
 		{
-			SHF_WRITE     = 0x00000001, /**< Section is writeable. */
-			SHF_ALLOC     = 0x00000002, /**< Section occupies memory during process execution. */
-			SHF_EXECINSTR = 0x00000004, /**< Section contains executable machine extructions. */
-			SHF_MASKPROC  = 0xf0000000  /**< Reserved for processor specific semantics. */
+			SHF_WRITE            = 0x00000001, /**< Section is writeable. */
+			SHF_ALLOC            = 0x00000002, /**< Section occupies memory during process execution. */
+			SHF_EXECINSTR        = 0x00000004, /**< Section contains executable machine extructions. */
+			SHF_MERGE            = 0x00000010, /**< Section can be merged to eliminate duplication. */
+			SHF_STRINGS          = 0x00000020, /**< Section contains zero-terminated strings. */
+			SHF_INFO_LINK        = 0x00000040, /**< sh_info contains section header index. */
+			SHF_LINK_ORDER       = 0x00000080, /**< Section order requirement with respect to linked section. */
+			SHF_OS_NONCONFORMING = 0x00000100, /**< Section requires special OS specific treatment. */
+			SHF_GROUP            = 0x00000200, /**< Section belongs to a group. */
+			SHF_TLS              = 0x00000400, /**< Thread local storage. */
+			SHF_MASKOS           = 0x0ff00000, /**< Reserved for OS specific use. */
+			SHF_AMD64_LARGE      = 0x10000000, /**< Section used AMD64 large memory model. */
+			SHF_ORDERED          = 0x40000000, /**< Ordered section. */
+			SHF_EXCLUDE          = 0x80000000, /**< Section is excluded from linking. */
+			SHF_MASKPROC         = 0xf0000000  /**< Reserved for processor specific semantics. */
 		};
 
 		// Symbol binding
