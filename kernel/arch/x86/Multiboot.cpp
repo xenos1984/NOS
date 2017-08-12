@@ -146,39 +146,9 @@ namespace Kernel
 			else
 				cmd = "";
 
-			if(ehdr->Magic[0] != Elf::ELF_MAG0 || ehdr->Magic[1] != Elf::ELF_MAG1 || ehdr->Magic[2] != Elf::ELF_MAG2 || ehdr->Magic[3] != Elf::ELF_MAG3)
+			if(!elf->Check())
 			{
-				Console::WriteMessage(Console::Style::WARNING, "Module at 0x%8x:", "Invalid ELF.", ModStart);
-				return false;
-			}
-#if defined ELF32
-			if(ehdr->Class != Elf::ELF_CLASS_32)
-			{
-				Console::WriteMessage(Console::Style::WARNING, "Module at 0x%8x:", "No 32bit module.", ModStart);
-				return false;
-			}
-#elif defined ELF64
-			if(ehdr->Class != Elf::ELF_CLASS_64)
-			{
-				Console::WriteMessage(Console::Style::WARNING, "Module at 0x%8x:", "No 64bit module.", ModStart);
-				return false;
-			}
-#endif
-			if(ehdr->Machine != kernelElfHeader.Machine)
-			{
-				Console::WriteMessage(Console::Style::WARNING, "Module at 0x%8x:", "Incorrect architecture 0x%4x, expected 0x%4x.", ModStart, ehdr->Machine, kernelElfHeader.Machine);
-				return false;
-			}
-
-			if(!ehdr->PHNum)
-			{
-				Console::WriteMessage(Console::Style::WARNING, "Module at 0x%8x:", "No program header found.", ModStart);
-				return false;
-			}
-
-			if(!ehdr->SHNum)
-			{
-				Console::WriteMessage(Console::Style::WARNING, "Module at 0x%8x:", "No section header found.", ModStart);
+				Console::WriteMessage(Console::Style::ERROR, "Module at 0x%8x:", "ELF check failed.", ModStart);
 				return false;
 			}
 

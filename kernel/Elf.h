@@ -440,6 +440,8 @@ namespace Kernel
 		{
 			return (SectionHeader*)(header.SHOffset + (Address)&header);
 		}
+
+		bool Check(void);
 	};
 }
 
