@@ -24,6 +24,7 @@ libkernel_a_SOURCES = \
 	Process.h \
 	Segment.h \
 	Symbol.h \
+	Tasker.h \
 	TaskManager.h \
 	TaskScheduler.h \
 	Thread.h \
@@ -36,6 +37,7 @@ libkernel_a_SOURCES = \
 	IRQManager.cpp \
 	Memory.cpp \
 	Process.cpp \
+	Tasker.cpp \
 	TaskScheduler.cpp \
 	Thread.cpp \
 	ThreadQueue.cpp

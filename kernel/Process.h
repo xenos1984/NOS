@@ -5,6 +5,7 @@
 
 #include <cstdint>
 #include <AtomicOps.h>
+#include <Elf.h>
 #include INC_ARCH(Process.h)
 
 namespace Kernel
@@ -35,6 +36,7 @@ namespace Kernel
 
 		ProcessData data; /**< Architecture specific data needed for each process. */
 
+		Process(Elf* elf);
 		Process(void);
 		~Process(void);
 
