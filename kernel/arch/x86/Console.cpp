@@ -129,27 +129,29 @@ namespace Kernel
 			volatile unsigned long *t;
 			unsigned int i;
 
-			Port::WriteU8(DEBUG_PORT, c); // Bochs / QEMU debugger console
-			Port::WriteU8(DEBUG_PORT_VBOX, c); // VirtualBox debugger console
-
-			if(c == '\t')
+			if(c != '\n' && c != '\r')
 			{
-				xPos += (8 - (xPos & 7));
+				Port::WriteU8(DEBUG_PORT, c); // Bochs / QEMU debugger console
+				Port::WriteU8(DEBUG_PORT_VBOX, c); // VirtualBox debugger console
+
+				if(c == '\t')
+				{
+					xPos += (8 - (xPos & 7));
+				}
+				else
+				{
+					videoMemoryCh()[xPos + yPos * COLUMNS].ch_at.character = c;
+					videoMemoryCh()[xPos + yPos * COLUMNS].ch_at.attribute = attrib;
+					buffer.ch_at[(bufoffset + xPos + yPos * COLUMNS) % TOTAL_CHARS].ch_at.character = c;
+					buffer.ch_at[(bufoffset + xPos + yPos * COLUMNS) % TOTAL_CHARS].ch_at.attribute = attrib;
+					xPos++;
+				}
 				if(xPos < COLUMNS)
 					return;
 			}
-			else if(c != '\n' && c != '\r')
-			{
-				videoMemoryCh()[xPos + yPos * COLUMNS].ch_at.character = c;
-				videoMemoryCh()[xPos + yPos * COLUMNS].ch_at.attribute = attrib;
-				buffer.ch_at[(bufoffset + xPos + yPos * COLUMNS) % TOTAL_CHARS].ch_at.character = c;
-				buffer.ch_at[(bufoffset + xPos + yPos * COLUMNS) % TOTAL_CHARS].ch_at.attribute = attrib;
 
-				xPos++;
-				if(xPos < COLUMNS)
-					return;
-			}
-
+			Port::WriteU8(DEBUG_PORT, '\n');
+			Port::WriteU8(DEBUG_PORT_VBOX, '\n');
 			xPos = 0;
 			yPos++;
 			if(yPos >= LINES)
