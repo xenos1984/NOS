@@ -21,7 +21,6 @@ libkernel_a_SOURCES = \
 	IRQManager.h \
 	Memory.h \
 	Pager.h \
-	PhysicalMemory.h \
 	Process.h \
 	Segment.h \
 	Symbol.h \
