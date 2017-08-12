@@ -110,8 +110,17 @@ namespace Kernel
 
 		SECTION(".init.text") bool Module::Start(void)
 		{
+			const char* cmd;
 			Elf* elf = (Elf*)Pager::MapBootRegion(ModStart, ModEnd - ModStart + 1, Memory::MemType::KERNEL_RO);
 			Elf::Header* ehdr = elf->GetHeader();
+
+			if(String)
+			{
+				cmd = (const char*)Pager::MapBootString(String, Memory::MemType::KERNEL_RO);
+				Console::WriteMessage(Console::Style::INFO, "Module at 0x%8x:", "%s", ModStart, cmd);
+			}
+			else
+				cmd = "";
 
 			if(ehdr->Magic[0] != Elf::ELF_MAG0 || ehdr->Magic[1] != Elf::ELF_MAG1 || ehdr->Magic[2] != Elf::ELF_MAG2 || ehdr->Magic[3] != Elf::ELF_MAG3)
 			{
