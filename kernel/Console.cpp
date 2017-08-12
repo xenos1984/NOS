@@ -229,7 +229,7 @@ namespace Kernel
 			va_start(arg, result);
 			SetStyle(Style::TEXT);
 			writef(message, &arg);
-			Write('\t');
+			Write(' ');
 			SetStyle(style);
 			writef(result, &arg);
 			Write('\n');

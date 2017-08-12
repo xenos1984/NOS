@@ -25,6 +25,8 @@ namespace Kernel
 			Info* mbi;
 			MemoryMap* mmap;
 			MemoryMap* mmap0;
+			Drive* drive;
+			Drive* drive0;
 			Memory::Zone zone;
 
 			// Map multiboot info.
@@ -74,6 +76,28 @@ namespace Kernel
 					}
 				}
 			}
+
+			if(mbi->HasMemInfo())
+			{
+				Console::WriteMessage(Console::Style::INFO, "Base contiguous memory:", "%u kB", mbi->UpperMemory + 1024);
+			}
+
+			if(mbi->HasDrives())
+			{
+				Console::WriteFormat("Drive list of length 0x%8x at address 0x%8x\n", mbi->DrivesLength, mbi->DrivesAddress);
+				drive0 = (Drive*)Pager::MapBootRegion(mbi->DrivesAddress, mbi->DrivesLength, Memory::MemType::KERNEL_RO);
+				for(drive = drive0; (unsigned long)drive - (unsigned long)drive0 < mbi->DrivesLength; drive = (Drive*)((unsigned long)drive + drive->Size))
+					Console::WriteFormat("Number: 0x%2x, Mode: %s, C: %d, H: %d, S: %d\n", drive->Number, (drive->Mode ? "LBA" : "CHS"), drive->Cylinders, drive->Heads, drive->Sectors);
+			}
+
+			if(mbi->HasBootDev())
+				Console::WriteMessage(Console::Style::INFO, "Boot device:", "Drive: 0x%2x, Partition: %d / %d / %d", mbi->BootDrive, mbi->BootPartition1, mbi->BootPartition2, mbi->BootPartition3);
+
+			if(mbi->HasLoaderName())
+				Console::WriteMessage(Console::Style::INFO, "Bootloader @ 0x%8x:", "%s", mbi->BootLoaderName, Pager::MapBootString(mbi->BootLoaderName, Memory::MemType::KERNEL_RO));
+
+			if(mbi->HasCmdline())
+				Console::WriteMessage(Console::Style::INFO, "Command line @ 0x%8x:", "%s", mbi->CommandLine, Pager::MapBootString(mbi->CommandLine, Memory::MemType::KERNEL_RO));
 
 			return mbi;
 		}
