@@ -32,6 +32,7 @@ libkernel_a_SOURCES = \
 	Clock.cpp \
 	Console.cpp \
 	Core.cpp \
+	Elf.cpp \
 	IRQManager.cpp \
 	Memory.cpp \
 	Process.cpp \

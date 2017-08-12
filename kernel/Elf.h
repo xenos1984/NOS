@@ -390,6 +390,15 @@ namespace Kernel
 			PT_HIPROC  = 0x7fffffff  /**< Processor specific. */
 		};
 
+		// Segment flags
+		enum SegmentFlags : uint32_t
+		{
+			PF_X        = 0x00000001, /**< Executable. */
+			PF_W        = 0x00000002, /**< Writeable. */
+			PF_R        = 0x00000004, /**< Readable. */
+			PF_MASKPROC = 0xf0000000  /**< Unspecified. */
+		};
+
 		// Dynamic table entries
 		enum DynamicEntry : uint32_t
 		{
