@@ -14,6 +14,14 @@ AC_DEFUN([NOS_SET_HOST], [
 		AC_DEFINE([uintX_t], [uint32_t])
 		AC_DEFINE([intX_t], [int32_t])
 		AC_DEFINE([ARCH_X86_IA32], [1], [Define to 1 for IA32 targets.])
+		case "${host_vendor}" in
+		pc)
+			vendor_subdir=pc
+			;;
+		*)
+			AC_MSG_ERROR([unsupported host vendor])
+			;;
+		esac
 		;;
 	x86_64)
 		arch_subdir=x86
@@ -26,6 +34,32 @@ AC_DEFUN([NOS_SET_HOST], [
 		AC_DEFINE([uintX_t], [uint64_t])
 		AC_DEFINE([intX_t], [int64_t])
 		AC_DEFINE([ARCH_X86_AMD64], [1], [Define to 1 for AMD64 targets.])
+		case "${host_vendor}" in
+		pc)
+			vendor_subdir=pc
+			;;
+		*)
+			AC_MSG_ERROR([unsupported host vendor])
+			;;
+		esac
+		;;
+	arm)
+		arch_subdir=arm
+		host_bfd=elf32-littlearm
+		copy_flags="-I ${host_bfd} -O ${host_bfd}"
+		AC_DEFINE([ELF32])
+		AC_DEFINE([uintX_t], [uint32_t])
+		AC_DEFINE([intX_t], [int32_t])
+		AC_DEFINE([ARCH_ARM], [1], [Define to 1 for ARM targets.])
+		case "${host_vendor}" in
+		raspi2)
+			subarch_subdir=v7
+			vendor_subdir=raspi
+			;;
+		*)
+			AC_MSG_ERROR([unsupported host vendor])
+			;;
+		esac
 		;;
 	m68k)
 		arch_subdir=m68k
@@ -58,8 +92,11 @@ AC_DEFUN([NOS_SET_HOST], [
 	AC_DEFINE_UNQUOTED([INC_ARCH(x)], [<arch/${arch_subdir}/x>], [NOS target architecture.])
 	AC_DEFINE_UNQUOTED([SUBARCH], [${subarch_subdir}], [NOS target subarchitecture.])
 	AC_DEFINE_UNQUOTED([INC_SUBARCH(x)], [<arch/${arch_subdir}/${subarch_subdir}/x>], [NOS target subarchitecture.])
+	AC_DEFINE_UNQUOTED([VENDOR], [${vendor_subdir}], [NOS target vendor.])
+	AC_DEFINE_UNQUOTED([INC_VENDOR(x)], [<vendor/${vendor_subdir}/x>], [NOS target vendor.])
 	AC_SUBST(arch_subdir)
 	AC_SUBST(subarch_subdir)
+	AC_SUBST(vendor_subdir)
 	AC_SUBST(host_bfd)
 	AC_SUBST(copy_flags)
 ])
