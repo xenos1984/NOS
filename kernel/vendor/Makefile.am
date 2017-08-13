@@ -1,6 +1,6 @@
 # Process this file with automake to produce a Makefile.in
 
-SUBDIRS = ${arch_subdir}
+SUBDIRS = ${vendor_subdir}
 
-DIST_SUBDIRS = x86 arm m68k
+DIST_SUBDIRS = pc raspi
 

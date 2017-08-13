@@ -2,7 +2,7 @@
 
 # NOS Kernel - architecture independent part.
 
-SUBDIRS = . arch
+SUBDIRS = . arch vendor
 
 AUTOMAKE_OPTIONS = nostdinc subdir-objects
 
