@@ -16,7 +16,9 @@ namespace Kernel
 			Process* p = new Process(elf);
 
 			// TODO: Enter process into list.
+
 			// Create first thread that jumps to entry point.
+			CreateThread(p, elf->GetHeader()->Entry);
 		}
 
 		Thread* CreateThread(Process* p, uintptr_t entry)

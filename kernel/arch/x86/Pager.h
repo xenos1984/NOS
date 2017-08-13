@@ -11,6 +11,12 @@ namespace Kernel
 	{
 		template<unsigned int level> class PageTableLevel;
 
+		struct Context
+		{
+			PageTableLevel<0>* top;
+			Memory::PhysAddr cr3;
+		};
+
 		PageTableLevel<0>* CreateContext(void);
 		Memory::PhysAddr SwitchContext(Memory::PhysAddr phys);
 		void DeleteContext(PageTableLevel<0>* pt);

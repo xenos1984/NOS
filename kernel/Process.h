@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <AtomicOps.h>
 #include <Elf.h>
+#include <Pager.h>
 #include INC_ARCH(Process.h)
 
 namespace Kernel
@@ -35,6 +36,7 @@ namespace Kernel
 		AtomicLock lock; /**< Lock used to safely maintain the thread list. */
 
 		ProcessData data; /**< Architecture specific data needed for each process. */
+		Pager::Context context;
 
 		Process(Elf* elf);
 		Process(void);
