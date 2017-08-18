@@ -4,7 +4,6 @@
 #include <new>
 #include <Core.h>
 #include <Clock.h>
-#include <VirtualMemory.h>
 #include <TaskScheduler.h>
 #include <Symbol.h>
 #include <Memory.h>
