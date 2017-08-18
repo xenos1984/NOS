@@ -4,6 +4,7 @@
 #include <new>
 #include <Core.h>
 #include <Symbol.h>
+#include <Pager.h>
 #include INC_ARCH(Multiboot.h)
 #include INC_ARCH(CPU.h)
 #include INC_ARCH(DescriptorTable.h)
@@ -72,4 +73,20 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, uint32_t mbiph
 	// Start multiboot modules.
 	mbi->InitModules();
 }
+
+extern "C" void FreeMemory(void)
+{
+	Pager::FreeBootMemory();
+}
+
+#if defined CONFIG_SMP || defined CONFIG_ACPI
+extern "C" void SECTION(".init.text") ApplicationEntry()
+{
+	// TODO: Check and enable CPU dependent features.
+
+	// TODO: Register CPU as available for execution in tasker.
+
+	// TODO: Set flag to indicate CPU is booted.
+}
+#endif
 
