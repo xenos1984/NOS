@@ -23,10 +23,10 @@ jobs:
             - restore_cache:
                 keys:
                     - nos-source-{{ checksum ".circle-sha" }}
-            - run: .circleci/build_x86.sh i686-pc-elf mp-acpi
-            - run: .circleci/build_x86.sh i686-pc-elf mp-noacpi --disable-acpi
-            - run: .circleci/build_x86.sh i686-pc-elf sp-acpi --disable-smp
-            - run: .circleci/build_x86.sh i686-pc-elf sp-noacpi --disable-smp --disable-acpi
+            - run: .circleci/build_pc.sh i686-pc-elf mp-acpi
+            - run: .circleci/build_pc.sh i686-pc-elf mp-noacpi --disable-acpi
+            - run: .circleci/build_pc.sh i686-pc-elf sp-acpi --disable-smp
+            - run: .circleci/build_pc.sh i686-pc-elf sp-noacpi --disable-smp --disable-acpi
             - save_cache:
                 key: nos-i686-pc-elf-{{ checksum ".circle-sha" }}
                 paths:
@@ -41,10 +41,10 @@ jobs:
             - restore_cache:
                 keys:
                     - nos-source-{{ checksum ".circle-sha" }}
-            - run: .circleci/build_x86.sh x86_64-pc-elf mp-acpi
-            - run: .circleci/build_x86.sh x86_64-pc-elf mp-noacpi --disable-acpi
-            - run: .circleci/build_x86.sh x86_64-pc-elf sp-acpi --disable-smp
-            - run: .circleci/build_x86.sh x86_64-pc-elf sp-noacpi --disable-smp --disable-acpi
+            - run: .circleci/build_pc.sh x86_64-pc-elf mp-acpi
+            - run: .circleci/build_pc.sh x86_64-pc-elf mp-noacpi --disable-acpi
+            - run: .circleci/build_pc.sh x86_64-pc-elf sp-acpi --disable-smp
+            - run: .circleci/build_pc.sh x86_64-pc-elf sp-noacpi --disable-smp --disable-acpi
             - save_cache:
                 key: nos-x86_64-pc-elf-{{ checksum ".circle-sha" }}
                 paths:
