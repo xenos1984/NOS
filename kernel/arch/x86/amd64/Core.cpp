@@ -30,7 +30,7 @@
 #include INC_ARCH(IOApicManager.h)
 
 using namespace Kernel;
-
+/*
 extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, uint32_t mbiphys)
 {
 	// Init console and show message.
@@ -107,10 +107,10 @@ extern "C" void FreeMemory(void)
 {
 	Pager::FreeBootMemory();
 }
-
+*/
 #if defined CONFIG_SMP || defined CONFIG_ACPI
 bool apflag;
-
+/*
 extern "C" void SECTION(".init.text") ApplicationEntry()
 {
 	unsigned long cr4 = CR4::Read();
@@ -129,5 +129,5 @@ extern "C" void SECTION(".init.text") ApplicationEntry()
 	Apic::SetTimerDiv(Apic::TDR_64);
 	Apic::TimerStart(0x10000);
 	apflag = true;
-}
+}*/
 #endif
