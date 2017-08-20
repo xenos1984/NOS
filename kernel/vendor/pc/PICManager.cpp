@@ -1,6 +1,6 @@
 // PICManager.cpp - Interrupt manager for PIC based systems.
 
-#include INC_ARCH(PICManager.h)
+#include INC_VENDOR(PICManager.h)
 #include <Console.h>
 
 using namespace Kernel;

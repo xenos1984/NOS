@@ -11,56 +11,32 @@ AM_CPPFLAGS = -imacros $(top_srcdir)/config.h -I$(top_srcdir)/kernel -I$(top_src
 noinst_LIBRARIES = libx86.a
 
 libx86_a_SOURCES = \
-	ACPI.h \
-	AML.h \
 	Apic.h \
 	AtomicOps.h \
-	Cmos.h \
-	Console.h \
 	ControlRegisters.h \
 	CPU.h \
 	DescriptorTable.h \
 	FPU.h \
-	HPET.h \
 	Interrupt.h \
-	IOApic.h \
-	IOApicManager.h \
 	Memory.h \
 	MSR.h \
-	Multiboot.h \
 	Pager.h \
-	PIC.h \
-	PICManager.h \
-	PIT.h \
-	PITClock.h \
+	PageTable.h \
+	PageTableEntry.h \
 	Port.h \
 	Process.h \
 	Processor.h \
-	SMP.h \
 	Symbol.h \
 	SysCall.h \
 	Thread.h \
 	\
-	ACPI.cpp \
-	AML.cpp \
 	Apic.cpp \
-	Cmos.cpp \
-	Console.cpp \
 	CPU.cpp \
 	DescriptorTable.cpp \
 	FPU.cpp \
-	HPET.cpp \
 	Interrupt.cpp \
-	IOApic.cpp \
-	IOApicManager.cpp \
-	Multiboot.cpp \
 	Pager.cpp \
-	PIC.cpp \
-	PICManager.cpp \
-	PIT.cpp \
-	PITClock.cpp \
-	Processor.cpp \
-	SMP.cpp
+	Processor.cpp
 
 #noinst_PROGRAMS = Kernel.elf
 

@@ -7,7 +7,7 @@
 #include INC_ARCH(Apic.h)
 #include INC_ARCH(CPU.h)
 #include INC_ARCH(FPU.h)
-#include INC_ARCH(Cmos.h)
+#include INC_VENDOR(Cmos.h)
 #include <Thread.h>
 #include <Process.h>
 #include <Console.h>

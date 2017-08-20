@@ -4,7 +4,7 @@
 #define __ARCH_X86_IOAPICMANAGER_H__
 
 #include <IRQManager.h>
-#include INC_ARCH(IOApic.h)
+#include INC_VENDOR(IOApic.h)
 
 namespace Kernel
 {

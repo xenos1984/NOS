@@ -1,6 +1,6 @@
 // IOApic.cpp - I/O Apic support
 
-#include INC_ARCH(IOApic.h)
+#include INC_VENDOR(IOApic.h)
 #include <Console.h>
 #include <Pager.h>
 #include <Heap.h>

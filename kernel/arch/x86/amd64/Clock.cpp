@@ -2,7 +2,7 @@
 
 #include <Clock.h>
 #include <Console.h>
-#include INC_ARCH(Cmos.h)
+#include INC_VENDOR(Cmos.h)
 #include INC_ARCH(Apic.h)
 #include INC_SUBARCH(PMode.h)
 

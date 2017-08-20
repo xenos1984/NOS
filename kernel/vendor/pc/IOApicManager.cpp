@@ -1,9 +1,9 @@
 // IOApicManager.cpp - Interrupt manager for IOApic based systems.
 
 #include <new>
-#include INC_ARCH(IOApicManager.h)
-#include INC_ARCH(SMP.h)
-#include INC_ARCH(ACPI.h)
+#include INC_VENDOR(IOApicManager.h)
+#include INC_VENDOR(SMP.h)
+#include INC_VENDOR(ACPI.h)
 #include INC_ARCH(Port.h)
 #include INC_ARCH(Apic.h)
 #include INC_SUBARCH(PMode.h)

@@ -1,7 +1,7 @@
 // SMP.cpp - Symmetric multiprocessing management.
 
 #include <new>
-#include INC_ARCH(SMP.h)
+#include INC_VENDOR(SMP.h)
 #include INC_ARCH(Apic.h)
 #include <Console.h>
 #include <Symbol.h>

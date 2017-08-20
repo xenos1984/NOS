@@ -2,7 +2,7 @@
 
 #include <AtomicOps.h>
 #include INC_ARCH(Port.h)
-#include INC_ARCH(PIT.h)
+#include INC_VENDOR(PIT.h)
 
 using namespace Kernel;
 

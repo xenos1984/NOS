@@ -1,7 +1,7 @@
 // AML.cpp - ACPI Machine Language
 
-#include INC_ARCH(ACPI.h)
-#include INC_ARCH(AML.h)
+#include INC_VENDOR(ACPI.h)
+#include INC_VENDOR(AML.h)
 #include <Console.h>
 
 #define WAIT asm volatile ( \

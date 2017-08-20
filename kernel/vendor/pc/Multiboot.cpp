@@ -3,7 +3,7 @@
 #include <Elf.h>
 #include <Console.h>
 #include <Symbol.h>
-#include INC_ARCH(Multiboot.h)
+#include INC_VENDOR(Multiboot.h)
 #include <TaskManager.h>
 #include <Heap.h>
 #include <Chunker.h>

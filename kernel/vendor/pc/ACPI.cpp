@@ -1,11 +1,11 @@
 // ACPI.cpp - Advanced Configuration and Power Interface.
 
 #include <new>
-#include INC_ARCH(ACPI.h)
-#include INC_ARCH(AML.h)
+#include INC_VENDOR(ACPI.h)
+#include INC_VENDOR(AML.h)
 #include INC_ARCH(Apic.h)
-#include INC_ARCH(IOApic.h)
-#include INC_ARCH(HPET.h)
+#include INC_VENDOR(IOApic.h)
+#include INC_VENDOR(HPET.h)
 #include <Pager.h>
 #include <Console.h>
 #include <Symbol.h>

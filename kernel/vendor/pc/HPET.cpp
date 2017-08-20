@@ -1,6 +1,6 @@
 // HPET.h - High Precision Event Timer
 
-#include INC_ARCH(HPET.h)
+#include INC_VENDOR(HPET.h)
 #include <Console.h>
 #include <Pager.h>
 #include <Heap.h>

@@ -1,7 +1,7 @@
 // PIC.cpp - Programmable Interrupt Controller
 
 #include <cstddef>
-#include INC_ARCH(PIC.h)
+#include INC_VENDOR(PIC.h)
 
 using namespace Kernel;
 

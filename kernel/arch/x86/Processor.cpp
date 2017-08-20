@@ -3,10 +3,10 @@
 #include <cstddef>
 #include <Console.h>
 #include <Symbol.h>
-#include INC_ARCH(Cmos.h)
-#include INC_ARCH(PIT.h)
-#include INC_ARCH(ACPI.h)
-#include INC_ARCH(SMP.h)
+#include INC_VENDOR(Cmos.h)
+#include INC_VENDOR(PIT.h)
+#include INC_VENDOR(ACPI.h)
+#include INC_VENDOR(SMP.h)
 #include INC_ARCH(Apic.h)
 #include INC_ARCH(Processor.h)
 #include INC_ARCH(CPU.h)

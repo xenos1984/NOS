@@ -3,7 +3,7 @@
 #include <AtomicOps.h>
 #include <Console.h>
 #include INC_ARCH(Port.h)
-#include INC_ARCH(Cmos.h)
+#include INC_VENDOR(Cmos.h)
 
 using namespace Kernel;
 

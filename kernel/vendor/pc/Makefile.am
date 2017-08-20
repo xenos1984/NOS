@@ -7,7 +7,34 @@ AM_CPPFLAGS = -imacros $(top_srcdir)/config.h -I$(top_srcdir)/kernel -I$(top_src
 noinst_LIBRARIES = libpc.a
 
 libpc_a_SOURCES = \
-	Core.cpp
+	ACPI.h \
+	AML.h \
+	Cmos.h \
+	Console.h \
+	HPET.h \
+	IOApic.h \
+	IOApicManager.h \
+	Multiboot.h \
+	PIC.h \
+	PICManager.h \
+	PIT.h \
+	PITClock.h \
+	SMP.h \
+	\
+	ACPI.cpp \
+	AML.cpp \
+	Cmos.cpp \
+	Console.cpp \
+	Core.cpp \
+	HPET.cpp \
+	IOApic.cpp \
+	IOApicManager.cpp \
+	Multiboot.cpp \
+	PIC.cpp \
+	PICManager.cpp \
+	PIT.cpp \
+	PITClock.cpp \
+	SMP.cpp
 
 noinst_PROGRAMS = Kernel.elf
 

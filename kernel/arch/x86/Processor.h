@@ -3,8 +3,8 @@
 #ifndef __ARCH_X86_PROCESSOR_H__
 #define __ARCH_X86_PROCESSOR_H__
 
-#include INC_ARCH(ACPI.h)
-#include INC_ARCH(SMP.h)
+#include INC_VENDOR(ACPI.h)
+#include INC_VENDOR(SMP.h)
 #include <Thread.h>
 
 namespace Kernel

@@ -4,7 +4,7 @@
 #define __ARCH_X86_PICMANAGER_H__
 
 #include <IRQManager.h>
-#include INC_ARCH(PIC.h)
+#include INC_VENDOR(PIC.h)
 
 namespace Kernel
 {

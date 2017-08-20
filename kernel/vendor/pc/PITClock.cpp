@@ -1,7 +1,7 @@
 // PITClock.cpp - System clock based on PIT
 
-#include INC_ARCH(PITClock.h)
-#include INC_ARCH(PIT.h)
+#include INC_VENDOR(PITClock.h)
+#include INC_VENDOR(PIT.h)
 #include INC_ARCH(DescriptorTable.h)
 #include INC_SUBARCH(Entry.h)
 #include INC_ARCH(Interrupt.h)

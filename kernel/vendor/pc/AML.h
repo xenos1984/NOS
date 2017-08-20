@@ -3,7 +3,7 @@
 #ifndef __ARCH_X86_AML_H__
 #define __ARCH_X86_AML_H__
 
-#include INC_ARCH(ACPI.h)
+#include INC_VENDOR(ACPI.h)
 
 #ifdef CONFIG_ACPI
 namespace Kernel

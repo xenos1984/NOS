@@ -13,12 +13,12 @@
 #include <Pager.h>
 #include INC_SUBARCH(Entry.h)
 #include INC_ARCH(DescriptorTable.h)
-#include INC_ARCH(Cmos.h)
-#include INC_ARCH(PIT.h)
-#include INC_ARCH(PITClock.h)
-#include INC_ARCH(Multiboot.h)
-#include INC_ARCH(ACPI.h)
-#include INC_ARCH(SMP.h)
+#include INC_VENDOR(Cmos.h)
+#include INC_VENDOR(PIT.h)
+#include INC_VENDOR(PITClock.h)
+#include INC_VENDOR(Multiboot.h)
+#include INC_VENDOR(ACPI.h)
+#include INC_VENDOR(SMP.h)
 #include INC_SUBARCH(X86_64TaskManager.h)
 #include INC_SUBARCH(PMode.h)
 #include INC_ARCH(Apic.h)
@@ -26,8 +26,8 @@
 #include INC_ARCH(MSR.h)
 #include INC_ARCH(Processor.h)
 #include INC_ARCH(CPU.h)
-#include INC_ARCH(PICManager.h)
-#include INC_ARCH(IOApicManager.h)
+#include INC_VENDOR(PICManager.h)
+#include INC_VENDOR(IOApicManager.h)
 
 using namespace Kernel;
 /*

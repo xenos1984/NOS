@@ -5,7 +5,7 @@
 
 #include <cstdint>
 #include <TaskManager.h>
-#include INC_ARCH(IOApic.h)
+#include INC_VENDOR(IOApic.h)
 #include INC_ARCH(Processor.h)
 
 namespace Kernel
