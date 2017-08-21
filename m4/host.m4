@@ -52,8 +52,19 @@ AC_DEFUN([NOS_SET_HOST], [
 		AC_DEFINE([intX_t], [int32_t])
 		AC_DEFINE([ARCH_ARM], [1], [Define to 1 for ARM targets.])
 		case "${host_vendor}" in
-		raspi2)
+		raspi)
+			CFLAGS="${CFLAGS} -mcpu=arm1176jzf-s"
 			subarch_subdir=v7
+			vendor_subdir=raspi
+			;;
+		raspi2)
+			CFLAGS="${CFLAGS} -mcpu=cortex-a7"
+			subarch_subdir=v7
+			vendor_subdir=raspi
+			;;
+		raspi3)
+			CFLAGS="${CFLAGS} -mcpu=cortex-a53"
+			subarch_subdir=v8
 			vendor_subdir=raspi
 			;;
 		*)
