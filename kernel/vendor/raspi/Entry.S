@@ -1,6 +1,7 @@
 .section .init.text
 
 #define KERNEL_OFFSET 0xC0000000
+#define PERI_OFFSET 0xCF000000
 
 .globl Entry
 .extern KernelEntry
@@ -30,7 +31,7 @@ Entry:
 	orr r5, r5, #1
 	ldr r4, =tabPGDIR - KERNEL_OFFSET
 	str r5, [r4]
-	add r4, r4, #0x3000
+	add r4, r4, #(KERNEL_OFFSET >> 18)
 	str r5, [r4]
 
 // Fill page table to map kernel
@@ -50,6 +51,20 @@ Entry:
 4:
 	cmp r5, r9
 	blo 3b
+
+// Map peripherals into virtual memory
+	ldr r4, =tabPGDIR - KERNEL_OFFSET + (PERI_OFFSET >> 18)
+	add r9, r4, #64
+	ldr r5, =#0x3f050412
+	b 6f
+
+5:
+	str r5, [r4], #4
+
+6:
+	cmp r4, r9
+	blo 5b
+
 
 // Enable MMU
 	ldr r4, =tabPGDIR - KERNEL_OFFSET
