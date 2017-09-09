@@ -39,7 +39,7 @@ Entry:
 	ldr r4, =tabPGTAB - KERNEL_OFFSET
 	mov r6, r5, LSR#10
 	add r4, r4, r6
-	ldr r7, =#0xff2
+	ldr r7, =#0x452
 	orr r5, r5, r7
 	b 4f
 
