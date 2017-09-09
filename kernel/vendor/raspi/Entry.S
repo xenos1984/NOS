@@ -4,9 +4,12 @@
 .extern KernelEntry
 
 Entry:
+// Set stack pointer to below kernel.
 	mov sp, #0x8000
+
+// Clear BSS and page tables
 	ldr r4, =bssStart
-	ldr r9, =bssEnd
+	ldr r9, =kernelEnd
 	mov r5, #0
 	mov r6, #0
 	mov r7, #0
@@ -20,10 +23,37 @@ Entry:
 	cmp r4, r9
 	blo 1b
 
+// Link page table to identity mapping and higher half
+	ldr r5, =tabPGTAB
+	orr r5, r5, #1
+	ldr r4, =tabPGDIR
+	str r5, [r4, #32]
+	add r4, r4, #0xc0000
+	str r5, [r4, #32]
+
+// Fill page table to map kernel
+	ldr r9, =kernelEnd
+	ldr r5, =initTextStart
+	ldr r4, =tabPGTAB
+	mov r6, r5, LSR#10
+	add r4, r4, r6
+	orr r5, r5, #2
+	b 4f
+
+3:
+	str r5, [r4], #4
+	add r5, #0x1000
+
+4:
+	cmp r5, r9
+	blo 3b
+
+// Call kernel entry point.
 	ldr r3, =KernelEntry
 	blx r3
 
-3:
+// Infinite loop.
+5:
 	wfe
-	b 3b
+	b 5b
 

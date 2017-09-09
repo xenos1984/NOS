@@ -63,6 +63,16 @@ SECTIONS
 	bspStack = .;
 	bssEnd = .;
 
+	. = ALIGN(16K);
+	.tables :
+	{
+		tabPGDIR = .;
+		. += 16K;
+		tabPGTAB = .;
+		. += 1K;
+	}
+	kernelEnd = .;
+
 	/DISCARD/ :
 	{
 		*(.gcc_except_table)
