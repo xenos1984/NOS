@@ -3,6 +3,8 @@ OUTPUT_ARCH(arm)
 ENTRY(Entry)
 
 kernelOffset = 0xc0000000;
+kernelStart = kernelOffset + 0x8000;
+initStart = kernelStart;
 
 GROUP(../../libkernel.a libraspi.a)
 INPUT(libgcc.a)
@@ -15,7 +17,7 @@ PHDRS
 
 SECTIONS
 {
-	.init.text 0x8000 :
+	.init.text (initStart + SIZEOF_HEADERS) : AT(ADDR(.init.text) - kernelOffset)
 	{
 		initTextStart = .;
 		*(.init.text)
@@ -23,7 +25,7 @@ SECTIONS
 		initTextEnd = .;
 	} :init
 
-	.init.data :
+	.init.data : AT(ADDR(.init.data) - kernelOffset)
 	{
 		initDataStart = .;
 		*(.init.data)
@@ -32,7 +34,7 @@ SECTIONS
 	}
 	initEnd = .;
 
-	.text :
+	.text : AT(ADDR(.text) - kernelOffset)
 	{
 		*(.text)
 		*(.text.*)
@@ -45,7 +47,7 @@ SECTIONS
 	textEnd = .;
 
 	dataStart = .;
-	.data :
+	.data : AT(ADDR(.data) - kernelOffset)
 	{
 		*(.data*)
 		*(.gnu.linkonce.d.*)
@@ -54,7 +56,7 @@ SECTIONS
 	dataEnd = .;
 	bssStart = .;
 
-	.bss :
+	.bss : AT(ADDR(.bss) - kernelOffset)
 	{
 		*(.common)
 		*(.bss*)
@@ -66,7 +68,7 @@ SECTIONS
 	bssEnd = .;
 
 	. = ALIGN(16K);
-	.tables :
+	.tables : AT(ADDR(.tables) - kernelOffset)
 	{
 		tabPGDIR = .;
 		. += 16K;
