@@ -47,6 +47,4 @@ namespace Kernel
 	}
 }
 
-#include INC_VENDOR(Console.h)
-
 #endif

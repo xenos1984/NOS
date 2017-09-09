@@ -38,16 +38,3 @@ libx86_a_SOURCES = \
 	Pager.cpp \
 	Processor.cpp
 
-#noinst_PROGRAMS = Kernel.elf
-
-#Kernel_elf_SOURCES =
-
-#Kernel_elf_DEPENDENCIES = ${subarch_subdir}/ldscript ${subarch_subdir}/lib${subarch_subdir}.a libx86.a ../../libkernel.a
-
-#Kernel_elf_LDFLAGS = \
-#	-Wl,-shared,-soname=Kernel.elf \
-#	-T ${subarch_subdir}/ldscript \
-#	-T ../../exports.lds \
-#	-Wl,-Map,Kernel.map \
-#	-Wl,-u,Entry
-
