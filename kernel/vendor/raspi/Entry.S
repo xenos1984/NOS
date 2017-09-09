@@ -27,9 +27,9 @@ Entry:
 	ldr r5, =tabPGTAB
 	orr r5, r5, #1
 	ldr r4, =tabPGDIR
-	str r5, [r4, #32]
-	add r4, r4, #0xc0000
-	str r5, [r4, #32]
+	str r5, [r4]
+	add r4, r4, #0x3000
+	str r5, [r4]
 
 // Fill page table to map kernel
 	ldr r9, =kernelEnd
@@ -37,7 +37,8 @@ Entry:
 	ldr r4, =tabPGTAB
 	mov r6, r5, LSR#10
 	add r4, r4, r6
-	orr r5, r5, #2
+	ldr r7, =#0xff2
+	orr r5, r5, r7
 	b 4f
 
 3:
@@ -61,6 +62,8 @@ Entry:
 
 // Call kernel entry point.
 	ldr r3, =KernelEntry
+	ldr r4, =kernelOffset
+	add r3, r3, r4
 	blx r3
 
 // Infinite loop.
