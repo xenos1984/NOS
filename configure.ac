@@ -107,12 +107,15 @@ AC_CONFIG_FILES([
 	drivers/arch/x86/Makefile
 	drivers/arch/x86/ia32/Makefile
 	drivers/arch/x86/amd64/Makefile
+	drivers/arch/arm/Makefile
 	drivers/arch/m68k/Makefile
 	drivers/pc/Makefile
 	drivers/pc/floppy/Makefile
+	drivers/raspi/Makefile
 	drivers/atari/Makefile
 	images/Makefile
 	images/pc/Makefile
+	images/raspi/Makefile
 	refman/Makefile
 	refman/refman.doxyfile
 ])
