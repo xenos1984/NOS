@@ -48,6 +48,17 @@ Entry:
 	cmp r5, r9
 	blo 3b
 
+// Enable MMU
+	ldr r4, =tabPGDIR
+	mcr p15, 0, r4, c2, c0
+	mov r4, #5
+	mcr p15, 0, r4, c3, c0
+	ldr r4, =0x101
+	mcr p15, 0, r4, c1, c0
+	nop
+	nop
+	nop
+
 // Call kernel entry point.
 	ldr r3, =KernelEntry
 	blx r3
