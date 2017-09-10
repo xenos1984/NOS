@@ -7,8 +7,14 @@ AM_CPPFLAGS = -imacros $(top_srcdir)/config.h -I$(top_srcdir)/kernel -I$(top_src
 noinst_LIBRARIES = libraspi.a
 
 libraspi_a_SOURCES = \
+	GPIO.h \
+	UART.h \
+	\
+	Console.cpp \
 	Core.cpp \
-	Entry.S
+	Entry.S \
+	GPIO.cpp \
+	UART.cpp
 
 noinst_PROGRAMS = Kernel.elf
 

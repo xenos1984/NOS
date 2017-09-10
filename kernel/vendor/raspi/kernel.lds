@@ -75,6 +75,7 @@ SECTIONS
 		tabPGTAB = .;
 		. += 1K;
 	}
+	. = ALIGN(4K);
 	kernelEnd = .;
 
 	/DISCARD/ :

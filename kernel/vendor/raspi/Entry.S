@@ -1,7 +1,8 @@
-.section .init.text
+// Entry.S - Kernel entry point
 
-#define KERNEL_OFFSET 0xC0000000
-#define PERI_OFFSET 0xCF000000
+#include <vendor/raspi/Entry.h>
+
+.section .init.text
 
 .globl Entry
 .extern KernelEntry
@@ -71,7 +72,8 @@ Entry:
 	mcr p15, 0, r4, c2, c0
 	mov r4, #5
 	mcr p15, 0, r4, c3, c0
-	ldr r4, =0x101
+	mrc p15, 0, r4, c1, c0
+	orr r4, r4, #1
 	mcr p15, 0, r4, c1, c0
 	nop
 	nop
