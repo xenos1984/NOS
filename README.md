@@ -24,7 +24,7 @@ Operating system project
 * i[3456]86-pc-elf (active)
 * x86\_64-pc-elf (active)
 * m68k-atari-elf (temporarily not supported)
-* arm-raspi2-eabi (planned)
+* arm-raspi2-eabi (active)
 
 ## Latest builds:
 * [i686-pc-elf GRUB2 bootable iso image](https://circleci.com/api/v1/project/xenos1984/NOS/latest/artifacts/0/$CIRCLE_ARTIFACTS/i686-pc-elf/NOS.iso) ([config log](https://circleci.com/api/v1/project/xenos1984/NOS/latest/artifacts/0/$CIRCLE_ARTIFACTS/i686-pc-elf/config.txt), [build log](https://circleci.com/api/v1/project/xenos1984/NOS/latest/artifacts/0/$CIRCLE_ARTIFACTS/i686-pc-elf/build.txt))

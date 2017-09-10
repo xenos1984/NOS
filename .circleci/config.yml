@@ -50,6 +50,22 @@ jobs:
                 paths:
                     - ~/x86_64-pc-elf
 
+    build_raspi2:
+        docker:
+            - image: xenos1984/cross-arm-raspi2-eabi:latest
+        working_directory: ~/nos
+        steps:
+            - run: echo $CIRCLE_SHA1 > .circle-sha
+            - restore_cache:
+                keys:
+                    - nos-source-{{ checksum ".circle-sha" }}
+            - run: .circleci/build_raspi.sh arm-raspi2-eabi mp
+            - run: .circleci/build_raspi.sh arm-raspi2-eabi sp --disable-smp
+            - save_cache:
+                key: nos-arm-raspi2-eabi-{{ checksum ".circle-sha" }}
+                paths:
+                    - ~/arm-raspi2-eabi
+
     collect:
         docker:
             - image: xenos1984/cross-source:latest
@@ -62,12 +78,18 @@ jobs:
             - restore_cache:
                 keys:
                     - nos-x86_64-pc-elf-{{ checksum ".circle-sha" }}
+            - restore_cache:
+                keys:
+                    - nos-arm-raspi2-eabi-{{ checksum ".circle-sha" }}
             - store_artifacts:
                 path: ~/i686-pc-elf
                 destination: i686-pc-elf
             - store_artifacts:
                 path: ~/x86_64-pc-elf
                 destination: x86_64-pc-elf
+            - store_artifacts:
+                path: ~/arm-raspi2-eabi
+                destination: arm-raspi2-eabi
 
 workflows:
     version: 2
@@ -80,8 +102,12 @@ workflows:
             - build_x86_64:
                 requires:
                     - autogen
+            - build_raspi2:
+                requires:
+                    - autogen
             - collect:
                 requires:
                     - build_i686
                     - build_x86_64
+                    - build_raspi2
 
