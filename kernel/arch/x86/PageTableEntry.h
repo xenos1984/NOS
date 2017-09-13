@@ -67,11 +67,6 @@ namespace Kernel
 			}
 
 		public:
-/*			static PageTableEntry& Entry(int i)
-			{
-				return reinterpret_cast<PageTableEntry*>(REC_PAGE_TAB)[i];
-			}
-*/
 			template<Memory::PageBits bits> PageTableEntry& Set(Memory::PhysAddr phys, Memory::MemType type)
 			{
 				static_assert(IsValidSize(bits), "invalid page size");
