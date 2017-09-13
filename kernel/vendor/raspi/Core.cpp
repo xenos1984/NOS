@@ -15,5 +15,6 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t r0, uint32_t r1, uint
 
 	Console::WriteFormat("Register arguments: r0 = 0x%8x, r1 = 0x%8x, r2 = 0x%8x\n", r0, r1, r2);
 	Console::WriteFormat("SCTLR = 0x%8x\n", Coprocessor::SCTLR::Read());
+	Console::WriteFormat("MIDR = 0x%8x\n", Coprocessor::MIDR::Read());
 }
 

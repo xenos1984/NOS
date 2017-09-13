@@ -33,6 +33,11 @@ namespace Kernel
 {
 	namespace Coprocessor
 	{
+		namespace MIDR
+		{
+			READ_WRITE_REG("p15", "c0", "c0", "0", "0")
+		}
+
 		namespace SCTLR
 		{
 			enum Flags : uint32_t
