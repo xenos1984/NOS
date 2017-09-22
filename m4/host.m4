@@ -54,18 +54,24 @@ AC_DEFUN([NOS_SET_HOST], [
 		case "${host_vendor}" in
 		raspi)
 			CFLAGS="${CFLAGS} -mcpu=arm1176jzf-s"
-			subarch_subdir=v7
+			subarch_subdir=v6
 			vendor_subdir=raspi
+			AC_DEFINE([ARCH_ARM_V6], [1], [Define to 1 for ARMv6 targets.])
+			AC_DEFINE([ARCH_ARM_1176JZFS], [1], [Define to 1 for ARM 1176JZF-S targets.])
 			;;
 		raspi2)
 			CFLAGS="${CFLAGS} -mcpu=cortex-a7"
 			subarch_subdir=v7
 			vendor_subdir=raspi
+			AC_DEFINE([ARCH_ARM_V7], [1], [Define to 1 for ARMv7 targets.])
+			AC_DEFINE([ARCH_ARM_CORTEX_A7], [1], [Define to 1 for ARM Cortex-A7 targets.])
 			;;
 		raspi3)
 			CFLAGS="${CFLAGS} -mcpu=cortex-a53"
 			subarch_subdir=v8
 			vendor_subdir=raspi
+			AC_DEFINE([ARCH_ARM_V8], [1], [Define to 1 for ARMv8 targets.])
+			AC_DEFINE([ARCH_ARM_CORTEX_A53], [1], [Define to 1 for ARM Cortex-A53 targets.])
 			;;
 		*)
 			AC_MSG_ERROR([unsupported host vendor])

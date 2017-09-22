@@ -4,6 +4,7 @@
 #define __ARCH_ARM_COPROCESSOR_H__
 
 #include <cstdint>
+#include INC_ARCH(Extensions.h)
 
 #define READ_WRITE_REG(cp, crn, crm, op1, op2) \
 	inline uint32_t Read(void) \
@@ -67,6 +68,13 @@ namespace Kernel
 
 			READ_WRITE_REG("p15", "c1", "c0", "0", "0")
 		}
+
+#ifdef ARM_EXT_SECURITY
+		namespace VBAR
+		{
+			READ_WRITE_REG("p15", "c12", "c0", "0", "0")
+		}
+#endif
 	}
 }
 
