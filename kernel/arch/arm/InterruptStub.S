@@ -1,5 +1,8 @@
 // InterruptStub.S - ARM interrupt / exception entry points.
 
+.globl ExceptionVectorBase
+
+.section .text
 .align 5
 ExceptionVectorBase:
 b . // Reset

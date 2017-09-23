@@ -19,6 +19,8 @@ namespace Kernel
 		static constexpr ConstSymbol heapEnd         = ConstSymbol(0xdfffffffUL);
 
 		static constexpr ConstSymbol kernelOffset    = ConstSymbol(0xc0000000UL);
+
+		extern "C" const ExtSymbol ExceptionVectorBase;
 	}
 }
 
