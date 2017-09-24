@@ -26,7 +26,8 @@ tst sp, #4
 subeq sp, #4
 push {r0}
 
-b . //bl DataAbort
+bl DataAbort
+b .
 
 pop {r0}
 mov sp, r0

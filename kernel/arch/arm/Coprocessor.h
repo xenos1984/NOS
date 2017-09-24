@@ -34,11 +34,25 @@ namespace Kernel
 {
 	namespace Coprocessor
 	{
+		/** Data Fault Address Register */
+		namespace DFAR
+		{
+			READ_WRITE_REG("p15", "c6", "c0", "0", "0")
+		}
+
+		/** Data Fault Status Register */
+		namespace DFSR
+		{
+			READ_WRITE_REG("p15", "c5", "c0", "0", "0")
+		}
+
+		/** Main ID Register */
 		namespace MIDR
 		{
 			READ_WRITE_REG("p15", "c0", "c0", "0", "0")
 		}
 
+		/** System Control Register */
 		namespace SCTLR
 		{
 			enum Flags : uint32_t
@@ -70,6 +84,7 @@ namespace Kernel
 		}
 
 #ifdef ARM_EXT_SECURITY
+		/** Vector Base Address Register */
 		namespace VBAR
 		{
 			READ_WRITE_REG("p15", "c12", "c0", "0", "0")
