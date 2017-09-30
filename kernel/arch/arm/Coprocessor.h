@@ -6,6 +6,15 @@
 #include <cstdint>
 #include INC_ARCH(Extensions.h)
 
+#define READ_ONLY_REG(cp, crn, crm, op1, op2) \
+	inline uint32_t Read(void) \
+	{ \
+		uint32_t x; \
+		\
+		asm volatile ("mrc " cp ", " op1 ", %0, " crn ", " crm ", " op2 : "=r"(x)); \
+		return(x); \
+	}
+
 #define READ_WRITE_REG(cp, crn, crm, op1, op2) \
 	inline uint32_t Read(void) \
 	{ \
@@ -61,7 +70,7 @@ namespace Kernel
 		/** Main ID Register */
 		namespace MIDR
 		{
-			READ_WRITE_REG("p15", "c0", "c0", "0", "0")
+			READ_ONLY_REG("p15", "c0", "c0", "0", "0")
 		}
 
 		/** System Control Register */
@@ -105,6 +114,7 @@ namespace Kernel
 	}
 }
 
+#undef READ_ONLY_REG
 #undef READ_WRITE_REG
 
 #endif
