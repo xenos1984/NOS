@@ -46,6 +46,18 @@ namespace Kernel
 			READ_WRITE_REG("p15", "c5", "c0", "0", "0")
 		}
 
+		/** Instruction Fault Address Register */
+		namespace IFAR
+		{
+			READ_WRITE_REG("p15", "c6", "c0", "0", "2")
+		}
+
+		/** Instruction Fault Status Register */
+		namespace IFSR
+		{
+			READ_WRITE_REG("p15", "c5", "c0", "0", "1")
+		}
+
 		/** Main ID Register */
 		namespace MIDR
 		{
