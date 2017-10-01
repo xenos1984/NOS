@@ -9,7 +9,7 @@ AC_DEFUN([NOS_SET_HOST], [
 		subarch_subdir=ia32
 		host_bfd=elf32-i386
 		copy_flags="-I ${host_bfd} -O ${host_bfd}"
-		CFLAGS="${CFLAGS} -mno-sse -mno-mmx -mno-sse2 -mno-3dnow -mno-avx -mno-80387"
+		CFLAGS="${CFLAGS} -mgeneral-regs-only"
 		AC_DEFINE([ELF32])
 		AC_DEFINE([uintX_t], [uint32_t])
 		AC_DEFINE([intX_t], [int32_t])
@@ -28,7 +28,7 @@ AC_DEFUN([NOS_SET_HOST], [
 		subarch_subdir=amd64
 		host_bfd=elf64-x86-64
 		copy_flags="-I ${host_bfd} -O ${host_bfd}"
-		CFLAGS="${CFLAGS} -mcmodel=large -mno-red-zone -mno-sse -mno-mmx -mno-sse2 -mno-3dnow -mno-avx -mno-80387"
+		CFLAGS="${CFLAGS} -mcmodel=large -mno-red-zone -mgeneral-regs-only"
 		LDFLAGS="${LDFLAGS} -Wl,-z -Wl,max-page-size=0x1000"
 		AC_DEFINE([ELF64])
 		AC_DEFINE([uintX_t], [uint64_t])
