@@ -27,4 +27,3 @@ libia32_a_SOURCES = \
 	Thread.cpp \
 	User.cpp
 
-EXTRA_DIST = ldscript

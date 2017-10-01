@@ -27,4 +27,3 @@ libamd64_a_SOURCES = \
 	User.cpp \
 	X86_64TaskManager.cpp
 
-EXTRA_DIST = ldscript

@@ -20,7 +20,7 @@ noinst_PROGRAMS = Kernel.elf
 
 Kernel_elf_SOURCES =
 
-Kernel_elf_DEPENDENCIES = kernel.lds libraspi.a ../../libkernel.a ../../arch/${arch_subdir}/lib${arch_subdir}.a #../../arch/${arch_subdir}/${subarch_subdir}/lib${subarch_subdir}.a
+Kernel_elf_DEPENDENCIES = kernel.lds libraspi.a ../../libkernel.a ../../arch/${arch_subdir}/lib${arch_subdir}.a ../../arch/${arch_subdir}/${subarch_subdir}/lib${subarch_subdir}.a
 
 Kernel_elf_LDFLAGS = \
 	-T kernel.lds \

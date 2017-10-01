@@ -55,7 +55,7 @@ namespace Kernel
 				PAGE_ACC_K_RW_U_RO = 0x0020,
 				PAGE_ACC_K_RW_U_RW = 0x0030,
 				PAGE_ACC_K_RO_U_NA = 0x0210,
-				PAGE_ACC_K_RW_U_NA = 0x0230
+				PAGE_ACC_K_RO_U_RO = 0x0230
 			};
 
 			constexpr static std::underlying_type<Flags>::type TypeFlags(Memory::MemType type)
