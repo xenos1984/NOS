@@ -41,15 +41,21 @@ namespace Kernel
 
 			enum Flags : uint32_t
 			{
-				PAGE_INVALID  = 0x0000,
-				PAGE_LARGE    = 0x0001,
-				PAGE_SMALL    = 0x0002,
-				PAGE_BUFFER   = 0x0004,
-				PAGE_CACHE    = 0x0008,
-				PAGE_SHARE    = 0x0400,
-				PAGE_NGLOBAL  = 0x0800,
-				PAGE_S_NOEXEC = 0x0001,
-				PAGE_L_NOEXEC = 0x8000
+				PAGE_INVALID       = 0x0000,
+				PAGE_LARGE         = 0x0001,
+				PAGE_SMALL         = 0x0002,
+				PAGE_BUFFER        = 0x0004,
+				PAGE_CACHE         = 0x0008,
+				PAGE_SHARE         = 0x0400,
+				PAGE_NGLOBAL       = 0x0800,
+				PAGE_S_NOEXEC      = 0x0001,
+				PAGE_L_NOEXEC      = 0x8000,
+				PAGE_ACC_K_NA_U_NA = 0x0000,
+				PAGE_ACC_K_RW_U_NA = 0x0010,
+				PAGE_ACC_K_RW_U_RO = 0x0020,
+				PAGE_ACC_K_RW_U_RW = 0x0030,
+				PAGE_ACC_K_RO_U_NA = 0x0210,
+				PAGE_ACC_K_RW_U_NA = 0x0230
 			};
 
 			constexpr static std::underlying_type<Flags>::type TypeFlags(Memory::MemType type)
@@ -116,5 +122,4 @@ namespace Kernel
 }
 
 #endif
-
 
