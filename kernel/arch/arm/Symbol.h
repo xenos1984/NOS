@@ -21,6 +21,9 @@ namespace Kernel
 		static constexpr ConstSymbol kernelOffset    = ConstSymbol(0xc0000000UL);
 
 		extern "C" const ExtSymbol ExceptionVectorBase;
+
+		extern "C" const ExtSymbol tabPGTAB;
+		extern "C" const ExtSymbol tabPGDIR;
 	}
 }
 
