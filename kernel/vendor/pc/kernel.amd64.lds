@@ -63,15 +63,8 @@ SECTIONS
 	} :user
 	userEnd = userStart + SIZEOF(.user);
 
-	kernelElfDynsym = userEnd;
 	textStart = userEnd;
-	.dynsym (userEnd) : AT(ADDR(.dynsym) - kernelOffset) { *(.dynsym) } :kernel
-	kernelElfDynstr = .;
-	.dynstr : AT(ADDR(.dynstr) - kernelOffset) { *(.dynstr) }
-	kernelElfHash = .;
-	.hash : AT(ADDR(.hash) - kernelOffset) { *(.hash) }
-
-	.text : AT(ADDR(.text) - kernelOffset)
+	.text (textStart) : AT(ADDR(.text) - kernelOffset)
 	{
 		*(.text)
 		*(.text.*)
@@ -80,7 +73,7 @@ SECTIONS
 		*(.gnu.linkonce.t.*)
 		*(.gnu.linkonce.r.*)
 		. = ALIGN(4K);
-	}
+	} :kernel
 	textEnd = .;
 
 	dataStart = .;
@@ -90,6 +83,12 @@ SECTIONS
 		*(.gnu.linkonce.d.*)
 	}
 
+	kernelElfDynsym = .;
+	.dynsym : AT(ADDR(.dynsym) - kernelOffset) { *(.dynsym) }
+	kernelElfDynstr = .;
+	.dynstr : AT(ADDR(.dynstr) - kernelOffset) { *(.dynstr) }
+	kernelElfHash = .;
+	.hash : AT(ADDR(.hash) - kernelOffset) { *(.hash) }
 	kernelElfDynamic = .;
 	.dynamic : { *(.dynamic) } :kernel :dynamic
 	.got.plt : { *(.got.plt) } :kernel

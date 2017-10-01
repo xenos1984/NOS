@@ -28,7 +28,7 @@ AC_DEFUN([NOS_SET_HOST], [
 		subarch_subdir=amd64
 		host_bfd=elf64-x86-64
 		copy_flags="-I ${host_bfd} -O ${host_bfd}"
-		CFLAGS="${CFLAGS} -mcmodel=large -mno-red-zone -mgeneral-regs-only"
+		CFLAGS="${CFLAGS} -mcmodel=kernel -mno-red-zone -mgeneral-regs-only"
 		LDFLAGS="${LDFLAGS} -Wl,-z -Wl,max-page-size=0x1000"
 		AC_DEFINE([ELF64])
 		AC_DEFINE([uintX_t], [uint64_t])
