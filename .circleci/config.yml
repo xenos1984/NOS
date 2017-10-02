@@ -100,6 +100,9 @@ jobs:
             - restore_cache:
                 keys:
                     - nos-arm-raspi2-eabi-{{ checksum ".circle-sha" }}
+            - restore_cache:
+                keys:
+                    - nos-qemu-raspi2-{{ checksum ".circle-sha" }}
             - store_artifacts:
                 path: ~/i686-pc-elf
                 destination: i686-pc-elf
@@ -109,6 +112,9 @@ jobs:
             - store_artifacts:
                 path: ~/arm-raspi2-eabi
                 destination: arm-raspi2-eabi
+            - store_artifacts:
+                path: ~/qemu-raspi2
+                destination: qemu-raspi2
 
 workflows:
     version: 2
