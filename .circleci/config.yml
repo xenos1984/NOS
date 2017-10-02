@@ -78,7 +78,7 @@ jobs:
             - run: mkdir ~/qemu-raspi2
             - run:
                 name: QEMU raspi2 MP
-                command: qemu-system-arm -m 256 -M raspi2 -cpu cortex-a7 -display none -monitor stdio -serial file:~/qemu-raspi2/arm-raspi2-eabi_mp.txt -kernel ~/arm-raspi2-eabi/mp/Kernel.elf
+                command: qemu-system-arm -m 256 -M raspi2 -cpu cortex-a7 -display none -monitor stdio -serial file:/root/qemu-raspi2/arm-raspi2-eabi_mp.txt -kernel ~/arm-raspi2-eabi/mp/Kernel.elf
                 no_output_timeout: 60s
             - save_cache:
                 key: nos-qemu-raspi2-{{ checksum ".circle-sha" }}
