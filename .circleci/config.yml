@@ -1,5 +1,7 @@
-version: 2
+defaults: &defaults
+    working_directory: ~/nos
 
+version: 2
 jobs:
     autogen:
         docker:
@@ -7,6 +9,8 @@ jobs:
         working_directory: ~/nos/source
         steps:
             - checkout
+            attach_workspace:
+                at: ~/nos
             - run: ./autogen.sh
             - persist_to_workspace:
                 root: ~/nos
