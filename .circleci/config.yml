@@ -68,12 +68,17 @@ jobs:
                 at: ~/nos
             - run:
                 name: QEMU raspi2 MP
-                command: sh -c 'sleep 45; echo "quit"' | qemu-system-arm -m 256 -M raspi2 -cpu cortex-a7 -display none -monitor stdio -serial file:mp/qemu.txt -kernel mp/Kernel.elf
+                command: ~/nos/source/.circleci/qemu_raspi.sh mp
+                no_output_timeout: 60s
+            - run:
+                name: QEMU raspi2 SP
+                command: ~/nos/source/.circleci/qemu_raspi.sh sp
                 no_output_timeout: 60s
             - persist_to_workspace:
                 root: ~/nos
                 paths:
                     - arm-raspi2-eabi/mp/qemu.txt
+                    - arm-raspi2-eabi/sp/qemu.txt
 
     collect:
         docker:
