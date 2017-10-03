@@ -59,6 +59,228 @@ jobs:
                 paths:
                     - arm-raspi2-eabi
 
+    qemu_i686:
+        docker:
+            - image: xenos1984/test-qemu:latest
+        working_directory: ~/nos/i686-pc-elf
+        steps:
+            - attach_workspace:
+                at: ~/nos
+            - run:
+                name: QEMU (32 bit, 1 CPU, ISA PC; MP, ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh i386 isapc 1 mp-acpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (32 bit, 1 CPU, ISA PC; MP, no ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh i386 isapc 1 mp-noacpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (32 bit, 1 CPU, ISA PC; SP, ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh i386 isapc 1 sp-acpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (32 bit, 1 CPU, ISA PC; SP, no ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh i386 isapc 1 sp-noacpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (32 bit, 1 CPU, i440FX + PIIX; MP, ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh i386 pc 1 mp-acpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (32 bit, 1 CPU, i440FX + PIIX; MP, no ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh i386 pc 1 mp-noacpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (32 bit, 1 CPU, i440FX + PIIX; SP, ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh i386 pc 1 sp-acpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (32 bit, 1 CPU, i440FX + PIIX; SP, no ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh i386 pc 1 sp-noacpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (32 bit, 1 CPU, Q35 + ICH9; MP, ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh i386 q35 1 mp-acpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (32 bit, 1 CPU, Q35 + ICH9; MP, no ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh i386 q35 1 mp-noacpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (32 bit, 1 CPU, Q35 + ICH9; SP, ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh i386 q35 1 sp-acpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (32 bit, 1 CPU, Q35 + ICH9; SP, no ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh i386 q35 1 sp-noacpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (32 bit, 4 CPUs, ISA PC; MP, ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh i386 isapc 4 mp-acpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (32 bit, 4 CPUs, ISA PC; MP, no ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh i386 isapc 4 mp-noacpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (32 bit, 4 CPUs, ISA PC; SP, ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh i386 isapc 4 sp-acpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (32 bit, 4 CPUs, ISA PC; SP, no ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh i386 isapc 4 sp-noacpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (32 bit, 4 CPUs, i440FX + PIIX; MP, ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh i386 pc 4 mp-acpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (32 bit, 4 CPUs, i440FX + PIIX; MP, no ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh i386 pc 4 mp-noacpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (32 bit, 4 CPUs, i440FX + PIIX; SP, ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh i386 pc 4 sp-acpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (32 bit, 4 CPUs, i440FX + PIIX; SP, no ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh i386 pc 4 sp-noacpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (32 bit, 4 CPUs, Q35 + ICH9; MP, ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh i386 q35 4 mp-acpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (32 bit, 4 CPUs, Q35 + ICH9; MP, no ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh i386 q35 4 mp-noacpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (32 bit, 4 CPUs, Q35 + ICH9; SP, ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh i386 q35 4 sp-acpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (32 bit, 4 CPUs, Q35 + ICH9; SP, no ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh i386 q35 4 sp-noacpi
+                no_output_timeout: 60s
+            - persist_to_workspace:
+                root: ~/nos
+                paths:
+                    - i686-pc-elf/mp-acpi/qemu*
+                    - i686-pc-elf/mp-noacpi/qemu*
+                    - i686-pc-elf/sp-acpi/qemu*
+                    - i686-pc-elf/sp-noacpi/qemu*
+
+    qemu_x86_64:
+        docker:
+            - image: xenos1984/test-qemu:latest
+        working_directory: ~/nos/x86_64-pc-elf
+        steps:
+            - attach_workspace:
+                at: ~/nos
+            - run:
+                name: QEMU (64 bit, 1 CPU, ISA PC; MP, ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 isapc 1 mp-acpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (64 bit, 1 CPU, ISA PC; MP, no ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 isapc 1 mp-noacpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (64 bit, 1 CPU, ISA PC; SP, ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 isapc 1 sp-acpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (64 bit, 1 CPU, ISA PC; SP, no ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 isapc 1 sp-noacpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (64 bit, 1 CPU, i440FX + PIIX; MP, ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 pc 1 mp-acpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (64 bit, 1 CPU, i440FX + PIIX; MP, no ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 pc 1 mp-noacpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (64 bit, 1 CPU, i440FX + PIIX; SP, ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 pc 1 sp-acpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (64 bit, 1 CPU, i440FX + PIIX; SP, no ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 pc 1 sp-noacpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (64 bit, 1 CPU, Q35 + ICH9; MP, ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 q35 1 mp-acpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (64 bit, 1 CPU, Q35 + ICH9; MP, no ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 q35 1 mp-noacpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (64 bit, 1 CPU, Q35 + ICH9; SP, ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 q35 1 sp-acpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (64 bit, 1 CPU, Q35 + ICH9; SP, no ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 q35 1 sp-noacpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (64 bit, 4 CPUs, ISA PC; MP, ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 isapc 4 mp-acpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (64 bit, 4 CPUs, ISA PC; MP, no ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 isapc 4 mp-noacpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (64 bit, 4 CPUs, ISA PC; SP, ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 isapc 4 sp-acpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (64 bit, 4 CPUs, ISA PC; SP, no ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 isapc 4 sp-noacpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (64 bit, 4 CPUs, i440FX + PIIX; MP, ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 pc 4 mp-acpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (64 bit, 4 CPUs, i440FX + PIIX; MP, no ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 pc 4 mp-noacpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (64 bit, 4 CPUs, i440FX + PIIX; SP, ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 pc 4 sp-acpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (64 bit, 4 CPUs, i440FX + PIIX; SP, no ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 pc 4 sp-noacpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (64 bit, 4 CPUs, Q35 + ICH9; MP, ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 q35 4 mp-acpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (64 bit, 4 CPUs, Q35 + ICH9; MP, no ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 q35 4 mp-noacpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (64 bit, 4 CPUs, Q35 + ICH9; SP, ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 q35 4 sp-acpi
+                no_output_timeout: 60s
+            - run:
+                name: QEMU (64 bit, 4 CPUs, Q35 + ICH9; SP, no ACPI)
+                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 q35 4 sp-noacpi
+                no_output_timeout: 60s
+            - persist_to_workspace:
+                root: ~/nos
+                paths:
+                    - x86_64-pc-elf/mp-acpi/qemu*
+                    - x86_64-pc-elf/mp-noacpi/qemu*
+                    - x86_64-pc-elf/sp-acpi/qemu*
+                    - x86_64-pc-elf/sp-noacpi/qemu*
+
     qemu_raspi2:
         docker:
             - image: xenos1984/test-qemu:latest
@@ -77,8 +299,8 @@ jobs:
             - persist_to_workspace:
                 root: ~/nos
                 paths:
-                    - arm-raspi2-eabi/mp/qemu.txt
-                    - arm-raspi2-eabi/sp/qemu.txt
+                    - arm-raspi2-eabi/mp/qemu*
+                    - arm-raspi2-eabi/sp/qemu*
 
     collect:
         docker:
@@ -111,13 +333,18 @@ workflows:
             - build_raspi2:
                 requires:
                     - autogen
+            - qemu_i686:
+                requires:
+                    - build_i686
+            - qemu_x86_64:
+                requires:
+                    - build_x86_64
             - qemu_raspi2:
                 requires:
                     - build_raspi2
             - collect:
                 requires:
-                    - build_i686
-                    - build_x86_64
-                    - build_raspi2
+                    - qemu_i686
+                    - qemu_x86_64
                     - qemu_raspi2
 
