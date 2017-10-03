@@ -4,117 +4,93 @@ jobs:
     autogen:
         docker:
             - image: xenos1984/cross-source:latest
-        working_directory: ~/nos
+        working_directory: ~/nos/source
         steps:
             - checkout
             - run: ./autogen.sh
-            - run: echo $CIRCLE_SHA1 > .circle-sha
-            - save_cache:
-                key: nos-source-{{ checksum ".circle-sha" }}
+            - persist_to_workspace:
+                root: ~/nos
                 paths:
-                    - ~/nos
+                    - source
 
     build_i686:
         docker:
             - image: xenos1984/cross-i686-pc-elf:latest
-        working_directory: ~/nos
+        working_directory: ~/nos/source
         steps:
-            - run: echo $CIRCLE_SHA1 > .circle-sha
-            - restore_cache:
-                keys:
-                    - nos-source-{{ checksum ".circle-sha" }}
+            attach_workspace:
+                at: ~/nos
             - run: .circleci/build_pc.sh i686-pc-elf mp-acpi
             - run: .circleci/build_pc.sh i686-pc-elf mp-noacpi --disable-acpi
             - run: .circleci/build_pc.sh i686-pc-elf sp-acpi --disable-smp
             - run: .circleci/build_pc.sh i686-pc-elf sp-noacpi --disable-smp --disable-acpi
-            - save_cache:
-                key: nos-i686-pc-elf-{{ checksum ".circle-sha" }}
+            - persist_to_workspace:
+                root: ~/nos
                 paths:
-                    - ~/i686-pc-elf
+                    - i686-pc-elf
 
     build_x86_64:
         docker:
             - image: xenos1984/cross-x86_64-pc-elf:latest
-        working_directory: ~/nos
+        working_directory: ~/nos/source
         steps:
-            - run: echo $CIRCLE_SHA1 > .circle-sha
-            - restore_cache:
-                keys:
-                    - nos-source-{{ checksum ".circle-sha" }}
+            attach_workspace:
+                at: ~/nos
             - run: .circleci/build_pc.sh x86_64-pc-elf mp-acpi
             - run: .circleci/build_pc.sh x86_64-pc-elf mp-noacpi --disable-acpi
             - run: .circleci/build_pc.sh x86_64-pc-elf sp-acpi --disable-smp
             - run: .circleci/build_pc.sh x86_64-pc-elf sp-noacpi --disable-smp --disable-acpi
-            - save_cache:
-                key: nos-x86_64-pc-elf-{{ checksum ".circle-sha" }}
+            - persist_to_workspace:
+                root: ~/nos
                 paths:
-                    - ~/x86_64-pc-elf
+                    - x86_64-pc-elf
 
     build_raspi2:
         docker:
             - image: xenos1984/cross-arm-raspi2-eabi:latest
-        working_directory: ~/nos
+        working_directory: ~/nos/source
         steps:
-            - run: echo $CIRCLE_SHA1 > .circle-sha
-            - restore_cache:
-                keys:
-                    - nos-source-{{ checksum ".circle-sha" }}
+            attach_workspace:
+                at: ~/nos
             - run: .circleci/build_raspi.sh arm-raspi2-eabi mp
             - run: .circleci/build_raspi.sh arm-raspi2-eabi sp --disable-smp
-            - save_cache:
-                key: nos-arm-raspi2-eabi-{{ checksum ".circle-sha" }}
+            - persist_to_workspace:
+                root: ~/nos
                 paths:
-                    - ~/arm-raspi2-eabi
+                    - arm-raspi2-eabi
 
     qemu_raspi2:
         docker:
             - image: xenos1984/test-qemu:latest
-        working_directory: ~/nos
+        working_directory: ~/nos/arm-raspi2-eabi
         steps:
-            - run: echo $CIRCLE_SHA1 > .circle-sha
-            - restore_cache:
-                keys:
-                    - nos-arm-raspi2-eabi-{{ checksum ".circle-sha" }}
-            - run: mkdir ~/qemu-raspi2
+            attach_workspace:
+                at: ~/nos
             - run:
                 name: QEMU raspi2 MP
-                command: sh -c 'sleep 45; echo "quit"' | qemu-system-arm -m 256 -M raspi2 -cpu cortex-a7 -display none -monitor stdio -serial file:/root/qemu-raspi2/arm-raspi2-eabi_mp.txt -kernel ~/arm-raspi2-eabi/mp/Kernel.elf
+                command: sh -c 'sleep 45; echo "quit"' | qemu-system-arm -m 256 -M raspi2 -cpu cortex-a7 -display none -monitor stdio -serial file:arm-raspi2-eabi_mp.txt -kernel mp/Kernel.elf
                 no_output_timeout: 60s
-            - save_cache:
-                key: nos-qemu-raspi2-{{ checksum ".circle-sha" }}
+            - persist_to_workspace:
+                root: ~/nos
                 paths:
-                    - ~/qemu-raspi2
+                    - arm-raspi-eabi/*.txt
 
     collect:
         docker:
             - image: xenos1984/cross-source:latest
         working_directory: ~/nos
         steps:
-            - run: echo $CIRCLE_SHA1 > .circle-sha
-            - restore_cache:
-                keys:
-                    - nos-i686-pc-elf-{{ checksum ".circle-sha" }}
-            - restore_cache:
-                keys:
-                    - nos-x86_64-pc-elf-{{ checksum ".circle-sha" }}
-            - restore_cache:
-                keys:
-                    - nos-arm-raspi2-eabi-{{ checksum ".circle-sha" }}
-            - restore_cache:
-                keys:
-                    - nos-qemu-raspi2-{{ checksum ".circle-sha" }}
+            attach_workspace:
+                at: ~/nos
             - store_artifacts:
-                path: ~/i686-pc-elf
+                path: ~/nos/i686-pc-elf
                 destination: i686-pc-elf
             - store_artifacts:
-                path: ~/x86_64-pc-elf
+                path: ~/nos/x86_64-pc-elf
                 destination: x86_64-pc-elf
             - store_artifacts:
-                path: ~/arm-raspi2-eabi
+                path: ~/nos/arm-raspi2-eabi
                 destination: arm-raspi2-eabi
-            - store_artifacts:
-                path: ~/qemu-raspi2
-                destination: qemu-raspi2
 
 workflows:
     version: 2

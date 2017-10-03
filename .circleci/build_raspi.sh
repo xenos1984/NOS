@@ -1,7 +1,7 @@
 #!/bin/bash
 
 target=$1
-folder=~/$target/$2
+folder=~/nos/$target/$2
 shift 2
 
 ./configure --host=$target $@
