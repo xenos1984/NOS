@@ -11,7 +11,9 @@ mkdir -p $folder
 cp config.log $folder/
 cp build.log $folder/
 cp kernel/vendor/raspi/Kernel.elf $folder/
+cp kernel/vendor/raspi/Kernel.map $folder/
 #cp images/raspi/NOS.img $folder/
+$target-objdump -x -d -C -g -S $folder/Kernel.elf > $folder/Kernel.dump
 
 make clean
 
