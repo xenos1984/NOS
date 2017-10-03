@@ -1,7 +1,5 @@
-defaults: &defaults
-    working_directory: ~/nos
-
 version: 2
+
 jobs:
     autogen:
         docker:
@@ -9,8 +7,6 @@ jobs:
         working_directory: ~/nos/source
         steps:
             - checkout
-            attach_workspace:
-                at: ~/nos
             - run: ./autogen.sh
             - persist_to_workspace:
                 root: ~/nos
@@ -22,7 +18,7 @@ jobs:
             - image: xenos1984/cross-i686-pc-elf:latest
         working_directory: ~/nos/source
         steps:
-            attach_workspace:
+            - attach_workspace:
                 at: ~/nos
             - run: .circleci/build_pc.sh i686-pc-elf mp-acpi
             - run: .circleci/build_pc.sh i686-pc-elf mp-noacpi --disable-acpi
@@ -38,7 +34,7 @@ jobs:
             - image: xenos1984/cross-x86_64-pc-elf:latest
         working_directory: ~/nos/source
         steps:
-            attach_workspace:
+            - attach_workspace:
                 at: ~/nos
             - run: .circleci/build_pc.sh x86_64-pc-elf mp-acpi
             - run: .circleci/build_pc.sh x86_64-pc-elf mp-noacpi --disable-acpi
@@ -54,7 +50,7 @@ jobs:
             - image: xenos1984/cross-arm-raspi2-eabi:latest
         working_directory: ~/nos/source
         steps:
-            attach_workspace:
+            - attach_workspace:
                 at: ~/nos
             - run: .circleci/build_raspi.sh arm-raspi2-eabi mp
             - run: .circleci/build_raspi.sh arm-raspi2-eabi sp --disable-smp
@@ -68,7 +64,7 @@ jobs:
             - image: xenos1984/test-qemu:latest
         working_directory: ~/nos/arm-raspi2-eabi
         steps:
-            attach_workspace:
+            - attach_workspace:
                 at: ~/nos
             - run:
                 name: QEMU raspi2 MP
@@ -84,7 +80,7 @@ jobs:
             - image: xenos1984/cross-source:latest
         working_directory: ~/nos
         steps:
-            attach_workspace:
+            - attach_workspace:
                 at: ~/nos
             - store_artifacts:
                 path: ~/nos/i686-pc-elf
