@@ -110,6 +110,56 @@ namespace Kernel
 			READ_WRITE_REG("p15", "c1", "c0", "0", "0")
 		}
 
+		/** Invalidate entire unified TLB. */
+		namespace TLBIALL
+		{
+			WRITE_ONLY_REG("p15", "c8", "c7", "0", "0")
+		}
+
+		/** Invalidate unified TLB by ASID. */
+		namespace TLBIASID
+		{
+			WRITE_ONLY_REG("p15", "c8", "c7", "0", "2")
+		}
+
+		/** Invalidate unified TLB by MVA. */
+		namespace TLBIMVA
+		{
+			WRITE_ONLY_REG("p15", "c8", "c7", "0", "1")
+		}
+
+		/** Invalidate unified TLB by MVA, all ASID. */
+		namespace TLBIMVAA
+		{
+			WRITE_ONLY_REG("p15", "c8", "c7", "0", "3")
+		}
+
+#ifdef ARM_EXT_SMP
+		/** Invalidate entire unified TLB. */
+		namespace TLBIALLIS
+		{
+			WRITE_ONLY_REG("p15", "c8", "c3", "0", "0")
+		}
+
+		/** Invalidate unified TLB by ASID. */
+		namespace TLBIASIDIS
+		{
+			WRITE_ONLY_REG("p15", "c8", "c3", "0", "2")
+		}
+
+		/** Invalidate unified TLB by MVA. */
+		namespace TLBIMVAIS
+		{
+			WRITE_ONLY_REG("p15", "c8", "c3", "0", "1")
+		}
+
+		/** Invalidate unified TLB by MVA, all ASID. */
+		namespace TLBIMVAAIS
+		{
+			WRITE_ONLY_REG("p15", "c8", "c3", "0", "3")
+		}
+#endif
+
 #ifdef ARM_EXT_SECURITY
 		/** Vector Base Address Register */
 		namespace VBAR
