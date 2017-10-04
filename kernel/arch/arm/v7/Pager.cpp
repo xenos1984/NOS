@@ -11,6 +11,26 @@ namespace Kernel
 {
 	namespace Pager
 	{
+		inline void InvalidateAll(void)
+		{
+			Coprocessor::TLBIALL::Write(0);
+		}
+
+		inline void InvalidateASID(uint8_t asid)
+		{
+			Coprocessor::TLBIASID::Write(asid);
+		}
+
+		inline void InvalidateMVAAll(uintptr_t mva)
+		{
+			Coprocessor::TLBIMVAA::Write(mva);
+		}
+
+		inline void InvalidateMVA(uint8_t asid, uintptr_t mva)
+		{
+			Coprocessor::TLBIMVA::Write(mva | asid);
+		}
+
 		template<Memory::PageBits bits> void MapPage(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type)
 		{
 			static_assert(IsValidSize(bits), "invalid page size");
