@@ -10,9 +10,9 @@ namespace Kernel
 {
 	namespace Pager
 	{
-		class alignas(16384) PageTableL1
+		template<Memory::PageBits size> class alignas(size >> 18) PageTableL1
 		{
-			PageTableEntryL1 entry[4096] = {PageTableEntryL1{}};
+			PageTableEntryL1 entry[size >> 20] = {PageTableEntryL1{}};
 		};
 
 		class alignas(1024) PageTableL2
@@ -20,9 +20,11 @@ namespace Kernel
 			PageTableEntryL2 entry[256] = {PageTableEntryL2{}};
 		};
 
-		inline PageTableL1& KernelPTL1(void)
+		typedef PageTableL1<Memory::PGB_4G> PageTableL1K;
+
+		inline PageTableL1K& KernelPTL1(void)
 		{
-			return *reinterpret_cast<PageTableL1*>(Symbol::tabPGDIR.Ptr());
+			return *reinterpret_cast<PageTableL1K*>(Symbol::tabPGDIR.Ptr());
 		}
 	}
 }
