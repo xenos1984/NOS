@@ -15,6 +15,12 @@
 		return(x); \
 	}
 
+#define WRITE_ONLY_REG(cp, crn, crm, op1, op2) \
+	inline void Write(uint32_t x) \
+	{ \
+		asm volatile ("mcr " cp ", " op1 ", %0, " crn ", " crm ", " op2 : : "r"(x)); \
+	} \
+
 #define READ_WRITE_REG(cp, crn, crm, op1, op2) \
 	inline uint32_t Read(void) \
 	{ \
