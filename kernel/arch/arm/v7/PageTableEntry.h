@@ -18,21 +18,58 @@ namespace Kernel
 
 			enum Flags : uint32_t
 			{
-				PAGE_INVALID   = 0x00000000,
-				PAGE_TABLE     = 0x00000001,
-				PAGE_SECTION   = 0x00000002,
-				PAGE_SUPER     = 0x00040002,
-				PAGE_T_PNOEXEC = 0x00000004,
-				PAGE_S_PNOEXEC = 0x00000001,
-				PAGE_S_BUFFER  = 0x00000004,
-				PAGE_S_CACHE   = 0x00000008,
-				PAGE_S_NOEXEC  = 0x00000010,
-				PAGE_T_NONSEC  = 0x00000008,
-				PAGE_S_NONSEC  = 0x00080000,
-				PAGE_S_SHARE   = 0x00010000,
-				PAGE_S_NGLOBAL = 0x00020000
+				PAGE_INVALID       = 0x00000000,
+				PAGE_TABLE         = 0x00000001,
+				PAGE_SECTION       = 0x00000002,
+				PAGE_SUPER         = 0x00040002,
+				PAGE_T_PNOEXEC     = 0x00000004,
+				PAGE_S_PNOEXEC     = 0x00000001,
+				PAGE_S_BUFFER      = 0x00000004,
+				PAGE_S_CACHE       = 0x00000008,
+				PAGE_S_NOEXEC      = 0x00000010,
+				PAGE_T_NONSEC      = 0x00000008,
+				PAGE_S_NONSEC      = 0x00080000,
+				PAGE_S_SHARE       = 0x00010000,
+				PAGE_S_NGLOBAL     = 0x00020000,
+				PAGE_ACC_K_NA_U_NA = 0x00000000,
+				PAGE_ACC_K_RW_U_NA = 0x00000400,
+				PAGE_ACC_K_RW_U_RO = 0x00000800,
+				PAGE_ACC_K_RW_U_RW = 0x00000c00,
+				PAGE_ACC_K_RO_U_NA = 0x00008400,
+				PAGE_ACC_K_RO_U_RO = 0x00008c00
 			};
-		} PACKED;
+
+			constexpr static std::underlying_type<Flags>::type TypeFlags(Memory::MemType type)
+			{
+				switch(type)
+				{/*
+				case Memory::MemType::KERNEL_EXEC:
+					return PAGE_PRESENT | PAGE_GLOBAL;
+				case Memory::MemType::KERNEL_RO:
+					return PAGE_PRESENT | PAGE_GLOBAL;
+				case Memory::MemType::KERNEL_RW:
+					return PAGE_PRESENT | PAGE_WRITEABLE | PAGE_GLOBAL;
+				case Memory::MemType::KERNEL_PAGETAB:
+					return PAGE_PRESENT | PAGE_WRITEABLE;
+				case Memory::MemType::USER_EXEC:
+					return PAGE_PRESENT | PAGE_USER;
+				case Memory::MemType::USER_RO:
+					return PAGE_PRESENT | PAGE_USER;
+				case Memory::MemType::USER_RW:
+					return PAGE_PRESENT | PAGE_WRITEABLE | PAGE_USER;
+				case Memory::MemType::USER_PAGETAB:
+					return PAGE_PRESENT | PAGE_WRITEABLE | PAGE_USER;
+				case Memory::MemType::USER_COW:
+					return PAGE_PRESENT | PAGE_USER;
+				case Memory::MemType::USER_DEMAND:
+					return PAGE_PRESENT | PAGE_USER;*/
+				default:
+					return 0;
+				}
+			}
+
+		public:
+		};
 
 		class PageTableEntryL2
 		{
@@ -117,7 +154,7 @@ namespace Kernel
 			{
 				return (raw == 0);
 			}
-		} PACKED;
+		};
 	}
 }
 
