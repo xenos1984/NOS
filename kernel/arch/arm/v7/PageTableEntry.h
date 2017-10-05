@@ -36,7 +36,24 @@ namespace Kernel
 				PAGE_ACC_K_RW_U_RO = 0x00000800,
 				PAGE_ACC_K_RW_U_RW = 0x00000c00,
 				PAGE_ACC_K_RO_U_NA = 0x00008400,
-				PAGE_ACC_K_RO_U_RO = 0x00008c00
+				PAGE_ACC_K_RO_U_RO = 0x00008c00,
+				PAGE_MRA_STRORD    = 0x00000000,
+				PAGE_MRA_DEV_SHA   = 0x00000004,
+				PAGE_MRA_DEV_NSHA  = 0x00002000,
+				PAGE_MRA_IMPL      = 0x00001008,
+				PAGE_MRA_N_NC      = 0x00001000,
+				PAGE_MRA_N_WB_WA   = 0x0000100c,
+				PAGE_MRA_N_WB_NWA  = 0x0000000c,
+				PAGE_MRA_N_WT_NWA  = 0x00000008,
+				PAGE_MRA_N_CACHE   = 0x00004000,
+				PAGE_MRA_I_NC      = 0x00000000,
+				PAGE_MRA_I_WB_WA   = 0x00000004,
+				PAGE_MRA_I_WB_NWA  = 0x0000000c,
+				PAGE_MRA_I_WT_NWA  = 0x00000008,
+				PAGE_MRA_O_NC      = 0x00000000,
+				PAGE_MRA_O_WB_WA   = 0x00001000,
+				PAGE_MRA_O_WB_NWA  = 0x00003000,
+				PAGE_MRA_O_WT_NWA  = 0x00002000
 			};
 
 			constexpr static std::underlying_type<Flags>::type TypeFlags(Memory::MemType type)
