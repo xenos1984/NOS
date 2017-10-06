@@ -146,57 +146,21 @@ namespace Kernel
 				PAGE_S_MRA_O_WT_NWA = 0x00000080
 			};
 
-			constexpr static std::underlying_type<Flags>::type TypeFlags(Memory::MemType type)
-			{
-				switch(type)
-				{/*
-				case Memory::MemType::KERNEL_EXEC:
-					return PAGE_PRESENT | PAGE_GLOBAL;
-				case Memory::MemType::KERNEL_RO:
-					return PAGE_PRESENT | PAGE_GLOBAL;
-				case Memory::MemType::KERNEL_RW:
-					return PAGE_PRESENT | PAGE_WRITEABLE | PAGE_GLOBAL;
-				case Memory::MemType::KERNEL_PAGETAB:
-					return PAGE_PRESENT | PAGE_WRITEABLE;
-				case Memory::MemType::USER_EXEC:
-					return PAGE_PRESENT | PAGE_USER;
-				case Memory::MemType::USER_RO:
-					return PAGE_PRESENT | PAGE_USER;
-				case Memory::MemType::USER_RW:
-					return PAGE_PRESENT | PAGE_WRITEABLE | PAGE_USER;
-				case Memory::MemType::USER_PAGETAB:
-					return PAGE_PRESENT | PAGE_WRITEABLE | PAGE_USER;
-				case Memory::MemType::USER_COW:
-					return PAGE_PRESENT | PAGE_USER;
-				case Memory::MemType::USER_DEMAND:
-					return PAGE_PRESENT | PAGE_USER;*/
-				default:
-					return 0;
-				}
-			}
-
+			template<Memory::PageBits bits> constexpr static std::underlying_type<Flags>::type TypeFlags(Memory::MemType type);
 		public:
-			template<Memory::PageBits bits> PageTableEntryL2& Set(Memory::PhysAddr phys, Memory::MemType type)
-			{
-				static_assert(IsValidSize(bits), "invalid page size");
-				if(bits == Memory::PGB_4K)
-					raw = phys | TypeFlags(type);
-				else
-					raw = phys | TypeFlags(type) | PAGE_LARGE;
-				return *this;
-			}
+			template<Memory::PageBits bits> PageTableEntryL2& Set(Memory::PhysAddr phys, Memory::MemType type);
 
-			uint32_t Raw(void) const
+			inline uint32_t Raw(void) const
 			{
 				return raw;
 			}
 
-			Memory::PhysAddr Phys(void) const
+			inline Memory::PhysAddr Phys(void) const
 			{
 				return raw & (~0xfffULL);
 			}
 
-			void Clear(void)
+			inline void Clear(void)
 			{
 				raw = 0;
 			}
@@ -206,6 +170,48 @@ namespace Kernel
 				return (raw == 0);
 			}
 		};
+
+		template<Memory::PageBits bits> constexpr std::underlying_type<PageTableEntryL2::Flags>::type PageTableEntryL2::TypeFlags(Memory::MemType type)
+		{
+			static_assert((bits == Memory::PGB_4K) || (bits == Memory::PGB_64K));
+			return 0;
+		}
+
+		template<> constexpr std::underlying_type<PageTableEntryL2::Flags>::type PageTableEntryL2::TypeFlags<Memory::PGB_4K>(Memory::MemType type)
+		{
+			switch(type)
+			{/*
+			case Memory::MemType::KERNEL_EXEC:
+				return PAGE_PRESENT | PAGE_GLOBAL;
+			case Memory::MemType::KERNEL_RO:
+				return PAGE_PRESENT | PAGE_GLOBAL;
+			case Memory::MemType::KERNEL_RW:
+				return PAGE_PRESENT | PAGE_WRITEABLE | PAGE_GLOBAL;
+			case Memory::MemType::KERNEL_PAGETAB:
+				return PAGE_PRESENT | PAGE_WRITEABLE;
+			case Memory::MemType::USER_EXEC:
+				return PAGE_PRESENT | PAGE_USER;
+			case Memory::MemType::USER_RO:
+				return PAGE_PRESENT | PAGE_USER;
+			case Memory::MemType::USER_RW:
+				return PAGE_PRESENT | PAGE_WRITEABLE | PAGE_USER;
+			case Memory::MemType::USER_PAGETAB:
+				return PAGE_PRESENT | PAGE_WRITEABLE | PAGE_USER;
+			case Memory::MemType::USER_COW:
+				return PAGE_PRESENT | PAGE_USER;
+			case Memory::MemType::USER_DEMAND:
+				return PAGE_PRESENT | PAGE_USER;*/
+			default:
+				return 0;
+			}
+		}
+
+		template<Memory::PageBits bits> PageTableEntryL2& PageTableEntryL2::Set(Memory::PhysAddr phys, Memory::MemType type)
+		{
+			static_assert((bits == Memory::PGB_4K) || (bits == Memory::PGB_64K), "invalid page size for L2 table");
+			raw = phys | TypeFlags<bits>(type);
+			return *this;
+		}
 	}
 }
 
