@@ -68,7 +68,17 @@ namespace Kernel
 
 			inline Memory::PhysAddr Phys(void) const
 			{
-				return raw & (~0xfffULL);
+				if((raw & 0x3) == PAGE_TABLE)
+					return raw & (~0x3ffUL);
+				else if((raw & 0x3) == PAGE_SECTION)
+				{
+					if((raw & PAGE_SUPER) == PAGE_SUPER)
+						return raw & (~0xffffffUL);
+					else
+						return raw & (~0xfffffUL);
+				}
+				else
+					return -1;
 			}
 
 			inline void Clear(void)
@@ -150,9 +160,14 @@ namespace Kernel
 				return raw;
 			}
 
-			inline Memory::PhysAddr Phys(void) const
+			Memory::PhysAddr Phys(void) const
 			{
-				return raw & (~0xfffULL);
+				if(raw & PAGE_SMALL)
+					return raw & (~0xfffUL);
+				else if(raw & PAGE_LARGE)
+					return raw & (~0xffffUL);
+				else
+					return -1;
 			}
 
 			inline void Clear(void)
