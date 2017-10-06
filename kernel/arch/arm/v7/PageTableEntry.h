@@ -147,6 +147,7 @@ namespace Kernel
 			};
 
 			template<Memory::PageBits bits> constexpr static std::underlying_type<Flags>::type TypeFlags(Memory::MemType type);
+
 		public:
 			template<Memory::PageBits bits> PageTableEntryL2& Set(Memory::PhysAddr phys, Memory::MemType type);
 
@@ -180,27 +181,56 @@ namespace Kernel
 		template<> constexpr std::underlying_type<PageTableEntryL2::Flags>::type PageTableEntryL2::TypeFlags<Memory::PGB_4K>(Memory::MemType type)
 		{
 			switch(type)
-			{/*
+			{
 			case Memory::MemType::KERNEL_EXEC:
-				return PAGE_PRESENT | PAGE_GLOBAL;
+				return PAGE_SMALL | PAGE_ACC_K_RO_U_NA | PAGE_S_MRA_N_WB_WA | PAGE_SHARE;
 			case Memory::MemType::KERNEL_RO:
-				return PAGE_PRESENT | PAGE_GLOBAL;
+				return PAGE_SMALL | PAGE_ACC_K_RO_U_NA | PAGE_S_MRA_N_WB_WA | PAGE_S_NOEXEC | PAGE_SHARE;
 			case Memory::MemType::KERNEL_RW:
-				return PAGE_PRESENT | PAGE_WRITEABLE | PAGE_GLOBAL;
+				return PAGE_SMALL | PAGE_ACC_K_RW_U_NA | PAGE_S_MRA_N_WB_WA | PAGE_S_NOEXEC | PAGE_SHARE;
 			case Memory::MemType::KERNEL_PAGETAB:
-				return PAGE_PRESENT | PAGE_WRITEABLE;
+				return PAGE_INVALID;
 			case Memory::MemType::USER_EXEC:
-				return PAGE_PRESENT | PAGE_USER;
+				return PAGE_SMALL | PAGE_ACC_K_RW_U_RO | PAGE_S_MRA_N_WB_WA | PAGE_SHARE;
 			case Memory::MemType::USER_RO:
-				return PAGE_PRESENT | PAGE_USER;
+				return PAGE_SMALL | PAGE_ACC_K_RW_U_RO | PAGE_S_MRA_N_WB_WA | PAGE_S_NOEXEC | PAGE_SHARE;
 			case Memory::MemType::USER_RW:
-				return PAGE_PRESENT | PAGE_WRITEABLE | PAGE_USER;
+				return PAGE_SMALL | PAGE_ACC_K_RW_U_RW | PAGE_S_MRA_N_WB_WA | PAGE_S_NOEXEC | PAGE_SHARE;
 			case Memory::MemType::USER_PAGETAB:
-				return PAGE_PRESENT | PAGE_WRITEABLE | PAGE_USER;
+				return PAGE_INVALID;
 			case Memory::MemType::USER_COW:
-				return PAGE_PRESENT | PAGE_USER;
+				return PAGE_SMALL | PAGE_ACC_K_RW_U_RO | PAGE_S_MRA_N_WB_WA | PAGE_S_NOEXEC | PAGE_SHARE;
 			case Memory::MemType::USER_DEMAND:
-				return PAGE_PRESENT | PAGE_USER;*/
+				return PAGE_SMALL | PAGE_ACC_K_RW_U_RO | PAGE_S_MRA_N_WB_WA | PAGE_S_NOEXEC | PAGE_SHARE;
+			default:
+				return 0;
+			}
+		}
+
+		template<> constexpr std::underlying_type<PageTableEntryL2::Flags>::type PageTableEntryL2::TypeFlags<Memory::PGB_64K>(Memory::MemType type)
+		{
+			switch(type)
+			{
+			case Memory::MemType::KERNEL_EXEC:
+				return PAGE_LARGE | PAGE_ACC_K_RO_U_NA | PAGE_L_MRA_N_WB_WA | PAGE_SHARE;
+			case Memory::MemType::KERNEL_RO:
+				return PAGE_LARGE | PAGE_ACC_K_RO_U_NA | PAGE_L_MRA_N_WB_WA | PAGE_L_NOEXEC | PAGE_SHARE;
+			case Memory::MemType::KERNEL_RW:
+				return PAGE_LARGE | PAGE_ACC_K_RW_U_NA | PAGE_L_MRA_N_WB_WA | PAGE_L_NOEXEC | PAGE_SHARE;
+			case Memory::MemType::KERNEL_PAGETAB:
+				return PAGE_INVALID;
+			case Memory::MemType::USER_EXEC:
+				return PAGE_LARGE | PAGE_ACC_K_RW_U_RO | PAGE_L_MRA_N_WB_WA | PAGE_SHARE;
+			case Memory::MemType::USER_RO:
+				return PAGE_LARGE | PAGE_ACC_K_RW_U_RO | PAGE_L_MRA_N_WB_WA | PAGE_L_NOEXEC | PAGE_SHARE;
+			case Memory::MemType::USER_RW:
+				return PAGE_LARGE | PAGE_ACC_K_RW_U_RW | PAGE_L_MRA_N_WB_WA | PAGE_L_NOEXEC | PAGE_SHARE;
+			case Memory::MemType::USER_PAGETAB:
+				return PAGE_INVALID;
+			case Memory::MemType::USER_COW:
+				return PAGE_LARGE | PAGE_ACC_K_RW_U_RO | PAGE_L_MRA_N_WB_WA | PAGE_L_NOEXEC | PAGE_SHARE;
+			case Memory::MemType::USER_DEMAND:
+				return PAGE_LARGE | PAGE_ACC_K_RW_U_RO | PAGE_L_MRA_N_WB_WA | PAGE_L_NOEXEC | PAGE_SHARE;
 			default:
 				return 0;
 			}
