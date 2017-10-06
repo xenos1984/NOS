@@ -202,10 +202,12 @@ namespace Kernel
 
 		void SECTION(".init.text") ParseTable(unsigned long phys)
 		{
-			TableHeader* header = (TableHeader*)Pager::MapBootRegion(phys, sizeof(TableHeader), Memory::MemType::KERNEL_RO);
 			unsigned char checksum;
 			unsigned char* csptr;
 			unsigned long i;
+
+			TableHeader* header = (TableHeader*)Pager::MapBootRegion(phys, sizeof(TableHeader), Memory::MemType::KERNEL_RO);
+			header = (TableHeader*)Pager::MapBootRegion(phys, header->Length, Memory::MemType::KERNEL_RO);
 
 			checksum = 0;
 			csptr = (unsigned char*)header;
@@ -226,13 +228,13 @@ namespace Kernel
 				AML::ParseTable(header);
 				break;
 			case 'F' | ('A' << 8) | ('C' << 16) | ('P' << 24):
-				ParseFadt((FadTable*)Pager::MapBootRegion(Pager::VirtToPhys(header), sizeof(FadTable), Memory::MemType::KERNEL_RO));
+				ParseFadt((FadTable*)header);
 				break;
 			case 'A' | ('P' << 8) | ('I' << 16) | ('C' << 24):
-				ParseMadt((MadTable*)Pager::MapBootRegion(Pager::VirtToPhys(header), sizeof(MadTable), Memory::MemType::KERNEL_RO));
+				ParseMadt((MadTable*)header);
 				break;
 			case 'H' | ('P' << 8) | ('E' << 16) | ('T' << 24):
-				ParseHpet((HpetTable*)Pager::MapBootRegion(Pager::VirtToPhys(header), sizeof(HpetTable), Memory::MemType::KERNEL_RO));
+				ParseHpet((HpetTable*)header);
 				break;
 			default:
 				break;
