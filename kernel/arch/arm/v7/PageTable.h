@@ -13,6 +13,12 @@ namespace Kernel
 		template<Memory::PageBits size> class alignas(size >> 18) PageTableL1
 		{
 			PageTableEntryL1 entry[size >> 20] = {PageTableEntryL1{}};
+
+		public:
+			inline PageTableEntryL1& Entry(unsigned int i)
+			{
+				return entry[i];
+			}
 		};
 
 		class alignas(1024) PageTableL2

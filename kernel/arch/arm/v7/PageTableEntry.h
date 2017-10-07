@@ -18,6 +18,7 @@ namespace Kernel
 
 			enum Flags : uint32_t
 			{
+				PAGE_TYPE_MASK     = 0x00040003,
 				PAGE_INVALID       = 0x00000000,
 				PAGE_TABLE         = 0x00000001,
 				PAGE_SECTION       = 0x00000002,
@@ -89,6 +90,26 @@ namespace Kernel
 			inline bool IsClear(void) const
 			{
 				return (raw == 0);
+			}
+
+			inline bool IsFault(void) const
+			{
+				return ((raw & 0x3) == 0);
+			}
+
+			inline bool IsTable(void) const
+			{
+				return ((raw & 0x3) == PAGE_TABLE);
+			}
+
+			inline bool IsSection(void) const
+			{
+				return ((raw & PAGE_TYPE_MASK) == PAGE_SECTION);
+			}
+
+			inline bool IsSuper(void) const
+			{
+				return ((raw & PAGE_TYPE_MASK) == PAGE_SUPER);
 			}
 		};
 

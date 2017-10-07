@@ -4,6 +4,7 @@
 #include <new>
 #include <Pager.h>
 #include <Symbol.h>
+#include <Console.h>
 #include INC_SUBARCH(PageTable.h)
 #include INC_ARCH(Coprocessor.h)
 
@@ -71,6 +72,33 @@ namespace Kernel
 
 		template<> void UnmapPage<Memory::PGB_16M>(uintptr_t virt)
 		{
+		}
+
+		Memory::PhysAddr VirtToPhys(uintptr_t addr)
+		{
+			unsigned int tab = addr >> Memory::PGB_1M;
+			unsigned int entry = (addr >> Memory::PGB_4K) & 0xff;
+
+			PageTableEntryL1& pgl1 = KernelPTL1().Entry(tab);
+
+			Console::WriteFormat("Addr 0x%8x -> Tab 0x%3x Entry 0x%2x : 0x%8x\n", addr, tab, entry, pgl1);
+
+			if(pgl1.IsFault())
+				return ~0;
+
+			if(pgl1.IsSuper())
+				return pgl1.Phys() | (addr & Memory::PGM_16M);
+
+			if(pgl1.IsSection())
+				return pgl1.Phys() | (addr & Memory::PGM_1M);
+/*
+			PageTableEntryL2& pgl2 = PageTab::Table(tab).Entry(entry);
+
+			if(!pgent.IsPresent())
+				return ~0;
+
+			return pgent.Phys() | (addr & Memory::PGM_4K);*/
+			return 0;
 		}
 	}
 }

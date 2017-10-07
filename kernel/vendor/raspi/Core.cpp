@@ -4,6 +4,7 @@
 #include <Core.h>
 #include <Console.h>
 #include <Symbol.h>
+#include <Pager.h>
 #include INC_VENDOR(UART.h)
 #include INC_ARCH(Coprocessor.h)
 
@@ -21,7 +22,6 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t r0, uint32_t r1, uint
 	Console::WriteFormat("MIDR = 0x%8x\n", Coprocessor::MIDR::Read());
 	Console::WriteFormat("VBAR = 0x%8x\n", Coprocessor::VBAR::Read());
 
-	//*((volatile int*)0x12345678) = 0x87654321;
-	asm volatile ("mov pc, #0x10000000");
+	Console::WriteFormat("VirtToPhys test: 0x%8x => 0x%8x\n", PERI_OFFSET + 0x12345, Pager::VirtToPhys(PERI_OFFSET + 0x12345));
 }
 
