@@ -71,7 +71,7 @@ namespace Kernel
 			uint32_t datasize;
 		};
 
-		template<PropTags tag, typename Tin, typename Tout> class PropertyTag
+		template<typename Tin, typename Tout> class PropertyTag
 		{
 		private:
 			PropTagHeader header;
@@ -82,13 +82,15 @@ namespace Kernel
 			};
 
 		public:
-			PropertyTag(const Tin& data)
+			PropertyTag(PropTags tag, const Tin& data) : din(data)
 			{
-				din = data;
 				header.tag = tag;
 				header.bufsize = sizeof(Tout);
 				header.datasize = sizeof(Tin);
 			}
+
+			PropertyTag() = delete;
+			PropertyTag(const PropertyTag<Tin, Tout>&) = default;
 
 			const Tout& GetData(void) const
 			{
@@ -96,19 +98,22 @@ namespace Kernel
 			}
 		};
 
-		template<PropTags tag, typename Tout> class PropertyTag<tag, void, Tout>
+		template<typename Tout> class PropertyTag<void, Tout>
 		{
 		private:
 			PropTagHeader header;
 			Tout dout;
 
 		public:
-			PropertyTag(void)
+			PropertyTag(PropTags tag)
 			{
 				header.tag = tag;
 				header.bufsize = sizeof(Tout);
 				header.datasize = 0;
 			}
+
+			PropertyTag() = delete;
+			PropertyTag(const PropertyTag<void, Tout>&) = default;
 
 			const Tout& GetData(void) const
 			{
@@ -131,11 +136,10 @@ namespace Kernel
 				CMD_RESP_ERROR   = 0x80000001
 			};
 
-			PropertyBuffer(const T& t)
+			PropertyBuffer(const T& t) : tags(t)
 			{
 				header.size = sizeof(T) + 12;
 				header.cmd = CMD_REQ;
-				tags = t;
 				terminator = 0;
 			}
 
@@ -145,8 +149,8 @@ namespace Kernel
 			}
 		};
 
-		template<PropTags tag, typename Tin, typename Tout> Tout QueryMailboxProp(const Tin& tin);
-		template<PropTags tag, typename Tout> Tout QueryMailboxProp(void);
+		template<typename Tin, typename Tout> Tout QueryMailboxProp(PropTags tag, const Tin& tin);
+		template<typename Tout> Tout QueryMailboxProp(PropTags tag);
 
 		uint32_t GetFirmwareRev(void);
 		uint32_t GetBoardModel(void);

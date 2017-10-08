@@ -27,9 +27,9 @@ namespace Kernel
 			}
 		}
 
-		template<PropTags tag, typename Tin, typename Tout> inline Tout QueryMailboxProp(const Tin& tin)
+		template<typename Tin, typename Tout> Tout QueryMailboxProp(PropTags tag, const Tin& tin)
 		{
-			PropertyBuffer<PropertyTag<tag, Tin, Tout>> buffer = PropertyBuffer<PropertyTag<tag, Tin, Tout>>(PropertyTag<tag, Tin, Tout>(tin));
+			PropertyBuffer<PropertyTag<Tin, Tout>> buffer = PropertyBuffer<PropertyTag<Tin, Tout>>(PropertyTag<Tin, Tout>(tag, tin));
 
 			for(int i = 0; i < sizeof(buffer) >> 2; i++)
 				Console::WriteFormat("Buffer[%d] = 0x%8x\n", i, ((uint32_t*)&buffer)[i]);
@@ -43,9 +43,9 @@ namespace Kernel
 			return buffer.GetTags().GetData();
 		}
 
-		template<PropTags tag, typename Tout> inline Tout QueryMailboxProp(void)
+		template<typename Tout> Tout QueryMailboxProp(PropTags tag)
 		{
-			PropertyBuffer<PropertyTag<tag, void, Tout>> buffer = PropertyBuffer<PropertyTag<tag, void, Tout>>(PropertyTag<tag, void, Tout>());
+			PropertyBuffer<PropertyTag<void, Tout>> buffer = PropertyBuffer<PropertyTag<void, Tout>>(PropertyTag<void, Tout>(tag));
 
 			for(unsigned int i = 0; i < sizeof(buffer) >> 2; i++)
 				Console::WriteFormat("Buffer[%d] = 0x%8x\n", i, ((uint32_t*)&buffer)[i]);
@@ -61,17 +61,17 @@ namespace Kernel
 
 		uint32_t GetFirmwareRev(void)
 		{
-			return QueryMailboxProp<PropTags::TAG_FW_REV, uint32_t>();
+			return QueryMailboxProp<uint32_t>(PropTags::TAG_FW_REV);
 		}
 
 		uint32_t GetBoardModel(void)
 		{
-			return QueryMailboxProp<PropTags::TAG_BOARD_MODEL, uint32_t>();
+			return QueryMailboxProp<uint32_t>(PropTags::TAG_BOARD_MODEL);
 		}
 
 		uint32_t GetBoardRev(void)
 		{
-			return QueryMailboxProp<PropTags::TAG_BOARD_REV, uint32_t>();
+			return QueryMailboxProp<uint32_t>(PropTags::TAG_BOARD_REV);
 		}
 	}
 }
