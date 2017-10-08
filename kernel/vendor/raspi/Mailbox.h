@@ -249,21 +249,42 @@ namespace Kernel
 			}
 		};
 
-		template<typename Tin, typename Tout> Tout QueryMailboxProp(PropTags tag, const Tin& tin);
-		template<typename Tout> Tout QueryMailboxProp(PropTags tag);
-
-		uint32_t GetFirmwareRev(void);
-		uint32_t GetBoardModel(void);
-		uint32_t GetBoardRev(void);
-
 		struct MemInfo
 		{
 			uint32_t start;
 			uint32_t length;
 		};
 
-		MemInfo GetArmMemory(void);
-		MemInfo GetVideoMemory(void);
+		template<typename Tin, typename Tout> Tout QueryMailboxProp(PropTags tag, const Tin& tin);
+		template<typename Tout> Tout QueryMailboxProp(PropTags tag);
+
+		extern template uint32_t QueryMailboxProp<uint32_t>(PropTags tag);
+		extern template MemInfo QueryMailboxProp<MemInfo>(PropTags tag);
+
+		inline uint32_t GetFirmwareRev(void)
+		{
+			return QueryMailboxProp<uint32_t>(PropTags::TAG_FW_REV);
+		}
+
+		inline uint32_t GetBoardModel(void)
+		{
+			return QueryMailboxProp<uint32_t>(PropTags::TAG_BOARD_MODEL);
+		}
+
+		inline uint32_t GetBoardRev(void)
+		{
+			return QueryMailboxProp<uint32_t>(PropTags::TAG_BOARD_REV);
+		}
+
+		inline MemInfo GetArmMemory(void)
+		{
+			return QueryMailboxProp<MemInfo>(PropTags::TAG_ARM_MEM);
+		}
+
+		inline MemInfo GetVideoMemory(void)
+		{
+			return QueryMailboxProp<MemInfo>(PropTags::TAG_VIDEO_MEM);
+		}
 	}
 }
 
