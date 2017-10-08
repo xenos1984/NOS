@@ -8,12 +8,14 @@ noinst_LIBRARIES = libraspi.a
 
 libraspi_a_SOURCES = \
 	GPIO.h \
+	Mailbox.h \
 	UART.h \
 	\
 	Console.cpp \
 	Core.cpp \
 	Entry.S \
 	GPIO.cpp \
+	Mailbox.cpp \
 	UART.cpp
 
 noinst_PROGRAMS = Kernel.elf
