@@ -53,9 +53,11 @@ namespace Kernel
 
 		enum class PropTags : uint32_t
 		{
-			TAG_FW_REV      = 0x00000001,
-			TAG_BOARD_MODEL = 0x00010001,
-			TAG_BOARD_REV   = 0x00010002
+			TAG_FW_REV       = 0x00000001,
+			TAG_BOARD_MODEL  = 0x00010001,
+			TAG_BOARD_REV    = 0x00010002,
+			TAG_MAC_ADDR     = 0x00010003,
+			TAG_BOARD_SERIAL = 0x00010004
 		};
 
 		struct PropBufHeader
@@ -146,6 +148,11 @@ namespace Kernel
 			const T& GetTags(void) const
 			{
 				return tags;
+			}
+
+			RequestResponse GetStatus(void) const
+			{
+				return header.cmd;
 			}
 		};
 
