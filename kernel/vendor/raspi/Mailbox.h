@@ -27,28 +27,30 @@ namespace Kernel
 			MB_EMPTY = 0x40000000
 		};
 
-		inline void Write(int mb, int reg, uint32_t value)
+		inline void Write(unsigned int mb, int reg, uint32_t value)
 		{
 			((volatile uint32_t*)base_addr)[(mb << 3) + reg] = value;
 		}
 
-		inline uint32_t Read(int mb, int reg)
+		inline uint32_t Read(unsigned int mb, int reg)
 		{
 			return ((volatile uint32_t*)base_addr)[(mb << 3) + reg];
 		}
 
-		inline bool IsFull(int mb)
+		inline bool IsFull(unsigned int mb)
 		{
-			return (Read(mb, REG_STATUS) | MB_FULL);
+			return (Read(mb, REG_STATUS) & MB_FULL);
 		}
 
-		inline bool IsEmpty(int mb)
+		inline bool IsEmpty(unsigned int mb)
 		{
-			return (Read(mb, REG_STATUS) | MB_EMPTY);
+			return (Read(mb, REG_STATUS) & MB_EMPTY);
 		}
 
-		void Send(int mb, int ch, uint32_t value);
-		uint32_t Receive(int mb, int ch);
+		void Send(unsigned int mb, unsigned int ch, uint32_t value);
+		uint32_t Receive(unsigned int mb, unsigned int ch);
+
+		uint32_t GetBoardModel(void);
 	}
 }
 

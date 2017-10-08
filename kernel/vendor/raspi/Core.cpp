@@ -6,6 +6,7 @@
 #include <Symbol.h>
 #include <Pager.h>
 #include INC_VENDOR(UART.h)
+#include INC_VENDOR(Mailbox.h)
 #include INC_ARCH(Coprocessor.h)
 
 using namespace Kernel;
@@ -22,6 +23,6 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t r0, uint32_t r1, uint
 	Console::WriteFormat("MIDR = 0x%8x\n", Coprocessor::MIDR::Read());
 	Console::WriteFormat("VBAR = 0x%8x\n", Coprocessor::VBAR::Read());
 
-	Console::WriteFormat("VirtToPhys test: 0x%8x => 0x%8x\n", PERI_OFFSET + 0x12345, Pager::VirtToPhys(PERI_OFFSET + 0x12345));
+	Console::WriteFormat("Board model: 0x%8x", Mailbox::GetBoardModel());
 }
 
