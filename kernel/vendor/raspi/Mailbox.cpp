@@ -29,23 +29,18 @@ namespace Kernel
 
 		uint32_t GetBoardModel(void)
 		{
-			alignas(16) uint32_t buffer[8];
+			PropertyBuffer<PropTagBoardModel> buffer = PropertyBuffer<PropTagBoardModel>(PropTagBoardModel());
 
-			buffer[0] = 28;
-			buffer[1] = 0;
-			buffer[2] = 0x00010001;
-			buffer[3] = 4;
-			buffer[4] = 0;
-			buffer[5] = 0;
-			buffer[6] = 0;
+			for(int i = 0; i < 7; i++)
+				Console::WriteFormat("Buffer[%d] = 0x%8x\n", i, ((uint32_t*)&buffer)[i]);
 
-			Send(1, 8, ((uintptr_t)buffer) - 0xc0000000);
+			Send(1, 8, ((uintptr_t)&buffer) - 0xc0000000);
 			Console::WriteFormat("Data received in mailbox: 0x%8x\n", Receive(0, 8));
 
 			for(int i = 0; i < 7; i++)
-				Console::WriteFormat("Buffer[%d] = 0x%8x\n", i, buffer[i]);
+				Console::WriteFormat("Buffer[%d] = 0x%8x\n", i, ((uint32_t*)&buffer)[i]);
 
-			return buffer[5];
+			return buffer.GetTags().GetData();
 		}
 	}
 }

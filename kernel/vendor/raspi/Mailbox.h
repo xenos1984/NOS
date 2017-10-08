@@ -50,6 +50,102 @@ namespace Kernel
 		void Send(unsigned int mb, unsigned int ch, uint32_t value);
 		uint32_t Receive(unsigned int mb, unsigned int ch);
 
+		struct PropBufHeader
+		{
+			uint32_t size;
+			uint32_t cmd;
+		};
+
+		struct PropTagHeader
+		{
+			uint32_t tag;
+			uint32_t bufsize;
+			uint32_t datasize;
+		};
+
+		template<uint32_t tag, typename Tin, typename Tout> class PropertyTag
+		{
+		private:
+			PropTagHeader header;
+			union
+			{
+				Tin din;
+				Tout dout;
+			};
+
+		public:
+			PropertyTag(const Tin& data)
+			{
+				din = data;
+				header.tag = tag;
+				header.bufsize = sizeof(Tout);
+				header.datasize = sizeof(Tin);
+			}
+
+			const Tout& GetData(void) const
+			{
+				return dout;
+			}
+		};
+
+		template<uint32_t tag, typename Tout> class PropertyTag<tag, void, Tout>
+		{
+		private:
+			PropTagHeader header;
+			Tout dout;
+
+		public:
+			PropertyTag(void)
+			{
+				header.tag = tag;
+				header.bufsize = sizeof(Tout);
+				header.datasize = 0;
+			}
+
+			const Tout& GetData(void) const
+			{
+				return dout;
+			}
+		};
+
+		template<typename T> class alignas(16) PropertyBuffer
+		{
+		private:
+			PropBufHeader header;
+			T tags;
+			uint32_t terminator;
+
+		public:
+			enum RequestResponse : uint32_t
+			{
+				CMD_REQ =          0x00000000,
+				CMD_RESP_SUCCESS = 0x80000000,
+				CMD_RESP_ERROR   = 0x80000001
+			};
+
+			PropertyBuffer(const T& t)
+			{
+				header.size = sizeof(T) + 12;
+				header.cmd = CMD_REQ;
+				tags = t;
+				terminator = 0;
+			}
+
+			const T& GetTags(void) const
+			{
+				return tags;
+			}
+		};
+
+		enum PropTags : uint32_t
+		{
+			TAG_FW_REV      = 0x00000001,
+			TAG_BOARD_MODEL = 0x00010001,
+			TAG_BOARD_REV   = 0x00010002
+		};
+
+		typedef PropertyTag<TAG_BOARD_MODEL, void, uint32_t> PropTagBoardModel;
+
 		uint32_t GetBoardModel(void);
 	}
 }
