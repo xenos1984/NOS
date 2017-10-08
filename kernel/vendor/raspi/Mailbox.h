@@ -131,6 +131,28 @@ namespace Kernel
 			TAG_CURSOR_STATE = 0x00008011
 		};
 
+		enum VoltageID : uint32_t
+		{
+			VOLT_CORE    = 0x00000001,
+			VOLT_SDRAM_C = 0x00000002,
+			VOLT_SDRAM_P = 0x00000003,
+			VOLT_SDRAM_I = 0x00000004
+		};
+
+		enum ClockID : uint32_t
+		{
+			CLK_EMMC  = 0x00000001,
+			CLK_UART  = 0x00000002,
+			CLK_ARM   = 0x00000003,
+			CLK_CORE  = 0x00000004,
+			CLK_V3D   = 0x00000005,
+			CLK_H264  = 0x00000006,
+			CLK_ISP   = 0x00000007,
+			CLK_SDRAM = 0x00000008,
+			CLK_PIXEL = 0x00000009,
+			CLK_PWM   = 0x0000000a
+		};
+
 		struct PropBufHeader
 		{
 			uint32_t size;
