@@ -27,20 +27,41 @@ namespace Kernel
 			}
 		}
 
-		uint32_t GetBoardModel(void)
+		template<PropTags tag, typename Tin, typename Tout> Tout QueryMailboxProp(const Tin& tin)
 		{
-			PropertyBuffer<PropTagBoardModel> buffer = PropertyBuffer<PropTagBoardModel>(PropTagBoardModel());
+			PropertyBuffer<PropertyTag<tag, Tin, Tout>> buffer = PropertyBuffer<PropertyTag<tag, Tin, Tout>>(PropertyTag<tag, Tin, Tout>(tin));
 
-			for(int i = 0; i < 7; i++)
+			for(int i = 0; i < sizeof(buffer) >> 2; i++)
 				Console::WriteFormat("Buffer[%d] = 0x%8x\n", i, ((uint32_t*)&buffer)[i]);
 
 			Send(1, 8, ((uintptr_t)&buffer) - 0xc0000000);
 			Console::WriteFormat("Data received in mailbox: 0x%8x\n", Receive(0, 8));
 
-			for(int i = 0; i < 7; i++)
+			for(int i = 0; i < sizeof(buffer) >> 2; i++)
 				Console::WriteFormat("Buffer[%d] = 0x%8x\n", i, ((uint32_t*)&buffer)[i]);
 
 			return buffer.GetTags().GetData();
+		}
+
+		template<PropTags tag, typename Tout> Tout QueryMailboxProp(void)
+		{
+			PropertyBuffer<PropertyTag<tag, void, Tout>> buffer = PropertyBuffer<PropertyTag<tag, void, Tout>>(PropertyTag<tag, void, Tout>());
+
+			for(unsigned int i = 0; i < sizeof(buffer) >> 2; i++)
+				Console::WriteFormat("Buffer[%d] = 0x%8x\n", i, ((uint32_t*)&buffer)[i]);
+
+			Send(1, 8, ((uintptr_t)&buffer) - 0xc0000000);
+			Console::WriteFormat("Data received in mailbox: 0x%8x\n", Receive(0, 8));
+
+			for(unsigned int i = 0; i < sizeof(buffer) >> 2; i++)
+				Console::WriteFormat("Buffer[%d] = 0x%8x\n", i, ((uint32_t*)&buffer)[i]);
+
+			return buffer.GetTags().GetData();
+		}
+
+		uint32_t GetBoardModel(void)
+		{
+			return QueryMailboxProp<PropTags::TAG_BOARD_MODEL, uint32_t>();
 		}
 	}
 }

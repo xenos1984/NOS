@@ -4,6 +4,7 @@
 #define __VENDOR_RASPI_MAILBOX_H__
 
 #include <cstdint>
+#include <Console.h>
 #include INC_VENDOR(Entry.h)
 
 namespace Kernel
@@ -50,6 +51,13 @@ namespace Kernel
 		void Send(unsigned int mb, unsigned int ch, uint32_t value);
 		uint32_t Receive(unsigned int mb, unsigned int ch);
 
+		enum class PropTags : uint32_t
+		{
+			TAG_FW_REV      = 0x00000001,
+			TAG_BOARD_MODEL = 0x00010001,
+			TAG_BOARD_REV   = 0x00010002
+		};
+
 		struct PropBufHeader
 		{
 			uint32_t size;
@@ -58,12 +66,12 @@ namespace Kernel
 
 		struct PropTagHeader
 		{
-			uint32_t tag;
+			PropTags tag;
 			uint32_t bufsize;
 			uint32_t datasize;
 		};
 
-		template<uint32_t tag, typename Tin, typename Tout> class PropertyTag
+		template<PropTags tag, typename Tin, typename Tout> class PropertyTag
 		{
 		private:
 			PropTagHeader header;
@@ -88,7 +96,7 @@ namespace Kernel
 			}
 		};
 
-		template<uint32_t tag, typename Tout> class PropertyTag<tag, void, Tout>
+		template<PropTags tag, typename Tout> class PropertyTag<tag, void, Tout>
 		{
 		private:
 			PropTagHeader header;
@@ -137,14 +145,8 @@ namespace Kernel
 			}
 		};
 
-		enum PropTags : uint32_t
-		{
-			TAG_FW_REV      = 0x00000001,
-			TAG_BOARD_MODEL = 0x00010001,
-			TAG_BOARD_REV   = 0x00010002
-		};
-
-		typedef PropertyTag<TAG_BOARD_MODEL, void, uint32_t> PropTagBoardModel;
+		template<PropTags tag, typename Tin, typename Tout> Tout QueryMailboxProp(const Tin& tin);
+		template<PropTags tag, typename Tout> Tout QueryMailboxProp(void);
 
 		uint32_t GetBoardModel(void);
 	}
