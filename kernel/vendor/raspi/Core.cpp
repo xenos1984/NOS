@@ -13,6 +13,8 @@ using namespace Kernel;
 
 extern "C" void SECTION(".init.text") KernelEntry(uint32_t r0, uint32_t r1, uint32_t r2)
 {
+	Mailbox::MemInfo armmem, vidmem;
+
 	UART::Init();
 	Core::Welcome();
 
@@ -26,5 +28,11 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t r0, uint32_t r1, uint
 	Console::WriteFormat("Firmware revision: 0x%8x\n", Mailbox::GetFirmwareRev());
 	Console::WriteFormat("Board model: 0x%8x\n", Mailbox::GetBoardModel());
 	Console::WriteFormat("Board revision: 0x%8x\n", Mailbox::GetBoardRev());
+
+	armmem = Mailbox::GetArmMemory();
+	vidmem = Mailbox::GetVideoMemory();
+
+	Console::WriteFormat("ARM memory: start = 0x%8x, length = 0x%8x\n", armmem.start, armmem.length);
+	Console::WriteFormat("Video memory: start = 0x%8x, length = 0x%8x\n", vidmem.start, vidmem.length);
 }
 

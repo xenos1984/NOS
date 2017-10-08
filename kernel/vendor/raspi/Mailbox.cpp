@@ -73,5 +73,15 @@ namespace Kernel
 		{
 			return QueryMailboxProp<uint32_t>(PropTags::TAG_BOARD_REV);
 		}
+
+		MemInfo GetArmMemory(void)
+		{
+			return QueryMailboxProp<MemInfo>(PropTags::TAG_ARM_MEM);
+		}
+
+		MemInfo GetVideoMemory(void)
+		{
+			return QueryMailboxProp<MemInfo>(PropTags::TAG_VIDEO_MEM);
+		}
 	}
 }

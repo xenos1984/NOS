@@ -57,7 +57,10 @@ namespace Kernel
 			TAG_BOARD_MODEL  = 0x00010001,
 			TAG_BOARD_REV    = 0x00010002,
 			TAG_MAC_ADDR     = 0x00010003,
-			TAG_BOARD_SERIAL = 0x00010004
+			TAG_BOARD_SERIAL = 0x00010004,
+			TAG_ARM_MEM      = 0x00010005,
+			TAG_VIDEO_MEM    = 0x00010006,
+			TAG_CLOCKS       = 0x00010007
 		};
 
 		struct PropBufHeader
@@ -162,6 +165,15 @@ namespace Kernel
 		uint32_t GetFirmwareRev(void);
 		uint32_t GetBoardModel(void);
 		uint32_t GetBoardRev(void);
+
+		struct MemInfo
+		{
+			uint32_t start;
+			uint32_t length;
+		};
+
+		MemInfo GetArmMemory(void);
+		MemInfo GetVideoMemory(void);
 	}
 }
 
