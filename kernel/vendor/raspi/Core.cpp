@@ -23,6 +23,8 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t r0, uint32_t r1, uint
 	Console::WriteFormat("MIDR = 0x%8x\n", Coprocessor::MIDR::Read());
 	Console::WriteFormat("VBAR = 0x%8x\n", Coprocessor::VBAR::Read());
 
-	Console::WriteFormat("Board model: 0x%8x", Mailbox::GetBoardModel());
+	Console::WriteFormat("Firmware revision: 0x%8x\n", Mailbox::GetFirmwareRev());
+	Console::WriteFormat("Board model: 0x%8x\n", Mailbox::GetBoardModel());
+	Console::WriteFormat("Board revision: 0x%8x\n", Mailbox::GetBoardRev());
 }
 

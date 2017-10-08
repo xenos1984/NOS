@@ -148,7 +148,9 @@ namespace Kernel
 		template<PropTags tag, typename Tin, typename Tout> Tout QueryMailboxProp(const Tin& tin);
 		template<PropTags tag, typename Tout> Tout QueryMailboxProp(void);
 
+		uint32_t GetFirmwareRev(void);
 		uint32_t GetBoardModel(void);
+		uint32_t GetBoardRev(void);
 	}
 }
 
