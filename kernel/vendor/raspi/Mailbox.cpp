@@ -8,13 +8,13 @@ namespace Kernel
 {
 	namespace Mailbox
 	{
-		void Send(unsigned int mb, unsigned int ch, uint32_t value)
+		void Send(unsigned int mb, Channel ch, uint32_t value)
 		{
 			while(IsFull(mb)) ;
 			Write(mb, REG_DATA, value | ch);
 		}
 
-		uint32_t Receive(unsigned int mb, unsigned int ch)
+		uint32_t Receive(unsigned int mb, Channel ch)
 		{
 			uint32_t data;
 
@@ -50,8 +50,8 @@ namespace Kernel
 			for(unsigned int i = 0; i < sizeof(buffer) >> 2; i++)
 				Console::WriteFormat("Buffer[%d] = 0x%8x\n", i, ((uint32_t*)&buffer)[i]);
 */
-			Send(1, 8, ((uintptr_t)&buffer) - 0xc0000000);
-			Receive(0, 8);
+			Send(1, CH_ARM_VID, ((uintptr_t)&buffer) - 0xc0000000);
+			Receive(0, CH_ARM_VID);
 /*
 			for(unsigned int i = 0; i < sizeof(buffer) >> 2; i++)
 				Console::WriteFormat("Buffer[%d] = 0x%8x\n", i, ((uint32_t*)&buffer)[i]);

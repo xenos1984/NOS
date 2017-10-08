@@ -28,6 +28,19 @@ namespace Kernel
 			MB_EMPTY = 0x40000000
 		};
 
+		enum Channel : unsigned int
+		{
+			CH_POWER    = 0x0,
+			CH_FRAMEBUF = 0x1,
+			CH_VUART    = 0x2,
+			CH_VCHIQ    = 0x3,
+			CH_LED      = 0x4,
+			CH_BUTTON   = 0x5,
+			CH_TOUCHSCR = 0x6,
+			CH_ARM_VID  = 0x8,
+			CH_VID_ARM  = 0x9
+		};
+
 		inline void Write(unsigned int mb, int reg, uint32_t value)
 		{
 			((volatile uint32_t*)base_addr)[(mb << 3) + reg] = value;
@@ -48,8 +61,8 @@ namespace Kernel
 			return (Read(mb, REG_STATUS) & MB_EMPTY);
 		}
 
-		void Send(unsigned int mb, unsigned int ch, uint32_t value);
-		uint32_t Receive(unsigned int mb, unsigned int ch);
+		void Send(unsigned int mb, Channel ch, uint32_t value);
+		uint32_t Receive(unsigned int mb, Channel ch);
 
 		enum class PropTags : uint32_t
 		{
