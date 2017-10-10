@@ -272,7 +272,7 @@ jobs:
 
     collect:
         docker:
-            - image: xenos1984/cross-source:latest
+            - image: xenos1984/tools-notify
         working_directory: ~/nos
         steps:
             - attach_workspace:
