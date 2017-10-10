@@ -6,11 +6,11 @@ server=irc.freenode.net
 port=6667
 channel="#nos"
 
-ii -s $server -p $port -i /tmp -n nos-circleci -f "NOS CircleCI bot" &
+ii -s $server -p $port -i /root -n nos-circleci -f "NOS CircleCI bot" &
 
 sleep 30
 
-echo "/j $channel" > /tmp/$server/in
-echo "NOS build #$CIRCLE_BUILD_NUM finished - see $CIRCLE_BUILD_URL for results." > "/tmp/$server/$channel/in"
-echo "/quit" > /tmp/$server/in
+echo "/j $channel" > /root/$server/in
+echo "NOS build #$CIRCLE_BUILD_NUM finished - see $CIRCLE_BUILD_URL for results." > "/root/$server/$channel/in"
+echo "/quit" > /root/$server/in
 
