@@ -6,10 +6,9 @@ channel="#nos"
 prefix=/root
 nick=nos-circleci
 
-echo "msg #nos NOS build #$CIRCLE_BUILD_NUM finished - see $CIRCLE_BUILD_URL for results." > ~/.ircrc
-echo "quit" >> ~/.ircrc
+echo "NOS build #$CIRCLE_BUILD_NUM finished - see $CIRCLE_BUILD_URL for results." > /root/irc.tct
 
-irc -d -c "$channel" $nick $server:$port:$IRCPASS
+sh -c 'sleep 30; cat /root/irc.txt' | irc -d -c "$channel" $nick $server:$port:$IRCPASS
 
 #printf "NICK :nos-circleci\r\nPASS $IRCPASS\r\nUSER nos-circleci nos-circleci nos-circleci :NOS CircleCI bot\r\nJOIN :$channel\r\nPRIVMSG $channel :NOS build #$CIRCLE_BUILD_NUM finished - see $CIRCLE_BUILD_URL for results.\r\nQUIT :Bye!\r\n" | nc -q 60 $server $port
 
