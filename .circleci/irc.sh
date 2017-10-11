@@ -3,16 +3,20 @@
 server=irc.freenode.net
 port=6667
 channel="#nos"
+prefix=/root
 
-printf "NICK :nos-circleci\r\nUSER nos-circleci nos-circleci nos-circleci :NOS CircleCI bot\r\nJOIN :$channel\r\nPRIVMSG $channel :NOS build #$CIRCLE_BUILD_NUM finished - see $CIRCLE_BUILD_URL for results.\r\nQUIT :Bye!\r\n" | nc -q 60 $server $port
+#printf "NICK :nos-circleci\r\nUSER nos-circleci nos-circleci nos-circleci :NOS CircleCI bot\r\nJOIN :$channel\r\nPRIVMSG $channel :NOS build #$CIRCLE_BUILD_NUM finished - see $CIRCLE_BUILD_URL for results.\r\nQUIT :Bye!\r\n" | nc -q 60 $server $port
 
-exit 0
+#exit 0
 
-ii -s $server -p $port -i /root -n nos-circleci -f "NOS CircleCI bot" &
+ii -s $server -p $port -i $prefix -n nos-circleci -f "NOS CircleCI bot" -k IRCPASS &
+
+sleep 60
+
+echo "/j $channel" > $prefix/$server/in
+echo "NOS build #$CIRCLE_BUILD_NUM finished - see $CIRCLE_BUILD_URL for results." > "$prefix/$server/$channel/in"
+echo "/quit" > $prefix/$server/in
 
 sleep 30
-
-echo "/j $channel" > /root/$server/in
-echo "NOS build #$CIRCLE_BUILD_NUM finished - see $CIRCLE_BUILD_URL for results." > "/root/$server/$channel/in"
-echo "/quit" > /root/$server/in
+pkill ii
 
