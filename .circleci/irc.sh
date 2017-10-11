@@ -5,9 +5,9 @@ port=6667
 channel="#nos"
 prefix=/root
 
-#printf "NICK :nos-circleci\r\nUSER nos-circleci nos-circleci nos-circleci :NOS CircleCI bot\r\nJOIN :$channel\r\nPRIVMSG $channel :NOS build #$CIRCLE_BUILD_NUM finished - see $CIRCLE_BUILD_URL for results.\r\nQUIT :Bye!\r\n" | nc -q 60 $server $port
+printf "NICK :nos-circleci\r\nPASS $IRCPASS\r\nUSER nos-circleci nos-circleci nos-circleci :NOS CircleCI bot\r\nJOIN :$channel\r\nPRIVMSG $channel :NOS build #$CIRCLE_BUILD_NUM finished - see $CIRCLE_BUILD_URL for results.\r\nQUIT :Bye!\r\n" | nc -q 60 $server $port
 
-#exit 0
+exit 0
 
 ii -s $server -p $port -i $prefix -n nos-circleci -f "NOS CircleCI bot" -k IRCPASS &
 
