@@ -6,7 +6,7 @@ channel="#nos"
 prefix=/root
 nick=nos-circleci
 
-echo "NOS build #$CIRCLE_BUILD_NUM finished - see $CIRCLE_BUILD_URL for results." > /root/irc.tct
+echo "NOS build #$CIRCLE_BUILD_NUM finished - see $CIRCLE_BUILD_URL for results." > /root/irc.txt
 
 sh -c 'sleep 30; cat /root/irc.txt' | irc -d -c "$channel" $nick $server:$port:$IRCPASS
 
