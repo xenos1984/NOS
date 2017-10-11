@@ -12,6 +12,9 @@ jobs:
                 root: ~/nos
                 paths:
                     - source
+            - run:
+                name: IRC notify
+                command: ~/nos/source/.circleci/irc.sh
 
     build_i686:
         docker:
