@@ -19,20 +19,3 @@ base64=`printf "$nick\0$nick\0$IRCPASS" | base64`
 	printf "QUIT :Bye!\r\n"
 ) | nc -q 60 $server $port
 
-exit 0
-
-echo "NOS build #$CIRCLE_BUILD_NUM finished - see $CIRCLE_BUILD_URL for results." > /root/irc.txt
-
-sh -c 'sleep 30; cat /root/irc.txt' | irc -d -c "$channel" $nick $server:$port:$IRCPASS
-
-ii -s $server -p $port -i $prefix -n nos-circleci -f "NOS CircleCI bot" -k IRCPASS &
-
-sleep 60
-
-echo "/j $channel" > $prefix/$server/in
-echo "NOS build #$CIRCLE_BUILD_NUM finished - see $CIRCLE_BUILD_URL for results." > "$prefix/$server/$channel/in"
-echo "/quit" > $prefix/$server/in
-
-sleep 30
-pkill ii
-

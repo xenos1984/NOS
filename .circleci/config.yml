@@ -3,7 +3,7 @@ version: 2
 jobs:
     autogen:
         docker:
-            - image: xenos1984/cross-source:latest
+            - image: xenos1984/cross-tools:latest
         working_directory: ~/nos/source
         steps:
             - checkout
@@ -12,6 +12,9 @@ jobs:
                 root: ~/nos
                 paths:
                     - source
+            - run:
+                name: IRC notify
+                command: ~/nos/source/.circleci/irc.sh
 
     build_i686:
         docker:
@@ -28,6 +31,9 @@ jobs:
                 root: ~/nos
                 paths:
                     - i686-pc-elf
+            - run:
+                name: IRC notify
+                command: ~/nos/source/.circleci/irc.sh
 
     build_x86_64:
         docker:
@@ -44,6 +50,9 @@ jobs:
                 root: ~/nos
                 paths:
                     - x86_64-pc-elf
+            - run:
+                name: IRC notify
+                command: ~/nos/source/.circleci/irc.sh
 
     build_raspi2:
         docker:
@@ -58,6 +67,9 @@ jobs:
                 root: ~/nos
                 paths:
                     - arm-raspi2-eabi
+            - run:
+                name: IRC notify
+                command: ~/nos/source/.circleci/irc.sh
 
     qemu_i686:
         docker:
@@ -153,6 +165,9 @@ jobs:
                     - i686-pc-elf/mp-noacpi/qemu*
                     - i686-pc-elf/sp-acpi/qemu*
                     - i686-pc-elf/sp-noacpi/qemu*
+            - run:
+                name: IRC notify
+                command: ~/nos/source/.circleci/irc.sh
 
     qemu_x86_64:
         docker:
@@ -248,6 +263,9 @@ jobs:
                     - x86_64-pc-elf/mp-noacpi/qemu*
                     - x86_64-pc-elf/sp-acpi/qemu*
                     - x86_64-pc-elf/sp-noacpi/qemu*
+            - run:
+                name: IRC notify
+                command: ~/nos/source/.circleci/irc.sh
 
     qemu_raspi2:
         docker:
@@ -269,10 +287,13 @@ jobs:
                 paths:
                     - arm-raspi2-eabi/mp/qemu*
                     - arm-raspi2-eabi/sp/qemu*
+            - run:
+                name: IRC notify
+                command: ~/nos/source/.circleci/irc.sh
 
     collect:
         docker:
-            - image: xenos1984/tools-notify
+            - image: xenos1984/cross-tools:latest
         working_directory: ~/nos
         steps:
             - attach_workspace:
