@@ -31,9 +31,6 @@ jobs:
                 root: ~/nos
                 paths:
                     - i686-pc-elf
-            - run:
-                name: IRC notify
-                command: ~/nos/source/.circleci/irc.sh
 
     build_x86_64:
         docker:
@@ -50,9 +47,6 @@ jobs:
                 root: ~/nos
                 paths:
                     - x86_64-pc-elf
-            - run:
-                name: IRC notify
-                command: ~/nos/source/.circleci/irc.sh
 
     build_raspi2:
         docker:
@@ -67,9 +61,6 @@ jobs:
                 root: ~/nos
                 paths:
                     - arm-raspi2-eabi
-            - run:
-                name: IRC notify
-                command: ~/nos/source/.circleci/irc.sh
 
     qemu_i686:
         docker:
