@@ -5,6 +5,7 @@
 #include <Console.h>
 #include <Symbol.h>
 #include <Pager.h>
+#include <Chunker.h>
 #include INC_VENDOR(UART.h)
 #include INC_VENDOR(Mailbox.h)
 #include INC_ARCH(Coprocessor.h)
@@ -34,5 +35,8 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t r0, uint32_t r1, uint
 
 	Console::WriteFormat("ARM memory: start = 0x%8x, length = 0x%8x\n", armmem.start, armmem.length);
 	Console::WriteFormat("Video memory: start = 0x%8x, length = 0x%8x\n", vidmem.start, vidmem.length);
+
+	Chunker::Init(armmem.start, armmem.length, Memory::Zone::NONE);
+	Chunker::Reserve(Symbol::kernelStart.Addr() - Symbol::kernelOffset.Addr(), Symbol::kernelEnd.Addr() - Symbol::kernelOffset.Addr());
 }
 
