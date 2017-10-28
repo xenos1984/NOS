@@ -12,6 +12,7 @@ namespace Kernel
 	{
 		template<Memory::PageBits size> class alignas(size >> 18) PageTableL1
 		{
+		private:
 			PageTableEntryL1 entry[size >> 20] = {PageTableEntryL1{}};
 
 		public:
@@ -23,7 +24,23 @@ namespace Kernel
 
 		class alignas(1024) PageTableL2
 		{
+		private:
 			PageTableEntryL2 entry[256] = {PageTableEntryL2{}};
+
+		public:
+			inline PageTableEntryL2& Entry(unsigned int i)
+			{
+				return entry[i];
+			}
+
+			static inline PageTableL2& Table(unsigned long i)
+			{
+				// TODO: Use some meaningful constants here
+				if(i < 2048)
+					return *reinterpret_cast<PageTableL2*>(0x7fe00000 + i * sizeof(PageTableL2));
+				else
+					return *reinterpret_cast<PageTableL2*>(0xc0000000 + i * sizeof(PageTableL2));
+			}
 		};
 
 		typedef PageTableL1<Memory::PGB_4G> PageTableL1K;

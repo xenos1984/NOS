@@ -73,7 +73,7 @@ SECTIONS
 		tabPGDIR = .;
 		. += 16K;
 		tabPGTAB = .;
-		. += 1K;
+		. += 4K;
 	}
 	. = ALIGN(4K);
 	kernelEnd = .;
