@@ -83,11 +83,17 @@ Entry:
 	blo 7b
 
 
-// Enable MMU
+// Set TTBR0 and TTBR1
 	ldr r4, =tabPGDIR - KERNEL_OFFSET
-	mcr p15, 0, r4, c2, c0
+	mcr p15, 0, r4, c2, c0, 0
+	mcr p15, 0, r4, c2, c0, 1
+// Configure how many bits to share
+	mov r4, #TABLE_SPLIT_BITS
+	mcr p15, 0, r4, c2, c0, 2
+// Set Domain Access Control Register
 	mov r4, #5
 	mcr p15, 0, r4, c3, c0
+// Enable MMU
 	mrc p15, 0, r4, c1, c0
 	orr r4, r4, #1
 	mcr p15, 0, r4, c1, c0
