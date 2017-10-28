@@ -283,8 +283,14 @@ namespace Kernel
 
 		template<Memory::PageBits bits> PageTableEntryL1& PageTableEntryL1::Set(Memory::PhysAddr phys, Memory::MemType type)
 		{
-			static_assert((bits == Memory::PGB_1M) || (bits == Memory::PGB_16M), "invalid page size for L2 table");
+			static_assert((bits == Memory::PGB_1M) || (bits == Memory::PGB_16M), "invalid page size for L1 table");
 			raw = phys | TypeFlags<bits>(type);
+			return *this;
+		}
+
+		template<> PageTableEntryL1& PageTableEntryL1::Set<Memory::PGB_4K>(Memory::PhysAddr phys, Memory::MemType type)
+		{
+			raw = phys | PAGE_TABLE;
 			return *this;
 		}
 

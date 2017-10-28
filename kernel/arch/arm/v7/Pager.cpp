@@ -40,7 +40,21 @@ namespace Kernel
 				Memory::AllocBlock<Memory::PGB_4K>(virt & ~Memory::PGM_4K, type);
 
 			new (reinterpret_cast<PageTableL2*>(virt)) PageTableL2;
+
+			KernelPTL1().Entry(i).Set<Memory::PGB_4K>(VirtToPhys(virt), type);
+
 			return *reinterpret_cast<PageTableL2*>(virt);
+		}
+
+		bool PageTableL2::IsEmpty()
+		{
+			for(unsigned int i = 0; i < 256; i++)
+			{
+				if(!entry[i].IsClear())
+					return false;
+			}
+
+			return true;
 		}
 
 		template<Memory::PageBits bits> void MapPage(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type)
@@ -68,6 +82,26 @@ namespace Kernel
 
 		template<> void UnmapPage<Memory::PGB_4K>(uintptr_t virt)
 		{
+			unsigned long table = virt >> Memory::PGB_1M;
+			unsigned long entry = (virt >> Memory::PGB_4K) & 0xff;
+
+			PageTableL2& pt = PageTableL2::Table(table);
+			PageTableEntryL2& pte = pt.Entry(entry);
+			pte.Clear();
+
+			if(pt.IsEmpty())
+			{
+				KernelPTL1().Entry(table).Clear();
+
+				unsigned long t0 = table & ~0x3UL;
+				unsigned long t1 = table & 0x3UL;
+
+				if(KernelPTL1().Entry(t0 | ((t1 + 1) % 4)).IsClear() && KernelPTL1().Entry(t0 | ((t1 + 2) % 4)).IsClear() && KernelPTL1().Entry(t0 | ((t1 + 3) % 4)).IsClear())
+				{
+					uintptr_t virt = (t0 < 2048 ? 0x7fe00000 : 0xc0000000) + t0 * sizeof(PageTableL2);
+					Memory::FreeBlock<Memory::PGB_4K>(virt);
+				}
+			}
 		}
 
 		template<> void MapPage<Memory::PGB_64K>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type)
@@ -88,6 +122,29 @@ namespace Kernel
 
 		template<> void UnmapPage<Memory::PGB_64K>(uintptr_t virt)
 		{
+			unsigned long table = virt >> Memory::PGB_1M;
+			unsigned long entry = (virt >> Memory::PGB_4K) & 0xff;
+
+			PageTableL2& pt = PageTableL2::Table(table);
+			for(unsigned int i = 0; i < 16; i++)
+			{
+				PageTableEntryL2& pte = pt.Entry(entry + i);
+				pte.Clear();
+			}
+
+			if(pt.IsEmpty())
+			{
+				KernelPTL1().Entry(table).Clear();
+
+				unsigned long t0 = table & ~0x3UL;
+				unsigned long t1 = table & 0x3UL;
+
+				if(KernelPTL1().Entry(t0 | ((t1 + 1) % 4)).IsClear() && KernelPTL1().Entry(t0 | ((t1 + 2) % 4)).IsClear() && KernelPTL1().Entry(t0 | ((t1 + 3) % 4)).IsClear())
+				{
+					uintptr_t virt = (t0 < 2048 ? 0x7fe00000 : 0xc0000000) + t0 * sizeof(PageTableL2);
+					Memory::FreeBlock<Memory::PGB_4K>(virt);
+				}
+			}
 		}
 
 		template<> void MapPage<Memory::PGB_1M>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type)

@@ -43,6 +43,9 @@ namespace Kernel
 
 			/** Destroy a L2 page table. */
 			void Destroy(void);
+
+			/** Check whether table is completely empty. */
+			bool IsEmpty(void);
 		};
 
 		typedef PageTableL1<Memory::PGB_4G> PageTableL1K;
