@@ -60,18 +60,34 @@ namespace Kernel
 
 		template<> void MapPage<Memory::PGB_1M>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type)
 		{
+			PageTableEntryL1& pte = KernelPTL1().Entry(virt >> Memory::PGB_1M);
+			pte.Set<Memory::PGB_1M>(phys, type);
 		}
 
 		template<> void UnmapPage<Memory::PGB_1M>(uintptr_t virt)
 		{
+			PageTableEntryL1& pte = KernelPTL1().Entry(virt >> Memory::PGB_1M);
+			pte.Clear();
+			InvalidateMVAAll(virt);
 		}
 
 		template<> void MapPage<Memory::PGB_16M>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type)
 		{
+			for(unsigned int i = 0; i < 16; i++)
+			{
+				PageTableEntryL1& pte = KernelPTL1().Entry(((virt & ~Memory::PGM_16M) >> Memory::PGB_1M) + i);
+				pte.Set<Memory::PGB_16M>(phys, type);
+			}
 		}
 
 		template<> void UnmapPage<Memory::PGB_16M>(uintptr_t virt)
 		{
+			for(unsigned int i = 0; i < 16; i++)
+			{
+				PageTableEntryL1& pte = KernelPTL1().Entry(((virt & ~Memory::PGM_16M) >> Memory::PGB_1M) + i);
+				pte.Clear();
+			}
+			InvalidateMVAAll(virt);
 		}
 
 		Memory::PhysAddr VirtToPhys(uintptr_t addr)
