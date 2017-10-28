@@ -81,7 +81,7 @@ namespace Kernel
 
 			PageTableEntryL1& pgl1 = KernelPTL1().Entry(tab);
 
-			Console::WriteFormat("Addr 0x%8x -> Tab 0x%3x Entry 0x%2x : 0x%8x\n", addr, tab, entry, pgl1);
+			Console::WriteFormat("Addr 0x%8x -> PT1 Entry 0x%3x : 0x%8x\n", addr, tab, pgl1);
 
 			if(pgl1.IsFault())
 				return ~0;
@@ -91,14 +91,18 @@ namespace Kernel
 
 			if(pgl1.IsSection())
 				return pgl1.Phys() | (addr & Memory::PGM_1M);
-/*
-			PageTableEntryL2& pgl2 = PageTab::Table(tab).Entry(entry);
 
-			if(!pgent.IsPresent())
-				return ~0;
+			PageTableEntryL2& pgl2 = PageTableL2::Table(tab).Entry(entry);
 
-			return pgent.Phys() | (addr & Memory::PGM_4K);*/
-			return 0;
+			Console::WriteFormat("Addr 0x%8x -> PT2 0x%3x Entry 0x%2x : 0x%8x\n", addr, tab, entry, pgl2);
+
+			if(pgl2.IsLarge())
+				return pgl2.Phys() | (addr & Memory::PGM_64K);
+
+			if(pgl2.IsSmall())
+				return pgl2.Phys() | (addr & Memory::PGM_4K);
+
+			return ~0;
 		}
 	}
 }

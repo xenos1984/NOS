@@ -200,6 +200,21 @@ namespace Kernel
 			{
 				return (raw == 0);
 			}
+
+			inline bool IsInvalid(void) const
+			{
+				return ((raw & 0x3) == PAGE_INVALID);
+			}
+
+			inline bool IsSmall(void) const
+			{
+				return ((raw & 0x3) == PAGE_SMALL);
+			}
+
+			inline bool IsLarge(void) const
+			{
+				return ((raw & 0x3) == PAGE_LARGE);
+			}
 		};
 
 		template<Memory::PageBits bits> constexpr std::underlying_type<PageTableEntryL1::Flags>::type PageTableEntryL1::TypeFlags(Memory::MemType type)

@@ -34,7 +34,7 @@ namespace Kernel
 			for(int i = 0; i < sizeof(buffer) >> 2; i++)
 				Console::WriteFormat("Buffer[%d] = 0x%8x\n", i, ((uint32_t*)&buffer)[i]);
 */
-			Send(1, CH_ARM_VID, ((uintptr_t)&buffer) - 0xc0000000);
+			Send(1, CH_ARM_VID, Pager::VirtToPhys(&buffer));
 			Receive(0, CH_ARM_VID);
 /*
 			for(int i = 0; i < sizeof(buffer) >> 2; i++)
@@ -50,7 +50,7 @@ namespace Kernel
 			for(unsigned int i = 0; i < sizeof(buffer) >> 2; i++)
 				Console::WriteFormat("Buffer[%d] = 0x%8x\n", i, ((uint32_t*)&buffer)[i]);
 */
-			Send(1, CH_ARM_VID, ((uintptr_t)&buffer) - 0xc0000000);
+			Send(1, CH_ARM_VID, Pager::VirtToPhys(&buffer));
 			Receive(0, CH_ARM_VID);
 /*
 			for(unsigned int i = 0; i < sizeof(buffer) >> 2; i++)
