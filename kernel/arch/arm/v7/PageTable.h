@@ -4,6 +4,7 @@
 #define __ARCH_ARM_V7_PAGETABLE_H__
 
 #include INC_SUBARCH(PageTableEntry.h)
+#include INC_VENDOR(Entry.h)
 #include <Symbol.h>
 #include <Memory.h>
 
@@ -11,6 +12,14 @@ namespace Kernel
 {
 	namespace Pager
 	{
+		static const unsigned long MinKernelL1Entry = 4096 >> TABLE_SPLIT_BITS;
+		static const unsigned long MaxUserL1Entry = MinKernelL1Entry - 1;
+		static const uintptr_t MinKernelVirt = MinKernelL1Entry << Memory::PGB_1M;
+		static const uintptr_t MaxUserVirt = MinKernelVirt - 1;
+		static const uintptr_t KernelPTL2Base = KERNEL_OFFSET;
+		static const uintptr_t UserPTL2Base = MinKernelVirt - (Memory::PGS_4M >> TABLE_SPLIT_BITS);
+		static const uintptr_t UserPTL1Base = UserPTL2Base - (Memory::PGS_16K >> TABLE_SPLIT_BITS);
+
 		template<Memory::PageBits size> class alignas(1 << (size - 18)) PageTableL1
 		{
 		private:
@@ -67,11 +76,10 @@ namespace Kernel
 
 		inline PageTableL2& PageTableL2::Table(unsigned long i)
 		{
-			// TODO: Use some meaningful constants here
-			if(i < 2048)
-				return *reinterpret_cast<PageTableL2*>(0x7fe00000 + i * sizeof(PageTableL2));
+			if(i < MinKernelL1Entry)
+				return *reinterpret_cast<PageTableL2*>(UserPTL2Base + i * sizeof(PageTableL2));
 			else
-				return *reinterpret_cast<PageTableL2*>(0xc0000000 + i * sizeof(PageTableL2));
+				return *reinterpret_cast<PageTableL2*>(KernelPTL2Base + i * sizeof(PageTableL2));
 		}
 
 		inline bool PageTableL2::Exists(unsigned long i)

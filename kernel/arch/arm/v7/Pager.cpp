@@ -34,7 +34,7 @@ namespace Kernel
 
 		PageTableL2& PageTableL2::Create(unsigned long i, Memory::MemType type)
 		{
-			uintptr_t virt = (i < 2048 ? 0x7fe00000 : 0xc0000000) + i * sizeof(PageTableL2);
+			uintptr_t virt = (i < MinKernelL1Entry ? UserPTL2Base : KernelPTL2Base) + i * sizeof(PageTableL2);
 
 			if(VirtToPhys(virt) == ~0UL)
 				Memory::AllocBlock<Memory::PGB_4K>(virt & ~Memory::PGM_4K, type);
@@ -98,7 +98,7 @@ namespace Kernel
 
 				if(KernelPTL1().Entry(t0 | ((t1 + 1) % 4)).IsClear() && KernelPTL1().Entry(t0 | ((t1 + 2) % 4)).IsClear() && KernelPTL1().Entry(t0 | ((t1 + 3) % 4)).IsClear())
 				{
-					uintptr_t virt = (t0 < 2048 ? 0x7fe00000 : 0xc0000000) + t0 * sizeof(PageTableL2);
+					uintptr_t virt = (t0 < MinKernelL1Entry ? UserPTL2Base : KernelPTL2Base) + t0 * sizeof(PageTableL2);
 					Memory::FreeBlock<Memory::PGB_4K>(virt);
 				}
 			}
@@ -141,7 +141,7 @@ namespace Kernel
 
 				if(KernelPTL1().Entry(t0 | ((t1 + 1) % 4)).IsClear() && KernelPTL1().Entry(t0 | ((t1 + 2) % 4)).IsClear() && KernelPTL1().Entry(t0 | ((t1 + 3) % 4)).IsClear())
 				{
-					uintptr_t virt = (t0 < 2048 ? 0x7fe00000 : 0xc0000000) + t0 * sizeof(PageTableL2);
+					uintptr_t virt = (t0 < MinKernelL1Entry ? UserPTL2Base : KernelPTL2Base) + t0 * sizeof(PageTableL2);
 					Memory::FreeBlock<Memory::PGB_4K>(virt);
 				}
 			}
