@@ -32,6 +32,17 @@ namespace Kernel
 			Coprocessor::TLBIMVA::Write(mva | asid);
 		}
 
+		PageTableL2& PageTableL2::Create(unsigned long i, Memory::MemType type)
+		{
+			uintptr_t virt = (i < 2048 ? 0x7fe00000 : 0xc0000000) + i * sizeof(PageTableL2);
+
+			if(VirtToPhys(virt) == ~0UL)
+				Memory::AllocBlock<Memory::PGB_4K>(virt & ~Memory::PGM_4K, type);
+
+			new (reinterpret_cast<PageTableL2*>(virt)) PageTableL2;
+			return *reinterpret_cast<PageTableL2*>(virt);
+		}
+
 		template<Memory::PageBits bits> void MapPage(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type)
 		{
 			static_assert(IsValidSize(bits), "invalid page size");
@@ -44,6 +55,15 @@ namespace Kernel
 
 		template<> void MapPage<Memory::PGB_4K>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type)
 		{
+			unsigned long table = virt >> Memory::PGB_1M;
+			unsigned long entry = (virt >> Memory::PGB_4K) & 0xff;
+
+			if(!PageTableL2::Exists(table))
+				PageTableL2::Create(table, type);
+
+			PageTableL2& pt = PageTableL2::Table(table);
+			PageTableEntryL2& pte = pt.Entry(entry);
+			pte.Set<Memory::PGB_4K>(phys, type);
 		}
 
 		template<> void UnmapPage<Memory::PGB_4K>(uintptr_t virt)
@@ -52,6 +72,18 @@ namespace Kernel
 
 		template<> void MapPage<Memory::PGB_64K>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type)
 		{
+			unsigned long table = virt >> Memory::PGB_1M;
+			unsigned long entry = (virt >> Memory::PGB_4K) & 0xf0;
+
+			if(!PageTableL2::Exists(table))
+				PageTableL2::Create(table, type);
+
+			PageTableL2& pt = PageTableL2::Table(table);
+			for(unsigned int i = 0; i < 16; i++)
+			{
+				PageTableEntryL2& pte = pt.Entry(entry + i);
+				pte.Set<Memory::PGB_64K>(phys, type);
+			}
 		}
 
 		template<> void UnmapPage<Memory::PGB_64K>(uintptr_t virt)
