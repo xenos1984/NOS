@@ -19,8 +19,15 @@ namespace Kernel
 		static const uintptr_t KernelPTL2Base = KERNEL_OFFSET;
 		static const uintptr_t UserPTL2Base = MinKernelVirt - (Memory::PGS_4M >> TABLE_SPLIT_BITS);
 		static const uintptr_t UserPTL1Base = UserPTL2Base - (Memory::PGS_16K >> TABLE_SPLIT_BITS);
+		static const Memory::PageBits UserPageBits = (Memory::PageBits)(Memory::PGB_4G - TABLE_SPLIT_BITS);
 
-		template<Memory::PageBits size> class alignas(1 << (size - 18)) PageTableL1
+		class PageTableTop
+		{
+		public:
+			static inline PageTableEntryL1& Entry(unsigned int i);
+		};
+
+		template<Memory::PageBits size> class alignas(1 << (size - 18)) PageTableL1 : public PageTableTop
 		{
 		private:
 			/** Array of page table entries, default constructed. */
@@ -64,6 +71,13 @@ namespace Kernel
 			return *reinterpret_cast<PageTableL1K*>(Symbol::tabPGDIR.Ptr());
 		}
 
+		typedef PageTableL1<UserPageBits> PageTableL1U;
+
+		inline PageTableL1U& UserPTL1(void)
+		{
+			return *reinterpret_cast<PageTableL1U*>(UserPTL1Base);
+		}
+
 		template<Memory::PageBits size> inline PageTableEntryL1& PageTableL1<size>::Entry(unsigned int i)
 		{
 			return entry[i];
@@ -85,6 +99,14 @@ namespace Kernel
 		inline bool PageTableL2::Exists(unsigned long i)
 		{
 			return KernelPTL1().Entry(i).IsTable();
+		}
+
+		inline PageTableEntryL1& PageTableTop::Entry(unsigned int i)
+		{
+			if(i < MinKernelL1Entry)
+				return UserPTL1().Entry(i);
+			else
+				return KernelPTL1().Entry(i);
 		}
 	}
 }
