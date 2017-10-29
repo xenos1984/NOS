@@ -231,7 +231,7 @@ namespace Kernel
 
 			return true;
 		}
-
+/*
 		bool Map(Memory::PhysAddr phys, uintptr_t virt, size_t length, Memory::MemType type)
 		{
 			uintptr_t diff;
@@ -270,7 +270,7 @@ namespace Kernel
 
 			return true;
 		}
-
+*/
 		bool Unmap(uintptr_t virt, size_t length)
 		{
 			uintptr_t addr;

@@ -36,6 +36,7 @@ libkernel_a_SOURCES = \
 	Elf.cpp \
 	IRQManager.cpp \
 	Memory.cpp \
+	Pager.cpp \
 	Process.cpp \
 	Tasker.cpp \
 	TaskScheduler.cpp \
