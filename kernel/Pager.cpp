@@ -59,7 +59,7 @@ namespace Kernel
 
 			return true;
 		}
-/*
+
 		template<Memory::PageBits size> void TryUnmapPage(uintptr_t addr, typename std::enable_if<!IsValidSize(size), Memory::PageBits>::type mapped);
 		template<Memory::PageBits size> void TryUnmapPage(uintptr_t addr, typename std::enable_if<IsValidSize(size), Memory::PageBits>::type mapped);
 
@@ -85,11 +85,11 @@ namespace Kernel
 		{
 			uintptr_t addr;
 			uintptr_t end = virt + length;
-
+/*
 			// Check whether this area is indeed mapped.
 			if(!IsMapped(virt, length))
 				return false;
-
+*/
 			for(addr = virt; addr < end; )
 			{
 				Memory::PageBits mapped = MappedSize(addr);
@@ -99,5 +99,5 @@ namespace Kernel
 
 			return true;
 		}
-*/	}
+	}
 }

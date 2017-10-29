@@ -270,7 +270,7 @@ namespace Kernel
 
 			return true;
 		}
-*/
+
 		bool Unmap(uintptr_t virt, size_t length)
 		{
 			uintptr_t addr;
@@ -303,7 +303,7 @@ namespace Kernel
 
 			return true;
 		}
-
+*/
 		Memory::PhysAddr VirtToPhys(uintptr_t addr)
 		{
 			addr &= 0xffffffffffffULL; // Remove sign extension.
