@@ -32,6 +32,41 @@ namespace Kernel
 			Coprocessor::TLBIMVA::Write(mva | asid);
 		}
 
+		Memory::PageBits MappedSize(uintptr_t virt)
+		{
+			// Normalize address to smallest possible page size.
+			virt &= ~Memory::PGM_4K;
+
+			// Check top level page table first.
+			PageTableEntryL1& pte1 = PageTableTop::Entry(virt >> Memory::PGB_1M);
+
+			// If it is not present, then this page is not mapped.
+			if(pte1.IsFault())
+				return Memory::PGB_INV;
+
+			// If it is present and 16MB, then this page is mapped.
+			if(pte1.IsSuper())
+				return Memory::PGB_16M;
+
+			// If it is present and 1MB, then this page is mapped.
+			if(pte1.IsSection())
+				return Memory::PGB_1M;
+
+			// For a smaller page, we need to check the next level.
+			PageTableEntryL2& pte2 = PageTableL2::Table(virt >> Memory::PGB_1M).Entry((virt >> Memory::PGB_4K) & 0xff);
+
+			// If it is present and large, this page is mapped.
+			if(pte2.IsLarge())
+				return Memory::PGB_64K;
+
+			// If it is present and small, this page is mapped.
+			if(pte2.IsSmall())
+				return Memory::PGB_4K;
+
+			// Otherwise, it is not mapped.
+			return Memory::PGB_INV;
+		}
+
 		PageTableL2& PageTableL2::Create(unsigned long i, Memory::MemType type)
 		{
 			uintptr_t virt = (i < MinKernelL1Entry ? UserPTL2Base : KernelPTL2Base) + i * sizeof(PageTableL2);
