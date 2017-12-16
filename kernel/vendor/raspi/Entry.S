@@ -8,6 +8,18 @@
 .extern KernelEntry
 
 Entry:
+// Check for CPU ID - let CPU 0 set up the basic structures, before others join.
+	mrc p15, 0, r4, c0, c0, 5
+	ands r4, r4, #3
+	beq EntryBSP
+
+// This is an application processor (CPU > 0), put into idle loop for now.
+EntryAP:
+	dsb
+	wfe
+	b EntryAP
+
+EntryBSP:
 // Set stack pointer to kernel stack.
 	ldr sp, =bspStack
 

@@ -6,6 +6,7 @@
 #include <Symbol.h>
 #include <Pager.h>
 #include <Chunker.h>
+#include <Heap.h>
 #include INC_VENDOR(UART.h)
 #include INC_VENDOR(Mailbox.h)
 #include INC_ARCH(Coprocessor.h)
@@ -39,7 +40,14 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t r0, uint32_t r1, uint
 	Chunker::Init(armmem.start, armmem.length, Memory::Zone::NONE);
 	Chunker::Reserve(Symbol::kernelStart.Addr() - Symbol::kernelOffset.Addr(), Symbol::kernelEnd.Addr() - Symbol::kernelOffset.Addr());
 
-	Pager::Map(0x1b000, 0xc010b000, 0x20000, Memory::MemType::KERNEL_RW);
-	Pager::Unmap(0xc0123000, 0x2000);
+	Heap::Init();
+	int* a = new int;
+	Heap::ShowMap();
+	int* b = new int;
+	Heap::ShowMap();
+	delete a;
+	Heap::ShowMap();
+	delete b;
+	Heap::ShowMap();
 }
 
