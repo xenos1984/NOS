@@ -16,6 +16,7 @@ jobs:
             - run:
                 name: IRC notify
                 command: ~/nos/source/.circleci/irc.sh
+                when: always
 
     build_i686:
         docker:
@@ -162,6 +163,7 @@ jobs:
             - run:
                 name: IRC notify
                 command: ~/nos/source/.circleci/irc.sh
+                when: always
 
     qemu_x86_64:
         docker:
@@ -260,6 +262,7 @@ jobs:
             - run:
                 name: IRC notify
                 command: ~/nos/source/.circleci/irc.sh
+                when: always
 
     qemu_raspi2:
         docker:
@@ -284,6 +287,7 @@ jobs:
             - run:
                 name: IRC notify
                 command: ~/nos/source/.circleci/irc.sh
+                when: always
 
     collect:
         docker:
@@ -304,6 +308,7 @@ jobs:
             - run:
                 name: IRC notify
                 command: ~/nos/source/.circleci/irc.sh
+                when: always
 
 workflows:
     version: 2
