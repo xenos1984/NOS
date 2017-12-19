@@ -1,6 +1,6 @@
 #!/bin/bash
 
-$folder=../$1
+folder=~/nos/$1
 
 grub-mkimage -o eltorito.img -O i386-pc-eltorito biosdisk iso9660 multiboot configfile
 
