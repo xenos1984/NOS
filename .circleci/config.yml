@@ -13,7 +13,7 @@ jobs:
                 root: ~/nos
                 paths:
                     - source
-            - run: "wget --method=PATCH --user=xenos1984 --password=$GHTOKEN --body-data=\{\"sha\":\"${CIRCLE_SHA1}\"\} -O - https://api.github.com/repos/xenos1984/nos/git/refs/tags/latest"
+            - run: "wget --method=PATCH --user=xenos1984 --password=$GHTOKEN --body-data='{\"sha\": \"'${CIRCLE_SHA1}'\"}' -O - https://api.github.com/repos/xenos1984/nos/git/refs/tags/latest"
             - run:
                 name: IRC notify
                 command: ~/nos/source/.circleci/irc.sh
@@ -31,7 +31,7 @@ jobs:
             - run: .circleci/build_pc.sh i686-pc-elf sp-acpi --disable-smp
             - run: .circleci/build_pc.sh i686-pc-elf sp-noacpi --disable-smp --disable-acpi
             - run: .circleci/pc_multi_iso.sh i686-pc-elf
-            - run: "wget --method=POST --user=xenos1984 --password=$GHTOKEN --header='Content-Type: application/octet-stream' --body-file=../i686-pc-elf/NOS.iso -O - \"https://uploads.github.com/repos/xenos1984/NOS/releases/9063364/assets?name=nos-i686.iso&label=NOS%20bootable%20ISO%20%2Ei686%2F\""
+            - run: "wget --method=POST --user=xenos1984 --password=$GHTOKEN --header='Content-Type: application/octet-stream' --body-file=../i686-pc-elf/NOS.iso -O - 'https://uploads.github.com/repos/xenos1984/NOS/releases/9063364/assets?name=nos-i686.iso&label=NOS%20bootable%20ISO%20%2Ei686%2F'"
             - persist_to_workspace:
                 root: ~/nos
                 paths:
@@ -49,7 +49,7 @@ jobs:
             - run: .circleci/build_pc.sh x86_64-pc-elf sp-acpi --disable-smp
             - run: .circleci/build_pc.sh x86_64-pc-elf sp-noacpi --disable-smp --disable-acpi
             - run: .circleci/pc_multi_iso.sh x86_64-pc-elf
-            - run: "wget --method=POST --user=xenos1984 --password=$GHTOKEN --header='Content-Type: application/octet-stream' --body-file=../x86_64-pc-elf/NOS.iso -O - \"https://uploads.github.com/repos/xenos1984/NOS/releases/9063364/assets?name=nos-x86_64.iso&label=NOS%20bootable%20ISO%20%2Ex86_64%2F\""
+            - run: "wget --method=POST --user=xenos1984 --password=$GHTOKEN --header='Content-Type: application/octet-stream' --body-file=../x86_64-pc-elf/NOS.iso -O - 'https://uploads.github.com/repos/xenos1984/NOS/releases/9063364/assets?name=nos-x86_64.iso&label=NOS%20bootable%20ISO%20%2Ex86_64%2F'"
             - persist_to_workspace:
                 root: ~/nos
                 paths:
