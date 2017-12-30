@@ -13,7 +13,7 @@ jobs:
                 root: ~/nos
                 paths:
                     - source
-            - run: "wget --method=PATCH --user=xenos1984 --password=$GHTOKEN --body-data={\"sha\":\"$CIRCLE_SHA1\"} -O - https://api.github.com/repos/xenos1984/nos/git/refs/tags/latest"
+            - run: "wget --method=PATCH --user=xenos1984 --password=$GHTOKEN --body-data=\{\"sha\":\"${CIRCLE_SHA1}\"\} -O - https://api.github.com/repos/xenos1984/nos/git/refs/tags/latest"
             - run:
                 name: IRC notify
                 command: ~/nos/source/.circleci/irc.sh
