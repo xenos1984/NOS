@@ -2,6 +2,7 @@
 
 #include INC_ARCH(Interrupt.h)
 #include INC_ARCH(Coprocessor.h)
+#include INC_SUBARCH(PageTable.h)
 #include <Console.h>
 
 namespace Kernel
@@ -10,6 +11,7 @@ namespace Kernel
 	{
 		Console::WriteFormat((status & 0x1000 ? "External abort; " : "Internal abort; "));
 		Console::WriteFormat((status & 0x800 ? "write; " : "read; "));
+
 		switch(((status & 0x400) >> 6) | (status & 0xf))
 		{
 		case 1:
@@ -82,6 +84,19 @@ namespace Kernel
 			Console::WriteFormat("unknown abort.\n");
 		}
 	}
+
+	void DumpFaultAddr(uintptr_t addr)
+	{
+		Console::WriteFormat("Faulting page: %d / %d\n", addr >> Memory::PGB_1M, (addr >> Memory::PGB_4K) & 0xff);
+
+		Pager::PageTableEntryL1& pte1 = Pager::PageTableTop().Entry(addr >> Memory::PGB_1M);
+		Console::WriteFormat("Page level 1: 0x%8x\n", pte1.Raw());
+		if(!pte1.IsFault())
+		{
+			Pager::PageTableEntryL2& pte2 = Pager::PageTableL2::Table(addr >> Memory::PGB_1M).Entry((addr >> Memory::PGB_4K) & 0xff);
+			Console::WriteFormat("Page level 2: 0x%8x\n", pte2.Raw());
+		}
+	}
 }
 
 using namespace Kernel;
@@ -98,19 +113,23 @@ void RegisterSet::Dump()
 extern "C" void PrefetchAbort(RegisterSet* regs)
 {
 	uint32_t ifsr = Coprocessor::IFSR::Read();
+	uint32_t ifar = Coprocessor::IFAR::Read();
 
 	Console::WriteFormat("Prefetch abort occurred\n");
-	Console::WriteFormat("IFAR = 0x%8x, IFSR = 0x%8x\n", Coprocessor::IFAR::Read(), ifsr);
+	Console::WriteFormat("IFAR = 0x%8x, IFSR = 0x%8x\n", ifar, ifsr);
 	DumpFaultStatus(ifsr);
+	DumpFaultAddr(ifar);
 	regs->Dump();
 }
 
 extern "C" void DataAbort(RegisterSet* regs)
 {
 	uint32_t dfsr = Coprocessor::DFSR::Read();
+	uint32_t dfar = Coprocessor::DFAR::Read();
 
 	Console::WriteFormat("Data abort occurred\n");
-	Console::WriteFormat("DFAR = 0x%8x, DFSR = 0x%8x\n", Coprocessor::DFAR::Read(), dfsr);
+	Console::WriteFormat("DFAR = 0x%8x, DFSR = 0x%8x\n", dfar, dfsr);
 	DumpFaultStatus(dfsr);
+	DumpFaultAddr(dfar);
 	regs->Dump();
 }
