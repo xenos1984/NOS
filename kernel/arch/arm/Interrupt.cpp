@@ -19,30 +19,40 @@ namespace Kernel
 			Console::WriteFormat("debug event.\n");
 			break;
 		case 3:
-		case 6:
-			Console::WriteFormat("access flag fault.\n");
+			Console::WriteFormat("access flag fault (PT1).\n");
 			break;
 		case 4:
 			Console::WriteFormat("instruction cache maintenance.\n");
 			break;
 		case 5:
+			Console::WriteFormat("translation fault (PT1).\n");
+			break;
+		case 6:
+			Console::WriteFormat("access flag fault (PT2).\n");
+			break;
 		case 7:
-			Console::WriteFormat("translation fault.\n");
+			Console::WriteFormat("translation fault (PT2).\n");
 			break;
 		case 8:
 			Console::WriteFormat("sync. external abort.\n");
 			break;
 		case 9:
+			Console::WriteFormat("domain fault (PT1).\n");
+			break;
 		case 11:
-			Console::WriteFormat("domain fault.\n");
+			Console::WriteFormat("domain fault (PT2).\n");
 			break;
 		case 12:
-		case 14:
-			Console::WriteFormat("sync. ext. abort on ttbl walk.\n");
+			Console::WriteFormat("sync. ext. abort on ttbl walk (PT1).\n");
 			break;
 		case 13:
+			Console::WriteFormat("permission fault (PT2).\n");
+			break;
+		case 14:
+			Console::WriteFormat("sync. ext. abort on ttbl walk (PT2).\n");
+			break;
 		case 15:
-			Console::WriteFormat("permission fault.\n");
+			Console::WriteFormat("permission fault (PT1).\n");
 			break;
 		case 16:
 			Console::WriteFormat("TLB conflict abort.\n");
@@ -63,8 +73,10 @@ namespace Kernel
 			Console::WriteFormat("coprocessor abort.\n");
 			break;
 		case 28:
+			Console::WriteFormat("sync. parity error on ttbl walk (PT1).\n");
+			break;
 		case 30:
-			Console::WriteFormat("sync. parity error on ttbl walk.\n");
+			Console::WriteFormat("sync. parity error on ttbl walk (PT2).\n");
 			break;
 		default:
 			Console::WriteFormat("unknown abort.\n");
