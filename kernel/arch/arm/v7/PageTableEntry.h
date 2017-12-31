@@ -60,7 +60,7 @@ namespace Kernel
 			template<Memory::PageBits bits> constexpr static std::underlying_type<Flags>::type TypeFlags(Memory::MemType type);
 
 		public:
-			template<Memory::PageBits bits> PageTableEntryL1& Set(Memory::PhysAddr phys, Memory::MemType type);
+			template<Memory::PageBits bits> inline PageTableEntryL1& Set(Memory::PhysAddr phys, Memory::MemType type);
 
 			inline uint32_t Raw(void) const
 			{
@@ -174,7 +174,7 @@ namespace Kernel
 			template<Memory::PageBits bits> constexpr static std::underlying_type<Flags>::type TypeFlags(Memory::MemType type);
 
 		public:
-			template<Memory::PageBits bits> PageTableEntryL2& Set(Memory::PhysAddr phys, Memory::MemType type);
+			template<Memory::PageBits bits> inline PageTableEntryL2& Set(Memory::PhysAddr phys, Memory::MemType type);
 
 			inline uint32_t Raw(void) const
 			{
@@ -281,14 +281,20 @@ namespace Kernel
 			}
 		}
 
-		template<Memory::PageBits bits> PageTableEntryL1& PageTableEntryL1::Set(Memory::PhysAddr phys, Memory::MemType type)
+		template<Memory::PageBits bits> inline PageTableEntryL1& PageTableEntryL1::Set(Memory::PhysAddr phys, Memory::MemType type)
 		{
 			static_assert((bits == Memory::PGB_1M) || (bits == Memory::PGB_16M), "invalid page size for L1 table");
 			raw = phys | TypeFlags<bits>(type);
 			return *this;
 		}
 
-		template<> PageTableEntryL1& PageTableEntryL1::Set<Memory::PGB_4K>(Memory::PhysAddr phys, Memory::MemType type)
+		template<> inline PageTableEntryL1& PageTableEntryL1::Set<Memory::PGB_64K>(Memory::PhysAddr phys, Memory::MemType type __attribute__((unused)))
+		{
+			raw = phys | PAGE_TABLE;
+			return *this;
+		}
+
+		template<> inline PageTableEntryL1& PageTableEntryL1::Set<Memory::PGB_4K>(Memory::PhysAddr phys, Memory::MemType type __attribute__((unused)))
 		{
 			raw = phys | PAGE_TABLE;
 			return *this;
@@ -358,14 +364,18 @@ namespace Kernel
 			}
 		}
 
-		template<Memory::PageBits bits> PageTableEntryL2& PageTableEntryL2::Set(Memory::PhysAddr phys, Memory::MemType type)
+		template<Memory::PageBits bits> inline PageTableEntryL2& PageTableEntryL2::Set(Memory::PhysAddr phys, Memory::MemType type)
 		{
 			static_assert((bits == Memory::PGB_4K) || (bits == Memory::PGB_64K), "invalid page size for L2 table");
 			raw = phys | TypeFlags<bits>(type);
 			return *this;
 		}
+
+		extern template std::underlying_type<PageTableEntryL1::Flags>::type PageTableEntryL1::TypeFlags<Memory::PGB_16M>(Memory::MemType type);
+		extern template std::underlying_type<PageTableEntryL1::Flags>::type PageTableEntryL1::TypeFlags<Memory::PGB_1M>(Memory::MemType type);
+		extern template std::underlying_type<PageTableEntryL2::Flags>::type PageTableEntryL2::TypeFlags<Memory::PGB_64K>(Memory::MemType type);
+		extern template std::underlying_type<PageTableEntryL2::Flags>::type PageTableEntryL2::TypeFlags<Memory::PGB_4K>(Memory::MemType type);
 	}
 }
 
 #endif
-

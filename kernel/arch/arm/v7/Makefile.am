@@ -10,5 +10,6 @@ libv7_a_SOURCES = \
 	PageTable.h \
 	PageTableEntry.h \
 	\
-	Pager.cpp
+	Pager.cpp \
+	PageTableEntry.cpp
 
