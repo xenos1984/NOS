@@ -208,7 +208,7 @@ namespace Kernel
 
 			inline bool IsSmall(void) const
 			{
-				return ((raw & 0x3) == PAGE_SMALL);
+				return ((raw & PAGE_SMALL) == PAGE_SMALL);
 			}
 
 			inline bool IsLarge(void) const
