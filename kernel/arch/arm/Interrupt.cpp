@@ -90,11 +90,11 @@ namespace Kernel
 		Console::WriteFormat("Faulting page: %d / %d\n", addr >> Memory::PGB_1M, (addr >> Memory::PGB_4K) & 0xff);
 
 		Pager::PageTableEntryL1& pte1 = Pager::PageTableTop().Entry(addr >> Memory::PGB_1M);
-		Console::WriteFormat("Page level 1: 0x%8x\n", pte1.Raw());
+		Console::WriteFormat("Page level 1 @ 0x%8x: 0x%8x\n", &pte1, pte1.Raw());
 		if(!pte1.IsFault())
 		{
 			Pager::PageTableEntryL2& pte2 = Pager::PageTableL2::Table(addr >> Memory::PGB_1M).Entry((addr >> Memory::PGB_4K) & 0xff);
-			Console::WriteFormat("Page level 2: 0x%8x\n", pte2.Raw());
+			Console::WriteFormat("Page level 2 @ 0x%8x: 0x%8x\n", &pte2, pte2.Raw());
 		}
 	}
 }
