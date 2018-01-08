@@ -30,7 +30,7 @@ jobs:
             - run: .circleci/build_pc.sh i686-pc-elf sp-acpi --disable-smp
             - run: .circleci/build_pc.sh i686-pc-elf sp-noacpi --disable-smp --disable-acpi
             - run: .circleci/pc_multi_iso.sh i686-pc-elf
-            - run: .circleci/pc_multi_floppy.sh i686-pc-elf
+              #- run: .circleci/pc_multi_floppy.sh i686-pc-elf
             - persist_to_workspace:
                 root: ~/nos
                 paths:
@@ -48,7 +48,7 @@ jobs:
             - run: .circleci/build_pc.sh x86_64-pc-elf sp-acpi --disable-smp
             - run: .circleci/build_pc.sh x86_64-pc-elf sp-noacpi --disable-smp --disable-acpi
             - run: .circleci/pc_multi_iso.sh x86_64-pc-elf
-            - run: .circleci/pc_multi_floppy.sh x86_64-pc-elf
+              #- run: .circleci/pc_multi_floppy.sh x86_64-pc-elf
             - persist_to_workspace:
                 root: ~/nos
                 paths:
