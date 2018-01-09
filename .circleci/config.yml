@@ -295,9 +295,9 @@ jobs:
         steps:
             - attach_workspace:
                 at: ~/nos
-            - run: apt-get install e2fsprogs grub-pc-bin bzip2 netcat-openbsd
-            - run: .circleci/pc_multi_floppy.sh i686-pc-elf
-            - run: .circleci/pc_multi_floppy.sh x86_64-pc-elf
+            - run: sudo apt-get install e2fsprogs grub-pc-bin bzip2 netcat-openbsd
+            - run: sudo .circleci/pc_multi_floppy.sh i686-pc-elf
+            - run: sudo .circleci/pc_multi_floppy.sh x86_64-pc-elf
             - persist_to_workspace:
                 root: ~/nos
                 paths:
