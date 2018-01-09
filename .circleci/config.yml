@@ -295,14 +295,18 @@ jobs:
         steps:
             - attach_workspace:
                 at: ~/nos
-            - run: sudo apt-get install dosfstools e2fsprogs grub-pc-bin bzip2 netcat-openbsd
-            - run: sudo ~/nos/source/.circleci/pc_multi_floppy.sh i686-pc-elf
-            - run: sudo ~/nos/source/.circleci/pc_multi_floppy.sh x86_64-pc-elf
+            - run: sudo apt-get install dosfstools e2fsprogs grub-pc-bin bzip2 netcat-openbsd wget
+            - run: sudo ~/nos/source/.circleci/pc_multi_floppy.sh i686-pc-elf fat12
+            - run: sudo ~/nos/source/.circleci/pc_multi_floppy.sh i686-pc-elf ext2
+            - run: sudo ~/nos/source/.circleci/pc_multi_floppy.sh x86_64-pc-elf fat12
+            - run: sudo ~/nos/source/.circleci/pc_multi_floppy.sh x86_64-pc-elf ext2
             - persist_to_workspace:
                 root: ~/nos
                 paths:
-                    - i686-pc-elf/NOS.img.bz2
-                    - x86_64-pc-elf/NOS.img.bz2
+                    - i686-pc-elf/NOS-fat12.img.bz2
+                    - i686-pc-elf/NOS-ext2.img.bz2
+                    - x86_64-pc-elf/NOS-fat12.img.bz2
+                    - x86_64-pc-elf/NOS-ext2.img.bz2
             - run:
                 name: IRC notify
                 command: ~/nos/source/.circleci/irc.sh
