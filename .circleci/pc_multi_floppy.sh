@@ -11,7 +11,7 @@ mkdosfs -F 12 $loop
 mkdir -p $mnt
 mount $loop $mnt
 mkdir -p $mnt/boot $mnt/nos
-grub-install --target=i386-pc --boot-directory=$mnt/boot --install-modules="multiboot configfile fat" --fonts=ascii --force --allow-floppy $loop
+grub-install --target=i386-pc --boot-directory=$mnt/boot --install-modules="multiboot configfile fat" --fonts=ascii --force --allow-floppy --debug --debug -v $loop
 cp ~/nos/source/.circleci/grub.cfg $mnt/boot/grub/
 for conf in mp-acpi mp-noacpi sp-acpi sp-noacpi
 do
