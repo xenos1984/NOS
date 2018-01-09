@@ -30,7 +30,6 @@ jobs:
             - run: .circleci/build_pc.sh i686-pc-elf sp-acpi --disable-smp
             - run: .circleci/build_pc.sh i686-pc-elf sp-noacpi --disable-smp --disable-acpi
             - run: .circleci/pc_multi_iso.sh i686-pc-elf
-              #- run: .circleci/pc_multi_floppy.sh i686-pc-elf
             - persist_to_workspace:
                 root: ~/nos
                 paths:
@@ -48,7 +47,6 @@ jobs:
             - run: .circleci/build_pc.sh x86_64-pc-elf sp-acpi --disable-smp
             - run: .circleci/build_pc.sh x86_64-pc-elf sp-noacpi --disable-smp --disable-acpi
             - run: .circleci/pc_multi_iso.sh x86_64-pc-elf
-              #- run: .circleci/pc_multi_floppy.sh x86_64-pc-elf
             - persist_to_workspace:
                 root: ~/nos
                 paths:
@@ -291,6 +289,25 @@ jobs:
                 command: ~/nos/source/.circleci/irc.sh
                 when: always
 
+    images:
+        machine: true
+        working_directory: ~/nos
+        steps:
+            - attach_workspace:
+                at: ~/nos
+            - run: apt-get install e2fsprogs grub-pc-bin bzip2 netcat-openbsd
+            - run: .circleci/pc_multi_floppy.sh i686-pc-elf
+            - run: .circleci/pc_multi_floppy.sh x86_64-pc-elf
+            - persist_to_workspace:
+                root: ~/nos
+                paths:
+                    - i686-pc-elf/NOS.img.bz2
+                    - x86_64-pc-elf/NOS.img.bz2
+            - run:
+                name: IRC notify
+                command: ~/nos/source/.circleci/irc.sh
+                when: always
+
     collect:
         docker:
             - image: xenos1984/cross-tools:latest
@@ -336,8 +353,13 @@ workflows:
             - qemu_raspi2:
                 requires:
                     - build_raspi2
+            - images:
+                requires:
+                    - build_i686
+                    - build_x86_64
             - collect:
                 requires:
+                    - images
                     - qemu_i686
                     - qemu_x86_64
                     - qemu_raspi2
