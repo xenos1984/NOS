@@ -49,6 +49,12 @@ namespace Kernel
 {
 	namespace Coprocessor
 	{
+		/** Clock Frequency Register */
+		namespace CNTFRQ
+		{
+			READ_WRITE_REG("p15", "c14", "c0", "0", "0")
+		}
+
 		/** Data Fault Address Register */
 		namespace DFAR
 		{

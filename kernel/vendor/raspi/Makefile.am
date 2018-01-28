@@ -8,6 +8,7 @@ noinst_LIBRARIES = libraspi.a
 
 libraspi_a_SOURCES = \
 	GPIO.h \
+	IRQ.h \
 	Mailbox.h \
 	UART.h \
 	\
