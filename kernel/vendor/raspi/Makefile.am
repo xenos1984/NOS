@@ -10,6 +10,7 @@ libraspi_a_SOURCES = \
 	GPIO.h \
 	IRQ.h \
 	Mailbox.h \
+	Timer.h \
 	UART.h \
 	\
 	Console.cpp \
