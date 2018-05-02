@@ -3,7 +3,7 @@
 noinst_PROGRAMS = NOS.iso
 
 eltorito.img:
-	grub-mkimage -o eltorito.img -O i386-pc-eltorito biosdisk iso9660 multiboot configfile
+	grub-mkimage -o eltorito.img -p /boot/grub -O i386-pc-eltorito biosdisk iso9660 multiboot configfile
 
 NOS_iso_SOURCES =
 
