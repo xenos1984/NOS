@@ -2,7 +2,7 @@
 
 folder=~/nos/$1
 
-grub-mkimage -o eltorito.img -O i386-pc-eltorito biosdisk iso9660 multiboot configfile
+grub-mkimage -o eltorito.img -p /boot/grub -O i386-pc-eltorito biosdisk iso9660 multiboot configfile
 
 genisoimage -R -c boot/boot.cat -b boot/grub/eltorito.img -no-emul-boot -boot-load-size 4 -boot-info-table -o $folder/NOS.iso -graft-points \
 	boot/grub/eltorito.img=eltorito.img \
