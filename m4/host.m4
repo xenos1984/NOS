@@ -45,6 +45,7 @@ AC_DEFUN([NOS_SET_HOST], [
 		;;
 	arm)
 		arch_subdir=arm
+		bits_subdir=a32
 		host_bfd=elf32-littlearm
 		copy_flags="-I ${host_bfd} -O ${host_bfd}"
 		AC_DEFINE([ELF32])
@@ -77,6 +78,30 @@ AC_DEFUN([NOS_SET_HOST], [
 			AC_MSG_ERROR([unsupported host vendor])
 			;;
 		esac
+		AC_SUBST(bits_subdir)
+		;;
+	aarch64)
+		arch_subdir=arm
+		bits_subdir=a64
+		host_bfd=elf64-littleaarch64
+		copy_flags="-I ${host_bfd} -O ${host_bfd}"
+		AC_DEFINE([ELF64])
+		AC_DEFINE([uintX_t], [uint64_t])
+		AC_DEFINE([intX_t], [int64_t])
+		AC_DEFINE([ARCH_ARM], [1], [Define to 1 for ARM targets.])
+		case "${host_vendor}" in
+		raspi3)
+			CFLAGS="${CFLAGS} -mcpu=cortex-a53"
+			subarch_subdir=v8
+			vendor_subdir=raspi
+			AC_DEFINE([ARCH_ARM_V8], [1], [Define to 1 for ARMv8 targets.])
+			AC_DEFINE([ARCH_ARM_CORTEX_A53], [1], [Define to 1 for ARM Cortex-A53 targets.])
+			;;
+		*)
+			AC_MSG_ERROR([unsupported host vendor])
+			;;
+		esac
+		AC_SUBST(bits_subdir)
 		;;
 	m68k)
 		arch_subdir=m68k
