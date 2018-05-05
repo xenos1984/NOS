@@ -4,6 +4,7 @@
 Operating system project
 
 ## Compile instructions
+*	Make sure you have a [GCC / Binutils cross compiler toolchain](http://wiki.osdev.org/GCC_Cross-Compiler) configured for the desired target triplet.
 *	Download the source code:
 
 		git clone https://github.com/xenos1984/NOS.git
