@@ -25,6 +25,7 @@ Operating system project
 * x86\_64-pc-elf (active)
 * m68k-atari-elf (temporarily not supported)
 * arm-raspi2-eabi (active)
+* aarch64-raspi3-elf (planned)
 
 ## Latest builds:
 * [i686-pc-elf GRUB2 bootable iso image](http://manuelhohmann.ddns.net/osdev/nosrelease.php?file=i686-pc-elf/mp-acpi/NOS.iso) ([config log](http://manuelhohmann.ddns.net/osdev/nosrelease.php?file=i686-pc-elf/mp-acpi/config.log), [build log](http://manuelhohmann.ddns.net/osdev/nosrelease.php?file=i686-pc-elf/mp-acpi/build.log))
