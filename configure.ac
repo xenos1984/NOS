@@ -89,7 +89,10 @@ AC_CONFIG_FILES([
 	kernel/arch/m68k/Makefile
 	kernel/arch/m68k/atari/Makefile
 	kernel/arch/arm/Makefile
+	kernel/arch/arm/a32/Makefile
+	kernel/arch/arm/a64/Makefile
 	kernel/arch/arm/v7/Makefile
+	kernel/arch/arm/v8/Makefile
 	kernel/arch/x86/Makefile
 	kernel/arch/x86/ia32/Makefile
 	kernel/arch/x86/amd64/Makefile
