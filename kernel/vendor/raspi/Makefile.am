@@ -27,7 +27,7 @@ EXTRA_Kernel_elf_SOURCES = \
 	Entry.a32.S \
 	Entry.a64.S
 
-Kernel_elf_LDADD = Entry.${bits_subdir}.$(OBJEXT) libraspi.a ../../libkernel.a ../../arch/${arch_subdir}/lib${arch_subdir}.a ../../arch/${arch_subdir}/${bits_subdir}/lib${bits_subdir}.a ../../arch/${arch_subdir}/${subarch_subdir}/lib${subarch_subdir}.a
+Kernel_elf_LDADD = Entry.${bits_subdir}.$(OBJEXT)
 
 Kernel_elf_DEPENDENCIES = kernel.${bits_subdir}.lds Entry.${bits_subdir}.$(OBJEXT) libraspi.a ../../libkernel.a ../../arch/${arch_subdir}/lib${arch_subdir}.a ../../arch/${arch_subdir}/${bits_subdir}/lib${bits_subdir}.a ../../arch/${arch_subdir}/${subarch_subdir}/lib${subarch_subdir}.a
 

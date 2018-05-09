@@ -1,12 +1,12 @@
-OUTPUT_FORMAT(elf32-littlearm)
-OUTPUT_ARCH(arm)
+OUTPUT_FORMAT(elf64-littleaarch64)
+OUTPUT_ARCH(aarch64)
 ENTRY(Entry)
 
-kernelOffset = 0xc0000000;
+kernelOffset = 0xffffffffc0000000;
 kernelStart = kernelOffset + 0x8000;
 initStart = kernelStart;
 
-GROUP(../../arch/arm/v7/libv7.a ../../arch/arm/a32/liba32.a ../../arch/arm/libarm.a ../../libkernel.a libraspi.a)
+GROUP(../../arch/arm/v8/libv8.a ../../arch/arm/a64/liba64.a ../../arch/arm/libarm.a ../../libkernel.a libraspi.a)
 INPUT(libgcc.a)
 
 PHDRS
@@ -70,9 +70,11 @@ SECTIONS
 	. = ALIGN(16K);
 	.tables : AT(ADDR(.tables) - kernelOffset)
 	{
-		tabPGDIR = .;
-		. += 16K;
-		tabPGTAB = .;
+		tabPGL1 = .;
+		. += 4K;
+		tabPGL2 = .;
+		. += 4K;
+		tabPGL3 = .;
 		. += 4K;
 	}
 	. = ALIGN(4K);

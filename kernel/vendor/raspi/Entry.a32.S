@@ -94,7 +94,6 @@ EntryBSP:
 	cmp r4, r9
 	blo 7b
 
-
 // Set TTBR0 and TTBR1
 	ldr r4, =tabPGDIR - KERNEL_OFFSET
 	mcr p15, 0, r4, c2, c0, 0
