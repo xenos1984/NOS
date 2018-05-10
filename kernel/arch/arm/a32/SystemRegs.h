@@ -1,7 +1,7 @@
-// Coprocessor.h - ARM architecture coprocessors.
+// SystemRegs.h - Aarch32 architecture system registers.
 
-#ifndef __ARCH_ARM_COPROCESSOR_H__
-#define __ARCH_ARM_COPROCESSOR_H__
+#ifndef __ARCH_ARM_A32_SYSTEMREGS_H__
+#define __ARCH_ARM_A32_SYSTEMREGS_H__
 
 #include <cstdint>
 #include INC_ARCH(Extensions.h)
@@ -19,7 +19,7 @@
 	inline void Write(uint32_t x) \
 	{ \
 		asm volatile ("mcr " cp ", " op1 ", %0, " crn ", " crm ", " op2 : : "r"(x)); \
-	} \
+	}
 
 #define READ_WRITE_REG(cp, crn, crm, op1, op2) \
 	inline uint32_t Read(void) \
@@ -47,7 +47,7 @@
 
 namespace Kernel
 {
-	namespace Coprocessor
+	namespace Sysreg
 	{
 		/** Clock Frequency Register */
 		namespace CNTFRQ
@@ -177,6 +177,7 @@ namespace Kernel
 }
 
 #undef READ_ONLY_REG
+#undef WRITE_ONLY_REG
 #undef READ_WRITE_REG
 
 #endif

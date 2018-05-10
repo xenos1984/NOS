@@ -12,7 +12,6 @@ noinst_LIBRARIES = libarm.a
 
 libarm_a_SOURCES = \
 	AtomicOps.h \
-	Coprocessor.h \
 	Delay.h \
 	Extensions.h \
 	Interrupt.h \

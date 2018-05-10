@@ -6,5 +6,6 @@ AM_CPPFLAGS = -imacros $(top_srcdir)/config.h -I$(top_srcdir)/kernel -I$(top_src
 
 noinst_LIBRARIES = liba64.a
 
-liba64_a_SOURCES =
+liba64_a_SOURCES = \
+	SystemRegs.h
 

@@ -1,7 +1,7 @@
 // Interrupt.h - Interrupts and exceptions in ARM architecture.
 
 #include INC_ARCH(Interrupt.h)
-#include INC_ARCH(Coprocessor.h)
+#include INC_BITS(SystemRegs.h)
 #include INC_SUBARCH(PageTable.h)
 #include <Console.h>
 
@@ -112,8 +112,8 @@ void RegisterSet::Dump()
 
 extern "C" void PrefetchAbort(RegisterSet* regs)
 {
-	uint32_t ifsr = Coprocessor::IFSR::Read();
-	uint32_t ifar = Coprocessor::IFAR::Read();
+	uint32_t ifsr = Sysreg::IFSR::Read();
+	uint32_t ifar = Sysreg::IFAR::Read();
 
 	Console::WriteFormat("Prefetch abort occurred\n");
 	Console::WriteFormat("IFAR = 0x%8x, IFSR = 0x%8x\n", ifar, ifsr);
@@ -124,8 +124,8 @@ extern "C" void PrefetchAbort(RegisterSet* regs)
 
 extern "C" void DataAbort(RegisterSet* regs)
 {
-	uint32_t dfsr = Coprocessor::DFSR::Read();
-	uint32_t dfar = Coprocessor::DFAR::Read();
+	uint32_t dfsr = Sysreg::DFSR::Read();
+	uint32_t dfar = Sysreg::DFAR::Read();
 
 	Console::WriteFormat("Data abort occurred\n");
 	Console::WriteFormat("DFAR = 0x%8x, DFSR = 0x%8x\n", dfar, dfsr);

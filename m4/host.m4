@@ -78,6 +78,7 @@ AC_DEFUN([NOS_SET_HOST], [
 			AC_MSG_ERROR([unsupported host vendor])
 			;;
 		esac
+		AC_DEFINE_UNQUOTED([INC_BITS(x)], [<arch/${arch_subdir}/${bits_subdir}/x>], [NOS target bit subtype.])
 		AC_SUBST(bits_subdir)
 		;;
 	aarch64)
@@ -101,6 +102,7 @@ AC_DEFUN([NOS_SET_HOST], [
 			AC_MSG_ERROR([unsupported host vendor])
 			;;
 		esac
+		AC_DEFINE_UNQUOTED([INC_BITS(x)], [<arch/${arch_subdir}/${bits_subdir}/x>], [NOS target bit subtype.])
 		AC_SUBST(bits_subdir)
 		;;
 	m68k)

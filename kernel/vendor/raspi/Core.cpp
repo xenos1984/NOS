@@ -9,7 +9,7 @@
 #include <Heap.h>
 #include INC_VENDOR(UART.h)
 #include INC_VENDOR(Mailbox.h)
-#include INC_ARCH(Coprocessor.h)
+#include INC_BITS(SystemRegs.h)
 
 using namespace Kernel;
 
@@ -20,13 +20,13 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t r0, uint32_t r1, uint
 	UART::Init();
 	Core::Welcome();
 
-	Coprocessor::VBAR::Write(Symbol::ExceptionVectorBase.Addr());
+	Sysreg::VBAR::Write(Symbol::ExceptionVectorBase.Addr());
 
 	Console::WriteFormat("Register arguments: r0 = 0x%8x, r1 = 0x%8x, r2 = 0x%8x\n", r0, r1, r2);
-	Console::WriteFormat("SCTLR = 0x%8x\n", Coprocessor::SCTLR::Read());
-	Console::WriteFormat("MIDR = 0x%8x\n", Coprocessor::MIDR::Read());
-	Console::WriteFormat("VBAR = 0x%8x\n", Coprocessor::VBAR::Read());
-	Console::WriteFormat("CNTFRQ = %d\n", Coprocessor::CNTFRQ::Read());
+	Console::WriteFormat("SCTLR = 0x%8x\n", Sysreg::SCTLR::Read());
+	Console::WriteFormat("MIDR = 0x%8x\n", Sysreg::MIDR::Read());
+	Console::WriteFormat("VBAR = 0x%8x\n", Sysreg::VBAR::Read());
+	Console::WriteFormat("CNTFRQ = %d\n", Sysreg::CNTFRQ::Read());
 
 	Console::WriteFormat("Firmware revision: 0x%8x\n", Mailbox::GetFirmwareRev());
 	Console::WriteFormat("Board model: 0x%8x\n", Mailbox::GetBoardModel());

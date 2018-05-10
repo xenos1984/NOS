@@ -6,7 +6,7 @@
 #include <Symbol.h>
 #include <Console.h>
 #include INC_SUBARCH(PageTable.h)
-#include INC_ARCH(Coprocessor.h)
+#include INC_BITS(SystemRegs.h)
 
 namespace Kernel
 {
@@ -14,22 +14,22 @@ namespace Kernel
 	{
 		inline void InvalidateAll(void)
 		{
-			Coprocessor::TLBIALL::Write(0);
+			Sysreg::TLBIALL::Write(0);
 		}
 
 		inline void InvalidateASID(uint8_t asid)
 		{
-			Coprocessor::TLBIASID::Write(asid);
+			Sysreg::TLBIASID::Write(asid);
 		}
 
 		inline void InvalidateMVAAll(uintptr_t mva)
 		{
-			Coprocessor::TLBIMVAA::Write(mva);
+			Sysreg::TLBIMVAA::Write(mva);
 		}
 
 		inline void InvalidateMVA(uint8_t asid, uintptr_t mva)
 		{
-			Coprocessor::TLBIMVA::Write(mva | asid);
+			Sysreg::TLBIMVA::Write(mva | asid);
 		}
 
 		Memory::PageBits MappedSize(uintptr_t virt)
