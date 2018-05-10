@@ -1,6 +1,6 @@
 // Interrupt.h - Interrupts and exceptions in ARM architecture.
 
-#include INC_ARCH(Interrupt.h)
+#include INC_BITS(Interrupt.h)
 #include INC_BITS(SystemRegs.h)
 #include INC_SUBARCH(PageTable.h)
 #include <Console.h>

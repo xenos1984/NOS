@@ -14,13 +14,9 @@ libarm_a_SOURCES = \
 	AtomicOps.h \
 	Delay.h \
 	Extensions.h \
-	Interrupt.h \
 	Memory.h \
 	Pager.h \
 	Process.h \
 	Symbol.h \
-	Thread.h \
-	\
-	Interrupt.cpp \
-	InterruptStub.S
+	Thread.h
 
