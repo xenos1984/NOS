@@ -6,5 +6,6 @@ AM_CPPFLAGS = -imacros $(top_srcdir)/config.h -I$(top_srcdir)/kernel -I$(top_src
 
 noinst_LIBRARIES = libv8.a
 
-libv8_a_SOURCES =
+libv8_a_SOURCES = \
+	Pager.cpp
 

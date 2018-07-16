@@ -15,13 +15,13 @@ Entry:
 
 // This is an application processor (CPU > 0), put into idle loop for now.
 EntryAP:
-	dsb
 	wfe
 	b EntryAP
 
 EntryBSP:
 // Set stack pointer to kernel stack.
-	ldr sp, =bspStack
+	ldr x4, =bspStack
+	mov sp, x4
 
 // Clear BSS and page tables
 	ldr x4, =bssStart - KERNEL_OFFSET
@@ -36,16 +36,19 @@ EntryBSP:
 	blo 1b
 
 // Link page table to identity mapping and higher half
+	mov x7, #0x703
 	ldr x5, =tabPGL2 - KERNEL_OFFSET
-	orr x5, x5, #0x703
+	orr x5, x5, x7
 	ldr x4, =tabPGL1 - KERNEL_OFFSET
-	str x5, [x4], #0xff8
+	str x5, [x4]
+	add x4, x4, #0xff8
 	str x5, [x4]
 
 	ldr x5, =tabPGL3 - KERNEL_OFFSET
-	orr x5, x5, #0x703
+	orr x5, x5, x7
 	ldr x4, =tabPGL2 - KERNEL_OFFSET
-	str x5, [x4], #0xff8
+	str x5, [x4]
+	add x4, x4, #0xff8
 	str x5, [x4]
 
 // Fill page table to map kernel
@@ -54,26 +57,26 @@ EntryBSP:
 	ldr x4, =tabPGL3 - KERNEL_OFFSET
 	mov x6, x5, LSR#9
 	add x4, x4, x6
-	ldr x7, =#0x703
 	orr x5, x5, x7
 	b 4f
 
 3:
 	str x5, [x4], #8
-	add x5, #0x1000
+	add x5, x5, #0x1, LSL #12
 
 4:
 	cmp x5, x9
 	blo 3b
 
 // Set memory attributes array
-	ldr x4, =#0x4404ff
+	ldr x4, =0x4404ff
 	msr mair_el1, x4
 // Set translate control register
 	mrs x4, id_aa64mmfr0_el1
 	and x4, x4, #0xf
 	lsl x4, x4, #32
-	orr x4, x4, =#0xb5193519
+	ldr x6, =0xb5193519
+	orr x4, x4, x6
 	msr tcr_el1, x4
 	isb
 // Set TTBR0 and TTBR1
@@ -84,19 +87,20 @@ EntryBSP:
 	dsb ish
 	isb
 	mrs x4, sctlr_el1
-	orr x4, =#0x00c00801
-	and x4, =#0xfcf7efe1
+	ldr x6, =0x00c00801
+	orr x4, x4, x6
+	ldr x6, =0xfcf7efe1
+	and x4, x4, x6
 	msr sctlr_el1, x4
-	isp
+	isb
 
 // Jump to higher half
-	ldr pc, =higherhalf
+	b higherhalf
 
 higherhalf:
 
 // Call kernel entry point.
-	ldr x3, =KernelEntry
-	blx x3
+	bl KernelEntry
 
 // Infinite loop.
 1:

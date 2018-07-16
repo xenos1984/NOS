@@ -21,7 +21,7 @@
 		asm volatile ("msr " name ", %0" : : "r"(x)); \
 	}
 
-#define READ_WRITE_REG(cp, crn, crm, op1, op2) \
+#define READ_WRITE_REG(name) \
 	inline uint64_t Read(void) \
 	{ \
 		uint64_t x; \
