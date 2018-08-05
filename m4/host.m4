@@ -92,7 +92,7 @@ AC_DEFUN([NOS_SET_HOST], [
 		AC_DEFINE([ARCH_ARM], [1], [Define to 1 for ARM targets.])
 		case "${host_vendor}" in
 		raspi3)
-			CFLAGS="${CFLAGS} -mcpu=cortex-a53"
+			CFLAGS="${CFLAGS} -mcpu=cortex-a53 -mgeneral-regs-only"
 			subarch_subdir=v8
 			vendor_subdir=raspi
 			AC_DEFINE([ARCH_ARM_V8], [1], [Define to 1 for ARMv8 targets.])
