@@ -112,6 +112,20 @@ EL1:
 	cmp x5, x9
 	blo 3b
 
+// Map peripherals into virtual memory
+	ldr x4, =tabPGL2 + 0x3c0 - KERNEL_OFFSET
+	add x9, x4, #64
+	ldr x5, =0x3f000605
+	b 6f
+
+5:
+	str x5, [x4], #8
+	add x5, x5, #0x200, LSL #12
+
+6:
+	cmp x4, x9
+	blo 5b
+
 // Set memory attributes array
 	ldr x4, =0x4404ff
 	msr mair_el1, x4
