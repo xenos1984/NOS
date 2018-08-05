@@ -66,6 +66,20 @@ jobs:
                 paths:
                     - arm-raspi2-eabi
 
+    build_raspi3:
+        docker:
+            - image: xenos1984/cross-aarch64-raspi3-elf:latest
+        working_directory: ~/nos/source
+        steps:
+            - attach_workspace:
+                at: ~/nos
+            - run: .circleci/build_raspi.sh aarch64-raspi3-elf mp
+            - run: .circleci/build_raspi.sh aarch64-raspi3-elf sp --disable-smp
+            - persist_to_workspace:
+                root: ~/nos
+                paths:
+                    - aarch64-raspi3-elf
+
     qemu_i686:
         docker:
             - image: xenos1984/test-qemu:latest
@@ -273,17 +287,42 @@ jobs:
                 at: ~/nos
             - run:
                 name: QEMU raspi2 MP
-                command: ~/nos/source/.circleci/qemu_raspi.sh mp
+                command: ~/nos/source/.circleci/qemu_raspi.sh arm raspi2 cortex-a7 mp
                 no_output_timeout: 60s
             - run:
                 name: QEMU raspi2 SP
-                command: ~/nos/source/.circleci/qemu_raspi.sh sp
+                command: ~/nos/source/.circleci/qemu_raspi.sh arm raspi2 cortex-a7 sp
                 no_output_timeout: 60s
             - persist_to_workspace:
                 root: ~/nos
                 paths:
                     - arm-raspi2-eabi/mp/qemu*
                     - arm-raspi2-eabi/sp/qemu*
+            - run:
+                name: IRC notify
+                command: ~/nos/source/.circleci/irc.sh
+                when: always
+
+    qemu_raspi3:
+        docker:
+            - image: xenos1984/test-qemu:latest
+        working_directory: ~/nos/aarch64-raspi3-elf
+        steps:
+            - attach_workspace:
+                at: ~/nos
+            - run:
+                name: QEMU raspi3 MP
+                command: ~/nos/source/.circleci/qemu_raspi.sh aarch64 raspi3 cortex-a53 mp
+                no_output_timeout: 60s
+            - run:
+                name: QEMU raspi3 SP
+                command: ~/nos/source/.circleci/qemu_raspi.sh aarch64 raspi3 cortex-a53 sp
+                no_output_timeout: 60s
+            - persist_to_workspace:
+                root: ~/nos
+                paths:
+                    - aarch64-raspi3-elf/mp/qemu*
+                    - aarch64-raspi3-elf/sp/qemu*
             - run:
                 name: IRC notify
                 command: ~/nos/source/.circleci/irc.sh
@@ -328,6 +367,9 @@ jobs:
             - store_artifacts:
                 path: ~/nos/arm-raspi2-eabi
                 destination: arm-raspi2-eabi
+            - store_artifacts:
+                path: ~/nos/aarch64-raspi3-elf
+                destination: aarch64-raspi3-elf
             - run: ~/nos/source/.circleci/release.sh
             - run:
                 name: IRC notify
@@ -348,6 +390,9 @@ workflows:
             - build_raspi2:
                 requires:
                     - autogen
+            - build_raspi3:
+                requires:
+                    - autogen
             - qemu_i686:
                 requires:
                     - build_i686
@@ -357,6 +402,9 @@ workflows:
             - qemu_raspi2:
                 requires:
                     - build_raspi2
+            - qemu_raspi3:
+                requires:
+                    - build_raspi3
             - images:
                 requires:
                     - build_i686
@@ -367,4 +415,5 @@ workflows:
                     - qemu_i686
                     - qemu_x86_64
                     - qemu_raspi2
+                    - qemu_raspi3
 
