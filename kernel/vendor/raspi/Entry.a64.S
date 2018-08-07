@@ -92,8 +92,6 @@ EL1:
 	orr x5, x5, x7
 	ldr x4, =tabPGL2 - KERNEL_OFFSET
 	str x5, [x4]
-	add x4, x4, #0xff8
-	str x5, [x4]
 
 // Fill page table to map kernel
 	ldr x9, =kernelEnd - KERNEL_OFFSET
