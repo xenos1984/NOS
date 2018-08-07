@@ -162,6 +162,14 @@ EL1:
 
 higherhalf:
 
+// Disable lower half / identity mapping, force use of higher half
+	ldr x4, =tabPGL1 - KERNEL_OFFSET
+	str xzr, [x4]
+	mrs x4, tcr_el1
+	and x4, x4, #0xffffffffffffff7f
+	msr tcr_el1, x4
+	msr ttbr0_el1, xzr
+
 // Call kernel entry point.
 	bl KernelEntry
 
