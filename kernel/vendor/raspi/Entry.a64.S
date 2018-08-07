@@ -79,13 +79,16 @@ EL1:
 	cmp x4, x9
 	blo 1b
 
-// Link page table to identity mapping and higher half
+// Link page table to recursive mapping, identity mapping and higher half
 	mov x7, #0x703
 	ldr x5, =tabPGL2 - KERNEL_OFFSET
 	orr x5, x5, x7
 	ldr x4, =tabPGL1 - KERNEL_OFFSET
+	orr x6, x4, x7
 	str x5, [x4]
-	add x4, x4, #0xff8
+	add x4, x4, #0xff0
+	str x6, [x4]
+	add x4, x4, #0x8
 	str x5, [x4]
 
 	ldr x5, =tabPGL3 - KERNEL_OFFSET
