@@ -38,6 +38,26 @@ namespace Kernel
 				PAGE_K_NOEXEC   = 0x0020000000000000,
 				PAGE_U_NOEXEC   = 0x0040000000000000
 			};
+
+			template<Memory::PageBits bits> constexpr static std::underlying_type<Flags>::type TypeFlags(Memory::MemType type);
+
+		public:
+			template<Memory::PageBits bits> inline PageTableEntry& Set(Memory::PhysAddr phys, Memory::MemType type);
+
+			inline uint64_t Raw(void) const
+			{
+				return raw;
+			}
+
+			inline void Clear(void)
+			{
+				raw = 0;
+			}
+
+			inline bool IsClear(void) const
+			{
+				return (raw == 0);
+			}
 		};
 	}
 }
