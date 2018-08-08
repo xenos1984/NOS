@@ -5,7 +5,7 @@
 #include <Pager.h>
 #include <Symbol.h>
 #include <Console.h>
-//#include INC_SUBARCH(PageTable.h)
+#include INC_SUBARCH(PageTable.h)
 #include INC_BITS(SystemRegs.h)
 
 namespace Kernel
@@ -61,6 +61,11 @@ namespace Kernel
 
 		Memory::PhysAddr VirtToPhys(uintptr_t addr)
 		{
+			Console::WriteFormat("VirtToPhys(%p)\n", addr);
+			Console::WriteFormat("PageTableAddr(3, 510) = %p\n", PageTableAddr(3, 510));
+			Console::WriteFormat("PageTableAddr(2, 510) = %p\n", PageTableAddr(2, 510));
+			Console::WriteFormat("PageTableAddr(1, 510) = %p\n", PageTableAddr(1, 510));
+			Console::WriteFormat("PageTableAddr(0, 510) = %p\n", PageTableAddr(0, 510));
 			return ~0;
 		}
 	}
