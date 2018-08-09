@@ -33,6 +33,42 @@ namespace Kernel
 			uintptr_t base = ((level == 3) ? MinKernelVirt : PageTableAddr(level + 1, rec));
 			return base + (rec << (64 - PageSizeOffset - (GranuleSize - 3) * (4 - level)));
 		}
+
+		/** Page table at a fixed level in the paging hierarchy */
+		template<unsigned int level> class alignas(1ULL << GranuleSize) PageTableLevel
+		{
+		protected:
+			/** Array of page table entries, default constructed. */
+			PageTableEntry entry[1ULL << (GranuleSize - 3)] = {PageTableEntry{}};
+
+		public:
+			/** Reference to i'th entry in the table. */
+			inline PageTableEntry& Entry(unsigned int i);
+
+			/** Check whether table is completely empty. */
+			bool IsEmpty(void);
+
+			/** Return i if this is the i'th table at this level. */
+			inline unsigned long Index(void);
+
+			/** Reference to the i'th table at this level. */
+			static inline PageTableLevel<level>& Table(unsigned long i);
+
+			/** Page table which contains the page table entry pointing to this page table. */
+			inline PageTableLevel<level - 1>& Parent(void);
+
+			/** Page table entry which points to this page table. */
+			inline PageTableEntry& Pointer(void);
+
+			/** Check whether the i'th table at this level exists. */
+			static bool Exists(unsigned long i);
+
+			/** Create new page table at this level. */
+			static PageTableLevel<level>& Create(unsigned long i, Memory::MemType);
+
+			/** Destroy a page table. */
+			void Destroy(void);
+		} PACKED;
 	}
 }
 
