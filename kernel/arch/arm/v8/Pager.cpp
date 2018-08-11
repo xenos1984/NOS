@@ -66,6 +66,8 @@ namespace Kernel
 			Console::WriteFormat("PageTableAddr(2, 510) = %p\n", PageTableAddr(2, 510));
 			Console::WriteFormat("PageTableAddr(1, 510) = %p\n", PageTableAddr(1, 510));
 			Console::WriteFormat("PageTableAddr(0, 510) = %p\n", PageTableAddr(0, 510));
+			Console::WriteFormat("Top level kernel page table: %p\n", &PageTableTopKernel());
+			Console::WriteFormat("Top level user page table: %p\n", &PageTableTopUser());
 			return ~0;
 		}
 	}

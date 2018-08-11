@@ -58,7 +58,7 @@ namespace Kernel
 			{
 				return (raw == 0);
 			}
-		};
+		} PACKED;
 	}
 }
 
