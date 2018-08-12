@@ -49,6 +49,11 @@ namespace Kernel
 				return raw;
 			}
 
+			inline Memory::PhysAddr Phys(void) const
+			{
+				return raw & 0x0000fffffffff000;
+			}
+
 			inline void Clear(void)
 			{
 				raw = 0;
@@ -57,6 +62,26 @@ namespace Kernel
 			inline bool IsClear(void) const
 			{
 				return (raw == 0);
+			}
+
+			inline bool IsInvalid(void) const
+			{
+				return ((raw & 0x3) == PAGE_INVALID);
+			}
+
+			inline bool IsBlock(void) const
+			{
+				return ((raw & 0x3) == PAGE_BLOCK);
+			}
+
+			inline bool IsTable(void) const
+			{
+				return ((raw & 0x3) == PAGE_TABLE);
+			}
+
+			inline bool IsPage(void) const
+			{
+				return ((raw & 0x3) == PAGE_PAGE);
 			}
 		} PACKED;
 	}

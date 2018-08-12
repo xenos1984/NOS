@@ -135,7 +135,7 @@ namespace Kernel
 			static_assert(level < 4, "Table level exceeds number of paging levels.");
 			static_assert(level >= InitialLookupLevel, "Table level below initial lookup level.");
 
-			if(!PageTableLevel<level - 1>::Exists(i >> (GranuleSize - 3)))
+			if(!PageTableLevel<level - 1>::ExistsKernel(i >> (GranuleSize - 3)))
 				return false;
 
 			return TableKernel(i).Pointer().IsPresent();
@@ -146,7 +146,7 @@ namespace Kernel
 			static_assert(level < 4, "Table level exceeds number of paging levels.");
 			static_assert(level >= InitialLookupLevel, "Table level below initial lookup level.");
 
-			if(!PageTableLevel<level - 1>::Exists(i >> (GranuleSize - 3)))
+			if(!PageTableLevel<level - 1>::ExistsUser(i >> (GranuleSize - 3)))
 				return false;
 
 			return TableUser(i).Pointer().IsPresent();

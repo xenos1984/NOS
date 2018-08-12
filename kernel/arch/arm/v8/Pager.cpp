@@ -61,13 +61,58 @@ namespace Kernel
 
 		Memory::PhysAddr VirtToPhys(uintptr_t addr)
 		{
-			Console::WriteFormat("VirtToPhys(%p)\n", addr);
-			Console::WriteFormat("PageTableAddr(3, 510) = %p\n", PageTableAddr(3, 510));
-			Console::WriteFormat("PageTableAddr(2, 510) = %p\n", PageTableAddr(2, 510));
-			Console::WriteFormat("PageTableAddr(1, 510) = %p\n", PageTableAddr(1, 510));
-			Console::WriteFormat("PageTableAddr(0, 510) = %p\n", PageTableAddr(0, 510));
-			Console::WriteFormat("Top level kernel page table: %p\n", &PageTableTopKernel());
-			Console::WriteFormat("Top level user page table: %p\n", &PageTableTopUser());
+			bool kernel;
+			unsigned int tab, entry;
+
+			//Console::WriteFormat("VirtToPhys(%p)\n", addr);
+
+			if(addr >= MinKernelVirt)
+				kernel = true;
+			else if(addr <= MaxUserVirt)
+				kernel = false;
+			else
+				return ~0;
+
+			addr &= (1ULL << (64 - PageSizeOffset)) - 1;
+
+			if constexpr(InitialLookupLevel == 0)
+			{
+				entry = addr >> (4 * GranuleSize - 9);
+				PageTableEntry& pte0 = (kernel ? PageTableLevel<0>::TableKernel(0) : PageTableLevel<0>::TableUser(0)).Entry(entry);
+				if(pte0.IsInvalid())
+					return ~0;
+				if(pte0.IsBlock()) // No blocks at this level.
+					return ~0;
+			}
+
+			if constexpr(InitialLookupLevel <= 1)
+			{
+				entry = (addr >> (3 * GranuleSize - 6)) & ((1ULL << (GranuleSize - 3)) - 1);
+				tab = addr >> (4 * GranuleSize - 9);
+				PageTableEntry& pte1 = (kernel ? PageTableLevel<1>::TableKernel(tab) : PageTableLevel<1>::TableUser(tab)).Entry(entry);
+				if(pte1.IsInvalid())
+					return ~0;
+				if(pte1.IsBlock())
+					return pte1.Phys() | (addr & ((1ULL << (3 * GranuleSize - 6)) - 1));
+			}
+
+			if constexpr(InitialLookupLevel <= 2)
+			{
+				entry = (addr >> (2 * GranuleSize - 3)) & ((1ULL << (GranuleSize - 3)) - 1);
+				tab = addr >> (3 * GranuleSize - 6);
+				PageTableEntry& pte2 = (kernel ? PageTableLevel<2>::TableKernel(tab) : PageTableLevel<2>::TableUser(tab)).Entry(entry);
+				if(pte2.IsInvalid())
+					return ~0;
+				if(pte2.IsBlock())
+					return pte2.Phys() | (addr & ((1ULL << (2 * GranuleSize - 3)) - 1));
+			}
+
+			entry = (addr >> GranuleSize) & ((1ULL << (GranuleSize - 3)) - 1);
+			tab = addr >> (2 * GranuleSize - 3);
+			PageTableEntry& pte3 = (kernel ? PageTableLevel<3>::TableKernel(tab) : PageTableLevel<3>::TableUser(tab)).Entry(entry);
+			if(pte3.IsPage())
+				return pte3.Phys() | (addr & ((1ULL << GranuleSize) - 1));
+
 			return ~0;
 		}
 	}

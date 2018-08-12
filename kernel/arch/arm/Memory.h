@@ -17,8 +17,11 @@ namespace Kernel
 			NONE,
 			MAX = NONE
 		};
-
+#ifdef ARCH_ARM_V8
+		typedef uint64_t PhysAddr;
+#else
 		typedef uint32_t PhysAddr;
+#endif
 	}
 }
 
