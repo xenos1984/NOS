@@ -14,6 +14,56 @@ namespace Kernel
 	{
 		Memory::PageBits MappedSize(uintptr_t virt)
 		{
+			bool kernel;
+			unsigned int tab, entry;
+
+			if(virt >= MinKernelVirt)
+				kernel = true;
+			else if(virt <= MaxUserVirt)
+				kernel = false;
+			else
+				return Memory::PGB_INV;
+
+			virt &= (1ULL << (64 - PageSizeOffset)) - 1;
+
+			if constexpr(InitialLookupLevel == 0)
+			{
+				entry = virt >> (4 * GranuleSize - 9);
+				PageTableEntry& pte0 = (kernel ? PageTableLevel<0>::TableKernel(0) : PageTableLevel<0>::TableUser(0)).Entry(entry);
+				if(pte0.IsInvalid())
+					return Memory::PGB_INV;
+				if(pte0.IsBlock()) // No blocks at this level.
+					return Memory::PGB_INV;
+			}
+
+			if constexpr(InitialLookupLevel <= 1)
+			{
+				entry = (virt >> (3 * GranuleSize - 6)) & ((1ULL << (GranuleSize - 3)) - 1);
+				tab = virt >> (4 * GranuleSize - 9);
+				PageTableEntry& pte1 = (kernel ? PageTableLevel<1>::TableKernel(tab) : PageTableLevel<1>::TableUser(tab)).Entry(entry);
+				if(pte1.IsInvalid())
+					return Memory::PGB_INV;
+				if(pte1.IsBlock())
+					return (Memory::PageBits)(3 * GranuleSize - 6);
+			}
+
+			if constexpr(InitialLookupLevel <= 2)
+			{
+				entry = (virt >> (2 * GranuleSize - 3)) & ((1ULL << (GranuleSize - 3)) - 1);
+				tab = virt >> (3 * GranuleSize - 6);
+				PageTableEntry& pte2 = (kernel ? PageTableLevel<2>::TableKernel(tab) : PageTableLevel<2>::TableUser(tab)).Entry(entry);
+				if(pte2.IsInvalid())
+					return Memory::PGB_INV;
+				if(pte2.IsBlock())
+					return (Memory::PageBits)(2 * GranuleSize - 3);
+			}
+
+			entry = (virt >> GranuleSize) & ((1ULL << (GranuleSize - 3)) - 1);
+			tab = virt >> (2 * GranuleSize - 3);
+			PageTableEntry& pte3 = (kernel ? PageTableLevel<3>::TableKernel(tab) : PageTableLevel<3>::TableUser(tab)).Entry(entry);
+			if(pte3.IsPage())
+				return GranuleSize;
+
 			return Memory::PGB_INV;
 		}
 
