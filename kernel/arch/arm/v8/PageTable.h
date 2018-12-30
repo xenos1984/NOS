@@ -3,6 +3,7 @@
 #ifndef __ARCH_ARM_V8_PAGETABLE_H__
 #define __ARCH_ARM_V8_PAGETABLE_H__
 
+#include INC_SUBARCH(Pager.h)
 #include INC_SUBARCH(PageTableEntry.h)
 #include INC_VENDOR(Entry.h)
 #include <Symbol.h>
@@ -13,7 +14,6 @@ namespace Kernel
 	namespace Pager
 	{
 		static const unsigned long PageSizeOffset = 25;
-		static const Memory::PageBits GranuleSize = Memory::PGB_4K;
 		static const unsigned int InitialLookupLevel = (PageSizeOffset + 5 * GranuleSize - 76) / (GranuleSize - 3);
 
 		static const uintptr_t MaxUserVirt = (1ULL << (64 - PageSizeOffset)) - 1;
