@@ -10,11 +10,6 @@ namespace Kernel
 	namespace Pager
 	{
 		constexpr unsigned long ValidSizes = Memory::PGS_4K | Memory::PGS_4M;
-
-		constexpr bool IsValidSize(Memory::PageBits size)
-		{
-			return Memory::IsValidSize(size, ValidSizes);
-		}
 	}
 }
 

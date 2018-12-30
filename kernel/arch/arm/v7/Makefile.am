@@ -7,6 +7,7 @@ AM_CPPFLAGS = -imacros $(top_srcdir)/config.h -I$(top_srcdir)/kernel -I$(top_src
 noinst_LIBRARIES = libv7.a
 
 libv7_a_SOURCES = \
+	Pager.h \
 	PageTable.h \
 	PageTableEntry.h \
 	\

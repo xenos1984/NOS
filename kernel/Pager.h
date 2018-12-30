@@ -39,4 +39,16 @@ namespace Kernel
 
 #include INC_ARCH(Pager.h)
 
+namespace Kernel
+{
+	namespace Pager
+	{
+		/** Indicates whether pages of this size can be mapped / unmapped by the pager. */
+		constexpr bool IsValidSize(Memory::PageBits size)
+		{
+			return Memory::IsValidSize(size, ValidSizes);
+		}
+	}
+}
+
 #endif
