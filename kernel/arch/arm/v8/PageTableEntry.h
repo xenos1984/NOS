@@ -39,7 +39,34 @@ namespace Kernel
 				PAGE_U_NOEXEC   = 0x0040000000000000
 			};
 
-			template<Memory::PageBits bits> constexpr static std::underlying_type<Flags>::type TypeFlags(Memory::MemType type);
+			constexpr static std::underlying_type<Flags>::type TypeFlags(Memory::MemType type)
+			{
+				switch(type)
+				{
+				case Memory::MemType::KERNEL_EXEC:
+					return PAGE_PAGE | PAGE_RO | PAGE_SH_INNER | PAGE_ACCESSED;
+				case Memory::MemType::KERNEL_RO:
+					return PAGE_PAGE | PAGE_RO | PAGE_SH_INNER | PAGE_ACCESSED;
+				case Memory::MemType::KERNEL_RW:
+					return PAGE_PAGE | PAGE_SH_INNER | PAGE_ACCESSED;
+				case Memory::MemType::KERNEL_PAGETAB:
+					return PAGE_PAGE | PAGE_SH_INNER | PAGE_ACCESSED;
+				case Memory::MemType::USER_EXEC:
+					return PAGE_PAGE | PAGE_USER | PAGE_RO | PAGE_SH_INNER | PAGE_ACCESSED | PAGE_NGLOBAL;
+				case Memory::MemType::USER_RO:
+					return PAGE_PAGE | PAGE_USER | PAGE_RO | PAGE_SH_INNER | PAGE_ACCESSED | PAGE_NGLOBAL;
+				case Memory::MemType::USER_RW:
+					return PAGE_PAGE | PAGE_USER | PAGE_SH_INNER | PAGE_ACCESSED | PAGE_NGLOBAL;
+				case Memory::MemType::USER_PAGETAB:
+					return PAGE_PAGE | PAGE_USER | PAGE_SH_INNER | PAGE_ACCESSED | PAGE_NGLOBAL;
+				case Memory::MemType::USER_COW:
+					return PAGE_PAGE | PAGE_USER | PAGE_SH_INNER | PAGE_ACCESSED | PAGE_NGLOBAL;
+				case Memory::MemType::USER_DEMAND:
+					return PAGE_PAGE | PAGE_USER | PAGE_SH_INNER | PAGE_ACCESSED | PAGE_NGLOBAL;
+				default:
+					return 0;
+				}
+			}
 
 		public:
 			template<Memory::PageBits bits> inline PageTableEntry& Set(Memory::PhysAddr phys, Memory::MemType type);
