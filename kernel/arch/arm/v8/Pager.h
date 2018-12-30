@@ -10,7 +10,7 @@ namespace Kernel
 	namespace Pager
 	{
 		static const Memory::PageBits GranuleSize = Memory::PGB_4K;
-		constexpr unsigned long ValidSizes = GranuleSize | (2 * GranuleSize - 3) | (3 * GranuleSize - 6);
+		constexpr unsigned long ValidSizes = (1UL << GranuleSize) | (1UL << (2 * GranuleSize - 3)) | (1UL << (3 * GranuleSize - 6));
 
 		struct Context
 		{

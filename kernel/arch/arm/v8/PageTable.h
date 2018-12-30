@@ -138,7 +138,7 @@ namespace Kernel
 			if(!PageTableLevel<level - 1>::ExistsKernel(i >> (GranuleSize - 3)))
 				return false;
 
-			return TableKernel(i).Pointer().IsPresent();
+			return !TableKernel(i).Pointer().IsInvalid();
 		}
 
 		template<unsigned int level> bool PageTableLevel<level>::ExistsUser(unsigned long i)
@@ -149,7 +149,7 @@ namespace Kernel
 			if(!PageTableLevel<level - 1>::ExistsUser(i >> (GranuleSize - 3)))
 				return false;
 
-			return TableUser(i).Pointer().IsPresent();
+			return !TableUser(i).Pointer().IsInvalid();
 		}
 
 		template<> inline bool PageTableLevel<InitialLookupLevel>::ExistsKernel(unsigned long i __attribute__((unused)))

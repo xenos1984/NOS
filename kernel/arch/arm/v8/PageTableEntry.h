@@ -44,32 +44,35 @@ namespace Kernel
 				switch(type)
 				{
 				case Memory::MemType::KERNEL_EXEC:
-					return PAGE_PAGE | PAGE_RO | PAGE_SH_INNER | PAGE_ACCESSED;
+					return PAGE_RO | PAGE_SH_INNER | PAGE_ACCESSED;
 				case Memory::MemType::KERNEL_RO:
-					return PAGE_PAGE | PAGE_RO | PAGE_SH_INNER | PAGE_ACCESSED;
+					return PAGE_RO | PAGE_SH_INNER | PAGE_ACCESSED;
 				case Memory::MemType::KERNEL_RW:
-					return PAGE_PAGE | PAGE_SH_INNER | PAGE_ACCESSED;
+					return PAGE_SH_INNER | PAGE_ACCESSED;
 				case Memory::MemType::KERNEL_PAGETAB:
-					return PAGE_PAGE | PAGE_SH_INNER | PAGE_ACCESSED;
+					return PAGE_SH_INNER | PAGE_ACCESSED;
 				case Memory::MemType::USER_EXEC:
-					return PAGE_PAGE | PAGE_USER | PAGE_RO | PAGE_SH_INNER | PAGE_ACCESSED | PAGE_NGLOBAL;
+					return PAGE_USER | PAGE_RO | PAGE_SH_INNER | PAGE_ACCESSED | PAGE_NGLOBAL;
 				case Memory::MemType::USER_RO:
-					return PAGE_PAGE | PAGE_USER | PAGE_RO | PAGE_SH_INNER | PAGE_ACCESSED | PAGE_NGLOBAL;
+					return PAGE_USER | PAGE_RO | PAGE_SH_INNER | PAGE_ACCESSED | PAGE_NGLOBAL;
 				case Memory::MemType::USER_RW:
-					return PAGE_PAGE | PAGE_USER | PAGE_SH_INNER | PAGE_ACCESSED | PAGE_NGLOBAL;
+					return PAGE_USER | PAGE_SH_INNER | PAGE_ACCESSED | PAGE_NGLOBAL;
 				case Memory::MemType::USER_PAGETAB:
-					return PAGE_PAGE | PAGE_USER | PAGE_SH_INNER | PAGE_ACCESSED | PAGE_NGLOBAL;
+					return PAGE_USER | PAGE_SH_INNER | PAGE_ACCESSED | PAGE_NGLOBAL;
 				case Memory::MemType::USER_COW:
-					return PAGE_PAGE | PAGE_USER | PAGE_SH_INNER | PAGE_ACCESSED | PAGE_NGLOBAL;
+					return PAGE_USER | PAGE_SH_INNER | PAGE_ACCESSED | PAGE_NGLOBAL;
 				case Memory::MemType::USER_DEMAND:
-					return PAGE_PAGE | PAGE_USER | PAGE_SH_INNER | PAGE_ACCESSED | PAGE_NGLOBAL;
+					return PAGE_USER | PAGE_SH_INNER | PAGE_ACCESSED | PAGE_NGLOBAL;
 				default:
 					return 0;
 				}
 			}
 
 		public:
-			template<Memory::PageBits bits> inline PageTableEntry& Set(Memory::PhysAddr phys, Memory::MemType type);
+			template<Memory::PageBits bits> inline PageTableEntry& Set(Memory::PhysAddr phys, Memory::MemType type)
+			{
+				raw = phys | TypeFlags(type) | ((bits == GranuleSize) ? PAGE_PAGE : PAGE_BLOCK);
+			}
 
 			inline uint64_t Raw(void) const
 			{

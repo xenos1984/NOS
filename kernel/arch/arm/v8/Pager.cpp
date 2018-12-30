@@ -69,7 +69,28 @@ namespace Kernel
 
 		template<Memory::PageBits bits> void MapPage(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type)
 		{
+			bool kernel;
+			unsigned int tab, entry;
+			constexpr int level = 4 - (bits - 3) / (GranuleSize - 3);
+
 			static_assert(IsValidSize(bits), "invalid page size");
+
+			if(virt >= MinKernelVirt)
+				kernel = true;
+			else if(virt <= MaxUserVirt)
+				kernel = false;
+			else
+				return;
+
+			virt &= (1ULL << (64 - PageSizeOffset)) - 1;
+			tab = virt >> (bits + GranuleSize - 3);
+			entry = (virt >> bits) & ((1 << (GranuleSize - 3)) - 1);
+
+			if(!(kernel ? PageTableLevel<level>::ExistsKernel(tab) : PageTableLevel<level>::ExistsUser(tab)))
+				/*PageTableLevel<level>::CreateUser(tab)*/;
+
+			PageTableEntry& pte = (kernel ? PageTableLevel<level>::TableKernel(tab) : PageTableLevel<level>::TableKernel(tab)).Entry(entry);
+			pte.Set<bits>(phys, type);
 		}
 
 		template<Memory::PageBits bits> void UnmapPage(uintptr_t virt)
@@ -77,37 +98,9 @@ namespace Kernel
 			static_assert(IsValidSize(bits), "invalid page size");
 		}
 
-		template<> void MapPage<Memory::PGB_4K>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type)
-		{
-		}
+		template void MapPage<GranuleSize>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type);
 
-		template<> void UnmapPage<Memory::PGB_4K>(uintptr_t virt)
-		{
-		}
-
-		template<> void MapPage<Memory::PGB_64K>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type)
-		{
-		}
-
-		template<> void UnmapPage<Memory::PGB_64K>(uintptr_t virt)
-		{
-		}
-
-		template<> void MapPage<Memory::PGB_1M>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type)
-		{
-		}
-
-		template<> void UnmapPage<Memory::PGB_1M>(uintptr_t virt)
-		{
-		}
-
-		template<> void MapPage<Memory::PGB_16M>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type)
-		{
-		}
-
-		template<> void UnmapPage<Memory::PGB_16M>(uintptr_t virt)
-		{
-		}
+		template void UnmapPage<GranuleSize>(uintptr_t virt);
 
 		Memory::PhysAddr VirtToPhys(uintptr_t addr)
 		{
