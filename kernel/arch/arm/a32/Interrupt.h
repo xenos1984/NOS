@@ -1,7 +1,7 @@
 // Interrupt.h - Interrupts and exceptions in ARM architecture.
 
-#ifndef __ARCH_ARM_INTERRUPT_H__
-#define __ARCH_ARM_INTERRUPT_H__
+#ifndef __ARCH_ARM_A32_INTERRUPT_H__
+#define __ARCH_ARM_A32_INTERRUPT_H__
 
 #include <cstdint>
 

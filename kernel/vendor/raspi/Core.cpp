@@ -20,7 +20,11 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t r0, uint32_t r1, uint
 	UART::Init();
 	Core::Welcome();
 
-//	Sysreg::VBAR::Write(Symbol::ExceptionVectorBase.Addr());
+#ifdef ELF64
+	Sysreg::VBAR_EL1::Write(Symbol::ExceptionVectorBase.Addr());
+#else
+	Sysreg::VBAR::Write(Symbol::ExceptionVectorBase.Addr());
+#endif
 
 	Console::WriteFormat("Register arguments: r0 = 0x%8x, r1 = 0x%8x, r2 = 0x%8x\n", r0, r1, r2);
 /*	Console::WriteFormat("SCTLR = 0x%8x\n", Sysreg::SCTLR::Read());
@@ -40,6 +44,8 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t r0, uint32_t r1, uint
 
 	Chunker::Init(armmem.start, armmem.length, Memory::Zone::NONE);
 	Chunker::Reserve(Symbol::kernelStart.Addr() - Symbol::kernelOffset.Addr(), Symbol::kernelEnd.Addr() - Symbol::kernelOffset.Addr());
+
+	*((int*)0x12345678) = 0x87654321;
 /*
 	Heap::Init();
 	int* a = new int;

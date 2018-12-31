@@ -55,8 +55,8 @@ EL2:
 	mov x2, #0x0800
 	movk x2, #0x30d0, lsl #16
 	msr sctlr_el1, x2
-// Change execution level to EL1
-	mov x2, #0x3c4
+// Change execution level to EL1h
+	mov x2, #0x3c5
 	msr spsr_el2, x2
 	adr x2, EL1
 	msr elr_el2, x2
