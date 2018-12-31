@@ -134,7 +134,30 @@ namespace Kernel
 
 		template<Memory::PageBits bits> void UnmapPage(uintptr_t virt)
 		{
+			bool kernel;
+			unsigned int tab, entry;
+			constexpr int level = 4 - (bits - 3) / (GranuleSize - 3);
+
 			static_assert(IsValidSize(bits), "invalid page size");
+
+			if(virt >= MinKernelVirt)
+				kernel = true;
+			else if(virt <= MaxUserVirt)
+				kernel = false;
+			else
+				return;
+
+			virt &= (1ULL << (64 - PageSizeOffset)) - 1;
+			tab = virt >> (bits + GranuleSize - 3);
+			entry = (virt >> bits) & ((1 << (GranuleSize - 3)) - 1);
+
+			PageTableLevel<level>& pt = PageTableLevel<level>::Table(kernel, tab);
+			PageTableEntry& pte = pt.Entry(entry);
+			pte.Clear();
+			//Invalidate(virt);
+
+			if(pt.IsEmpty())
+				Memory::FreeBlock<GranuleSize>(&pt);
 		}
 
 		template void MapPage<GranuleSize>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type);

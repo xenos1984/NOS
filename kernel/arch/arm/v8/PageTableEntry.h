@@ -72,6 +72,7 @@ namespace Kernel
 			template<Memory::PageBits bits> inline PageTableEntry& Set(Memory::PhysAddr phys, Memory::MemType type)
 			{
 				raw = phys | TypeFlags(type) | ((bits == GranuleSize) ? PAGE_PAGE : PAGE_BLOCK);
+				return *this;
 			}
 
 			inline uint64_t Raw(void) const
