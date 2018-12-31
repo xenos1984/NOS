@@ -9,8 +9,6 @@ namespace Kernel
 {
 	struct RegisterSet
 	{
-		uint64_t usp;
-		uint64_t ulr;
 		uint64_t r0;
 		uint64_t r1;
 		uint64_t r2;
@@ -42,8 +40,9 @@ namespace Kernel
 		uint64_t r28;
 		uint64_t r29;
 		uint64_t lr;
-		uint64_t pc;
-		uint64_t ps;
+		uint64_t sp;
+		/*uint64_t pc;
+		uint64_t ps;*/
 
 		void Dump(void);
 	} PACKED;

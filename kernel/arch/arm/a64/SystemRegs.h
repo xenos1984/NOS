@@ -55,6 +55,12 @@ namespace Kernel
 			READ_WRITE_REG("CNTFRQ_EL0")
 		}
 
+		/** Exception Syndrome Register */
+		namespace ESR_EL1
+		{
+			READ_ONLY_REG("ESR_EL1")
+		}
+
 		/** Main ID Register */
 		namespace MIDR_EL1
 		{
