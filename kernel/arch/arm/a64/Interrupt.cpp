@@ -9,7 +9,10 @@ namespace Kernel
 {
 	void DumpExceptionSyndrome(uint32_t syn)
 	{
-		switch(syn >> 26)
+		unsigned int cls = syn >> 26;
+		unsigned int iss = syn & ((1 << 25) - 1);
+
+		switch(cls)
 		{
 		case 0x01:
 			Console::WriteFormat("Trapped WFI or WFE instruction execution.\n");
@@ -86,11 +89,8 @@ namespace Kernel
 			break;
 
 		case 0x20:
-			Console::WriteFormat("Instruction Abort from a lower Exception level, that might be using AArch32 or AArch64.\n");
-			break;
-
 		case 0x21:
-			Console::WriteFormat("Instruction Abort taken without a change in Exception level.\n");
+			Console::WriteFormat("Instruction Abort %s.\n", (cls & 0x1 ? "taken without a change in Exception level" : "from a lower Exception level, that might be using AArch32 or AArch64"));
 			break;
 
 		case 0x22:
@@ -98,11 +98,95 @@ namespace Kernel
 			break;
 
 		case 0x24:
-			Console::WriteFormat("Data Abort from a lower Exception level, that might be using AArch32 or AArch64.\n");
-			break;
-
 		case 0x25:
-			Console::WriteFormat("Data Abort taken without a change in Exception level.\n");
+			{
+				Console::WriteFormat("Data Abort %s.\n", (cls & 0x1 ? "taken without a change in Exception level" : "from a lower Exception level, that might be using AArch32 or AArch64"));
+				unsigned int dfsc = iss & 0x3f;
+				switch(dfsc)
+				{
+				case 0x00:
+				case 0x01:
+				case 0x02:
+				case 0x03:
+					Console::WriteFormat("Address size fault at level %d.\n", dfsc);
+					break;
+
+				case 0x04:
+				case 0x05:
+				case 0x06:
+				case 0x07:
+					Console::WriteFormat("Translation fault at level %d.\n", dfsc & 0x3);
+					break;
+
+				case 0x08:
+				case 0x09:
+				case 0x0a:
+				case 0x0b:
+					Console::WriteFormat("Access flag fault at level %d.\n", dfsc & 0x3);
+					break;
+
+				case 0x0c:
+				case 0x0d:
+				case 0x0e:
+				case 0x0f:
+					Console::WriteFormat("Permission fault at level %d.\n", dfsc & 0x3);
+					break;
+
+				case 0x10:
+					Console::WriteFormat("Synchronous External abort, not on translation table walk.\n");
+					break;
+
+				case 0x14:
+				case 0x15:
+				case 0x16:
+				case 0x17:
+					Console::WriteFormat("Synchronous External abort, on translation table walk at level %d.\n", dfsc & 0x3);
+					break;
+
+				case 0x18:
+					Console::WriteFormat("Synchronous parity or ECC error on memory access, not on translation table walk.\n");
+					break;
+
+				case 0x1c:
+				case 0x1d:
+				case 0x1e:
+				case 0x1f:
+					Console::WriteFormat("Synchronous parity or ECC error on memory access on translation table walk at level %d.\n", dfsc & 0x3);
+					break;
+
+				case 0x21:
+					Console::WriteFormat("Alignment fault.\n");
+					break;
+
+				case 0x30:
+					Console::WriteFormat("TLB conflict abort.\n");
+					break;
+
+				case 0x31:
+					Console::WriteFormat("Unsupported atomic hardware update fault.\n");
+					break;
+
+				case 0x34:
+					Console::WriteFormat("Implementation defined fault (Lockdown).\n");
+					break;
+
+				case 0x35:
+					Console::WriteFormat("Implementation defined fault (Unsupported Exclusive or Atomic access).\n");
+					break;
+
+				case 0x3d:
+					Console::WriteFormat("Section Domain Fault.\n");
+					break;
+
+				case 0x3e:
+					Console::WriteFormat("Page Domain Fault.\n");
+					break;
+
+				default:
+					Console::WriteFormat("Unknown Data Fault Status Code 0x%2x.\n", dfsc);
+					break;
+				}
+			}
 			break;
 
 		case 0x26:
@@ -122,27 +206,18 @@ namespace Kernel
 			break;
 
 		case 0x30:
-			Console::WriteFormat("Breakpoint exception from a lower Exception level, that might be using AArch32 or AArch64.\n");
-			break;
-
 		case 0x31:
-			Console::WriteFormat("Breakpoint exception taken without a change in Exception level.\n");
+			Console::WriteFormat("Breakpoint exception %s.\n", (cls & 0x1 ? "taken without a change in Exception level" : "from a lower Exception level, that might be using AArch32 or AArch64"));
 			break;
 
 		case 0x32:
-			Console::WriteFormat("Software Step exception from a lower Exception level, that might be using AArch32 or AArch64.\n");
-			break;
-
 		case 0x33:
-			Console::WriteFormat("Software Step exception taken without a change in Exception level.\n");
+			Console::WriteFormat("Software Step exception %s.\n", (cls & 0x1 ? "taken without a change in Exception level" : "from a lower Exception level, that might be using AArch32 or AArch64"));
 			break;
 
 		case 0x34:
-			Console::WriteFormat("Watchpoint exception from a lower Exception level, that might be using AArch32 or AArch64.\n");
-			break;
-
 		case 0x35:
-			Console::WriteFormat("Watchpoint exception taken without a change in Exception level.\n");
+			Console::WriteFormat("Watchpoint exception %s.\n", (cls & 0x1 ? "taken without a change in Exception level" : "from a lower Exception level, that might be using AArch32 or AArch64"));
 			break;
 
 		case 0x38:
@@ -158,7 +233,7 @@ namespace Kernel
 			break;
 
 		default:
-			Console::WriteFormat("Unknown reason 0x%2x.\n", syn >> 26);
+			Console::WriteFormat("Unknown reason 0x%2x.\n", cls);
 			break;
 		}
 	}
