@@ -55,8 +55,7 @@ namespace Kernel
 			inline unsigned long Index(void);
 
 			/** Reference to the i'th table at this level. */
-			static inline PageTableLevel<level>& TableKernel(unsigned long i);
-			static inline PageTableLevel<level>& TableUser(unsigned long i);
+			static inline PageTableLevel<level>& Table(bool kernel, unsigned long i);
 
 			/** Page table which contains the page table entry pointing to this page table. */
 			inline PageTableLevel<level - 1>& Parent(void);
@@ -65,12 +64,10 @@ namespace Kernel
 			inline PageTableEntry& Pointer(void);
 
 			/** Check whether the i'th table at this level exists. */
-			static bool ExistsKernel(unsigned long i);
-			static bool ExistsUser(unsigned long i);
+			static bool Exists(bool kernel, unsigned long i);
 
 			/** Create new page table at this level. */
-			static PageTableLevel<level>& CreateKernel(unsigned long i, Memory::MemType);
-			static PageTableLevel<level>& CreateUser(unsigned long i, Memory::MemType);
+			static PageTableLevel<level>& Create(bool kernel, unsigned long i, Memory::MemType);
 
 			/** Destroy a page table. */
 			void Destroy(void);
@@ -100,20 +97,12 @@ namespace Kernel
 			return (reinterpret_cast<uintptr_t>(this) - (reinterpret_cast<uintptr_t>(this) & -(1ULL << (GranuleSize + (level - InitialLookupLevel) * (GranuleSize - 3))))) >> GranuleSize;
 		}
 
-		template<unsigned int level> inline PageTableLevel<level>& PageTableLevel<level>::TableKernel(unsigned long i)
+		template<unsigned int level> inline PageTableLevel<level>& PageTableLevel<level>::Table(bool kernel, unsigned long i)
 		{
 			static_assert(level < 4, "Table level exceeds number of paging levels.");
 			static_assert(level >= InitialLookupLevel, "Table level below initial lookup level.");
 
-			return reinterpret_cast<PageTableLevel<level>*>(PageTableAddr(level, PageRecursiveKernel))[i];
-		}
-
-		template<unsigned int level> inline PageTableLevel<level>& PageTableLevel<level>::TableUser(unsigned long i)
-		{
-			static_assert(level < 4, "Table level exceeds number of paging levels.");
-			static_assert(level >= InitialLookupLevel, "Table level below initial lookup level.");
-
-			return reinterpret_cast<PageTableLevel<level>*>(PageTableAddr(level, PageRecursiveUser))[i];
+			return reinterpret_cast<PageTableLevel<level>*>(PageTableAddr(level, (kernel ? PageRecursiveKernel : PageRecursiveUser)))[i];
 		}
 
 		template<unsigned int level> inline PageTableLevel<level - 1>& PageTableLevel<level>::Parent(void)
@@ -130,46 +119,25 @@ namespace Kernel
 			return Parent().Entry(Index() & ((1 << (GranuleSize - 3)) - 1));
 		}
 
-		template<unsigned int level> bool PageTableLevel<level>::ExistsKernel(unsigned long i)
+		template<unsigned int level> bool PageTableLevel<level>::Exists(bool kernel, unsigned long i)
 		{
 			static_assert(level < 4, "Table level exceeds number of paging levels.");
 			static_assert(level >= InitialLookupLevel, "Table level below initial lookup level.");
 
-			if(!PageTableLevel<level - 1>::ExistsKernel(i >> (GranuleSize - 3)))
+			if(!PageTableLevel<level - 1>::Exists(kernel, i >> (GranuleSize - 3)))
 				return false;
 
-			return !TableKernel(i).Pointer().IsInvalid();
+			return !Table(kernel, i).Pointer().IsInvalid();
 		}
 
-		template<unsigned int level> bool PageTableLevel<level>::ExistsUser(unsigned long i)
-		{
-			static_assert(level < 4, "Table level exceeds number of paging levels.");
-			static_assert(level >= InitialLookupLevel, "Table level below initial lookup level.");
-
-			if(!PageTableLevel<level - 1>::ExistsUser(i >> (GranuleSize - 3)))
-				return false;
-
-			return !TableUser(i).Pointer().IsInvalid();
-		}
-
-		template<> inline bool PageTableLevel<InitialLookupLevel>::ExistsKernel(unsigned long i __attribute__((unused)))
+		template<> inline bool PageTableLevel<InitialLookupLevel>::Exists(bool kernel __attribute__((unused)), unsigned long i __attribute__((unused)))
 		{
 			return true;
 		}
 
-		template<> inline bool PageTableLevel<InitialLookupLevel>::ExistsUser(unsigned long i __attribute__((unused)))
+		inline PageTableLevel<InitialLookupLevel>& PageTableTop(bool kernel)
 		{
-			return true;
-		}
-
-		inline PageTableLevel<InitialLookupLevel>& PageTableTopKernel(void)
-		{
-			return PageTableLevel<InitialLookupLevel>::TableKernel(0);
-		}
-
-		inline PageTableLevel<InitialLookupLevel>& PageTableTopUser(void)
-		{
-			return PageTableLevel<InitialLookupLevel>::TableUser(0);
+			return PageTableLevel<InitialLookupLevel>::Table(kernel, 0);
 		}
 	}
 }

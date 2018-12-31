@@ -29,7 +29,7 @@ namespace Kernel
 			if constexpr(InitialLookupLevel == 0)
 			{
 				entry = virt >> (4 * GranuleSize - 9);
-				PageTableEntry& pte0 = (kernel ? PageTableLevel<0>::TableKernel(0) : PageTableLevel<0>::TableUser(0)).Entry(entry);
+				PageTableEntry& pte0 = PageTableLevel<0>::Table(kernel, 0).Entry(entry);
 				if(pte0.IsInvalid())
 					return Memory::PGB_INV;
 				if(pte0.IsBlock()) // No blocks at this level.
@@ -40,7 +40,7 @@ namespace Kernel
 			{
 				entry = (virt >> (3 * GranuleSize - 6)) & ((1ULL << (GranuleSize - 3)) - 1);
 				tab = virt >> (4 * GranuleSize - 9);
-				PageTableEntry& pte1 = (kernel ? PageTableLevel<1>::TableKernel(tab) : PageTableLevel<1>::TableUser(tab)).Entry(entry);
+				PageTableEntry& pte1 = PageTableLevel<1>::Table(kernel, tab).Entry(entry);
 				if(pte1.IsInvalid())
 					return Memory::PGB_INV;
 				if(pte1.IsBlock())
@@ -51,7 +51,7 @@ namespace Kernel
 			{
 				entry = (virt >> (2 * GranuleSize - 3)) & ((1ULL << (GranuleSize - 3)) - 1);
 				tab = virt >> (3 * GranuleSize - 6);
-				PageTableEntry& pte2 = (kernel ? PageTableLevel<2>::TableKernel(tab) : PageTableLevel<2>::TableUser(tab)).Entry(entry);
+				PageTableEntry& pte2 = PageTableLevel<2>::Table(kernel, tab).Entry(entry);
 				if(pte2.IsInvalid())
 					return Memory::PGB_INV;
 				if(pte2.IsBlock())
@@ -60,7 +60,7 @@ namespace Kernel
 
 			entry = (virt >> GranuleSize) & ((1ULL << (GranuleSize - 3)) - 1);
 			tab = virt >> (2 * GranuleSize - 3);
-			PageTableEntry& pte3 = (kernel ? PageTableLevel<3>::TableKernel(tab) : PageTableLevel<3>::TableUser(tab)).Entry(entry);
+			PageTableEntry& pte3 = PageTableLevel<3>::Table(kernel, tab).Entry(entry);
 			if(pte3.IsPage())
 				return GranuleSize;
 
@@ -86,10 +86,10 @@ namespace Kernel
 			tab = virt >> (bits + GranuleSize - 3);
 			entry = (virt >> bits) & ((1 << (GranuleSize - 3)) - 1);
 
-			if(!(kernel ? PageTableLevel<level>::ExistsKernel(tab) : PageTableLevel<level>::ExistsUser(tab)))
-				/*PageTableLevel<level>::CreateUser(tab)*/;
+			if(!PageTableLevel<level>::Exists(kernel, tab))
+				/*PageTableLevel<level>::Create(kernel, tab)*/;
 
-			PageTableEntry& pte = (kernel ? PageTableLevel<level>::TableKernel(tab) : PageTableLevel<level>::TableKernel(tab)).Entry(entry);
+			PageTableEntry& pte = PageTableLevel<level>::Table(kernel, tab).Entry(entry);
 			pte.Set<bits>(phys, type);
 		}
 
@@ -99,8 +99,12 @@ namespace Kernel
 		}
 
 		template void MapPage<GranuleSize>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type);
+		template void MapPage<(Memory::PageBits)(2 * GranuleSize - 3)>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type);
+		template void MapPage<(Memory::PageBits)(3 * GranuleSize - 6)>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type);
 
 		template void UnmapPage<GranuleSize>(uintptr_t virt);
+		template void UnmapPage<(Memory::PageBits)(2 * GranuleSize - 3)>(uintptr_t virt);
+		template void UnmapPage<(Memory::PageBits)(3 * GranuleSize - 6)>(uintptr_t virt);
 
 		Memory::PhysAddr VirtToPhys(uintptr_t addr)
 		{
@@ -121,7 +125,7 @@ namespace Kernel
 			if constexpr(InitialLookupLevel == 0)
 			{
 				entry = addr >> (4 * GranuleSize - 9);
-				PageTableEntry& pte0 = (kernel ? PageTableLevel<0>::TableKernel(0) : PageTableLevel<0>::TableUser(0)).Entry(entry);
+				PageTableEntry& pte0 = PageTableLevel<0>::Table(kernel, 0).Entry(entry);
 				if(pte0.IsInvalid())
 					return ~0;
 				if(pte0.IsBlock()) // No blocks at this level.
@@ -132,7 +136,7 @@ namespace Kernel
 			{
 				entry = (addr >> (3 * GranuleSize - 6)) & ((1ULL << (GranuleSize - 3)) - 1);
 				tab = addr >> (4 * GranuleSize - 9);
-				PageTableEntry& pte1 = (kernel ? PageTableLevel<1>::TableKernel(tab) : PageTableLevel<1>::TableUser(tab)).Entry(entry);
+				PageTableEntry& pte1 = PageTableLevel<1>::Table(kernel, tab).Entry(entry);
 				if(pte1.IsInvalid())
 					return ~0;
 				if(pte1.IsBlock())
@@ -143,7 +147,7 @@ namespace Kernel
 			{
 				entry = (addr >> (2 * GranuleSize - 3)) & ((1ULL << (GranuleSize - 3)) - 1);
 				tab = addr >> (3 * GranuleSize - 6);
-				PageTableEntry& pte2 = (kernel ? PageTableLevel<2>::TableKernel(tab) : PageTableLevel<2>::TableUser(tab)).Entry(entry);
+				PageTableEntry& pte2 = PageTableLevel<2>::Table(kernel, tab).Entry(entry);
 				if(pte2.IsInvalid())
 					return ~0;
 				if(pte2.IsBlock())
@@ -152,7 +156,7 @@ namespace Kernel
 
 			entry = (addr >> GranuleSize) & ((1ULL << (GranuleSize - 3)) - 1);
 			tab = addr >> (2 * GranuleSize - 3);
-			PageTableEntry& pte3 = (kernel ? PageTableLevel<3>::TableKernel(tab) : PageTableLevel<3>::TableUser(tab)).Entry(entry);
+			PageTableEntry& pte3 = PageTableLevel<3>::Table(kernel, tab).Entry(entry);
 			if(pte3.IsPage())
 				return pte3.Phys() | (addr & ((1ULL << GranuleSize) - 1));
 
