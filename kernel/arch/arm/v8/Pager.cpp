@@ -12,6 +12,42 @@ namespace Kernel
 {
 	namespace Pager
 	{
+		/** Determine which attributes to set for the page table mapping this page. */
+		static constexpr Memory::MemType ParentType(Memory::MemType type)
+		{
+			switch(type)
+			{
+			case Memory::MemType::KERNEL_EXEC:
+			case Memory::MemType::KERNEL_RO:
+			case Memory::MemType::KERNEL_RW:
+			case Memory::MemType::KERNEL_PAGETAB:
+				return Memory::MemType::KERNEL_PAGETAB;
+				break;
+			case Memory::MemType::USER_EXEC:
+			case Memory::MemType::USER_RO:
+			case Memory::MemType::USER_RW:
+			case Memory::MemType::USER_PAGETAB:
+			case Memory::MemType::USER_COW:
+			case Memory::MemType::USER_DEMAND:
+				return Memory::MemType::USER_PAGETAB;
+				break;
+			default:
+				return Memory::MemType::KERNEL_RW;
+			}
+		}
+
+		template<unsigned int level> PageTableLevel<level>& PageTableLevel<level>::Create(bool kernel, unsigned long i, Memory::MemType type)
+		{
+			static_assert(level > InitialLookupLevel, "Top level page table cannot be created.");
+			static_assert(level <= 3, "Table level exceeds number of paging levels.");
+
+			uintptr_t virt = PageTableAddr(level, (kernel ? PageRecursiveKernel : PageRecursiveUser)) + i * sizeof(PageTableLevel<level>);
+			Memory::AllocBlock<GranuleSize>(virt, type);
+			new (reinterpret_cast<PageTableLevel<level>*>(virt)) PageTableLevel<level>;
+
+			return *reinterpret_cast<PageTableLevel<level>*>(virt);
+		}
+
 		Memory::PageBits MappedSize(uintptr_t virt)
 		{
 			bool kernel;
@@ -86,8 +122,11 @@ namespace Kernel
 			tab = virt >> (bits + GranuleSize - 3);
 			entry = (virt >> bits) & ((1 << (GranuleSize - 3)) - 1);
 
-			if(!PageTableLevel<level>::Exists(kernel, tab))
-				/*PageTableLevel<level>::Create(kernel, tab)*/;
+			if constexpr(level > InitialLookupLevel)
+			{
+				if(!PageTableLevel<level>::Exists(kernel, tab))
+					PageTableLevel<level>::Create(kernel, tab, ParentType(type));
+			}
 
 			PageTableEntry& pte = PageTableLevel<level>::Table(kernel, tab).Entry(entry);
 			pte.Set<bits>(phys, type);

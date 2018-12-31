@@ -50,7 +50,7 @@ namespace Kernel
 				case Memory::MemType::KERNEL_RW:
 					return PAGE_SH_INNER | PAGE_ACCESSED;
 				case Memory::MemType::KERNEL_PAGETAB:
-					return PAGE_SH_INNER | PAGE_ACCESSED;
+					return PAGE_SH_INNER | PAGE_ACCESSED | PAGE_NGLOBAL;
 				case Memory::MemType::USER_EXEC:
 					return PAGE_USER | PAGE_RO | PAGE_SH_INNER | PAGE_ACCESSED | PAGE_NGLOBAL;
 				case Memory::MemType::USER_RO:
