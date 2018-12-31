@@ -55,6 +55,12 @@ namespace Kernel
 			READ_WRITE_REG("CNTFRQ_EL0")
 		}
 
+		/** Exception Link Register */
+		namespace ELR_EL1
+		{
+			READ_WRITE_REG("ELR_EL1")
+		}
+
 		/** Exception Syndrome Register */
 		namespace ESR_EL1
 		{
@@ -98,6 +104,12 @@ namespace Kernel
 			};
 
 			READ_WRITE_REG("SCTLR_EL1")
+		}
+
+		/** Saved Program Status Register */
+		namespace SPSR_EL1
+		{
+			READ_WRITE_REG("SPSR_EL1")
 		}
 
 		/** Vector Base Address Register */

@@ -7,6 +7,161 @@
 
 namespace Kernel
 {
+	void DumpExceptionSyndrome(uint32_t syn)
+	{
+		switch(syn >> 26)
+		{
+		case 0x01:
+			Console::WriteFormat("Trapped WFI or WFE instruction execution.\n");
+			break;
+
+		case 0x03:
+		case 0x05:
+			Console::WriteFormat("Trapped MCR or MRC access.\n");
+			break;
+
+		case 0x04:
+		case 0x0c:
+			Console::WriteFormat("Trapped MCRR or MRRC access.\n");
+			break;
+
+		case 0x06:
+			Console::WriteFormat("Trapped LDC or STC access.\n");
+			break;
+
+		case 0x07:
+			Console::WriteFormat("Trapped access to SVE, Advanced SIMD, or floating-point functionality.\n");
+			break;
+
+		case 0x08:
+			Console::WriteFormat("Trapped VMRS access, from ID group trap.\n");
+			break;
+
+		case 0x09:
+			Console::WriteFormat("Trapped Pointer Authentication instruction.\n");
+			break;
+
+		case 0x0e:
+			Console::WriteFormat("Illegal Execution state.\n");
+			break;
+
+		case 0x11:
+			Console::WriteFormat("SVC instruction execution in AArch32 state.\n");
+			break;
+
+		case 0x12:
+			Console::WriteFormat("HVC instruction execution in AArch32 state, when HVC is not disabled.\n");
+			break;
+
+		case 0x13:
+			Console::WriteFormat("SMC instruction execution in AArch32 state, when SMC is not disabled.\n");
+			break;
+
+		case 0x15:
+			Console::WriteFormat("SVC instruction execution in AArch64 state.\n");
+			break;
+
+		case 0x16:
+			Console::WriteFormat("HVC instruction execution in AArch64 state, when HVC is not disabled.\n");
+			break;
+
+		case 0x17:
+			Console::WriteFormat("SMC instruction execution in AArch64 state, when SMC is not disabled.\n");
+			break;
+
+		case 0x18:
+			Console::WriteFormat("Trapped MSR, MRS or System instruction execution in AArch64 state.\n");
+			break;
+
+		case 0x19:
+			Console::WriteFormat("Trapped access to SVE functionality.\n");
+			break;
+
+		case 0x1a:
+			Console::WriteFormat("Trapped ERET, ERETAA, or ERETAB instruction execution.\n");
+			break;
+
+		case 0x1f:
+			Console::WriteFormat("Implementation defined exception to EL3.\n");
+			break;
+
+		case 0x20:
+			Console::WriteFormat("Instruction Abort from a lower Exception level, that might be using AArch32 or AArch64.\n");
+			break;
+
+		case 0x21:
+			Console::WriteFormat("Instruction Abort taken without a change in Exception level.\n");
+			break;
+
+		case 0x22:
+			Console::WriteFormat("PC alignment fault exception.\n");
+			break;
+
+		case 0x24:
+			Console::WriteFormat("Data Abort from a lower Exception level, that might be using AArch32 or AArch64.\n");
+			break;
+
+		case 0x25:
+			Console::WriteFormat("Data Abort taken without a change in Exception level.\n");
+			break;
+
+		case 0x26:
+			Console::WriteFormat("SP alignment fault exception.\n");
+			break;
+
+		case 0x28:
+			Console::WriteFormat("Trapped floating-point exception taken from AArch32 state.\n");
+			break;
+
+		case 0x2c:
+			Console::WriteFormat("Trapped floating-point exception taken from AArch64 state.\n");
+			break;
+
+		case 0x2f:
+			Console::WriteFormat("SError interrupt.\n");
+			break;
+
+		case 0x30:
+			Console::WriteFormat("Breakpoint exception from a lower Exception level, that might be using AArch32 or AArch64.\n");
+			break;
+
+		case 0x31:
+			Console::WriteFormat("Breakpoint exception taken without a change in Exception level.\n");
+			break;
+
+		case 0x32:
+			Console::WriteFormat("Software Step exception from a lower Exception level, that might be using AArch32 or AArch64.\n");
+			break;
+
+		case 0x33:
+			Console::WriteFormat("Software Step exception taken without a change in Exception level.\n");
+			break;
+
+		case 0x34:
+			Console::WriteFormat("Watchpoint exception from a lower Exception level, that might be using AArch32 or AArch64.\n");
+			break;
+
+		case 0x35:
+			Console::WriteFormat("Watchpoint exception taken without a change in Exception level.\n");
+			break;
+
+		case 0x38:
+			Console::WriteFormat("BKPT instruction execution in AArch32 state.\n");
+			break;
+
+		case 0x3a:
+			Console::WriteFormat("Vector Catch exception from AArch32 state.\n");
+			break;
+
+		case 0x3c:
+			Console::WriteFormat("BRK instruction execution in AArch64 state.\n");
+			break;
+
+		default:
+			Console::WriteFormat("Unknown reason 0x%2x.\n", syn >> 26);
+			break;
+		}
+	}
 }
 
 using namespace Kernel;
@@ -29,7 +184,11 @@ void RegisterSet::Dump()
 extern "C" void KernelSyncHandler(RegisterSet* regs)
 {
 	uint64_t syndrome = Sysreg::ESR_EL1::Read();
+	uint64_t pc = Sysreg::ELR_EL1::Read();
+	uint64_t ps = Sysreg::SPSR_EL1::Read();
 
 	Console::WriteFormat("Synchronous exception occurred with ESR = 0x%8x:\n", syndrome);
+	DumpExceptionSyndrome(syndrome);
+	Console::WriteFormat(" pc = 0x%16lx,  ps = 0x%16lx.\n", pc, ps);
 	regs->Dump();
 }
