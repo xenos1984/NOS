@@ -236,6 +236,12 @@ namespace Kernel
 			Console::WriteFormat("Unknown reason 0x%2x.\n", cls);
 			break;
 		}
+
+		if((cls & 0xfa) == 0x20) // Show FAR for data or instruction abort
+		{
+			uint64_t far = Sysreg::FAR_EL1::Read();
+			Console::WriteFormat("FAR = 0x%16lx.\n", far);
+		}
 	}
 }
 

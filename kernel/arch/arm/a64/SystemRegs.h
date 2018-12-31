@@ -67,6 +67,12 @@ namespace Kernel
 			READ_ONLY_REG("ESR_EL1")
 		}
 
+		/** Fault Address Register */
+		namespace FAR_EL1
+		{
+			READ_ONLY_REG("FAR_EL1")
+		}
+
 		/** Main ID Register */
 		namespace MIDR_EL1
 		{
