@@ -12,6 +12,65 @@ namespace Kernel
 {
 	namespace Pager
 	{
+		inline void InvalidateAll(bool is)
+		{
+			if(is)
+				asm volatile ("tlbi alle1is");
+			else
+				asm volatile ("tlbi alle1");
+		}
+
+		inline void InvalidateASID(bool is, uint64_t asid)
+		{
+			asid <<= 48;
+
+			if(is)
+				asm volatile ("tlbi aside1is, %0" : : "r"(asid));
+			else
+				asm volatile ("tlbi aside1, %0" : : "r"(asid));
+		}
+
+		inline void InvalidateAddr(bool is, bool leaf, uint64_t virt)
+		{
+			virt >>= 12;
+
+			if(is)
+			{
+				if(leaf)
+					asm volatile ("tlbi vaale1is, %0" : : "r"(virt));
+				else
+					asm volatile ("tlbi vaae1is, %0" : : "r"(virt));
+			}
+			else
+			{
+				if(leaf)
+					asm volatile ("tlbi vaale1, %0" : : "r"(virt));
+				else
+					asm volatile ("tlbi vaae1, %0" : : "r"(virt));
+			}
+		}
+
+		inline void InvalidateAddrASID(bool is, bool leaf, uint64_t virt, uint64_t asid)
+		{
+			virt >>= 12;
+			asid <<= 48;
+
+			if(is)
+			{
+				if(leaf)
+					asm volatile ("tlbi vale1is, %0" : : "r"(virt | asid));
+				else
+					asm volatile ("tlbi vae1is, %0" : : "r"(virt | asid));
+			}
+			else
+			{
+				if(leaf)
+					asm volatile ("tlbi vale1, %0" : : "r"(virt | asid));
+				else
+					asm volatile ("tlbi vae1, %0" : : "r"(virt | asid));
+			}
+		}
+
 		/** Determine which attributes to set for the page table mapping this page. */
 		static constexpr Memory::MemType ParentType(Memory::MemType type)
 		{
@@ -130,6 +189,7 @@ namespace Kernel
 
 			PageTableEntry& pte = PageTableLevel<level>::Table(kernel, tab).Entry(entry);
 			pte.Set<bits>(phys, type);
+			InvalidateAddr(true, true, virt);
 		}
 
 		template<Memory::PageBits bits> void UnmapPage(uintptr_t virt)
@@ -154,7 +214,7 @@ namespace Kernel
 			PageTableLevel<level>& pt = PageTableLevel<level>::Table(kernel, tab);
 			PageTableEntry& pte = pt.Entry(entry);
 			pte.Clear();
-			//Invalidate(virt);
+			InvalidateAddr(true, true, virt);
 
 			if(pt.IsEmpty())
 				Memory::FreeBlock<GranuleSize>(&pt);
