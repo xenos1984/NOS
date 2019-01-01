@@ -234,7 +234,7 @@ namespace Kernel
 			lock.Enter();
 			do
 			{
-				Console::WriteFormat("Block 0x%8x of length 0x%8x at 0x%8x, %s\n", mp, mp->length, mp->mem, (mp->free ? "free" : "allocated"));
+				Console::WriteFormat("Block 0x%p of length 0x%p at 0x%p, %s\n", mp, mp->length, mp->mem, (mp->free ? "free" : "allocated"));
 				mp = mp->next;
 			}
 			while(mp != &root);
