@@ -8,6 +8,7 @@
 #include INC_VENDOR(Entry.h)
 #include <Symbol.h>
 #include <Memory.h>
+#include <Console.h>
 
 namespace Kernel
 {
@@ -107,11 +108,14 @@ namespace Kernel
 
 		template<unsigned int level> inline PageTableLevel<level - 1>& PageTableLevel<level>::Parent(void)
 		{
-			uintptr_t tabaddr = reinterpret_cast<uintptr_t>(this);
-			uintptr_t shifted = tabaddr >> GranuleSize;
-			uintptr_t mask = (1ULL << (2 * GranuleSize - 3)) - 1;
+			constexpr uintptr_t mask1 = -(1ULL << (67 - PageSizeOffset - GranuleSize));
+			constexpr uintptr_t mask2 = ~mask1 & -(1ULL << GranuleSize);
 
-			return *reinterpret_cast<PageTableLevel<level - 1>*>((shifted & mask) | (tabaddr & ~mask));
+			uintptr_t tabaddr = reinterpret_cast<uintptr_t>(this);
+			uintptr_t shifted = (tabaddr >> (GranuleSize - 3)) & mask2;
+			uintptr_t addr = (tabaddr & mask1) | shifted;
+
+			return *reinterpret_cast<PageTableLevel<level - 1>*>(addr);
 		}
 
 		template<unsigned int level> inline PageTableEntry& PageTableLevel<level>::Pointer(void)
