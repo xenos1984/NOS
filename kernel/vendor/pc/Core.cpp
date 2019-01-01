@@ -5,9 +5,11 @@
 #include <Core.h>
 #include <Symbol.h>
 #include <Pager.h>
+#include <Console.h>
 #include INC_VENDOR(Multiboot.h)
 #include INC_ARCH(CPU.h)
 #include INC_ARCH(DescriptorTable.h)
+#include INC_ARCH(ControlRegisters.h)
 #include INC_VENDOR(Cmos.h)
 #include INC_VENDOR(PIT.h)
 #include INC_VENDOR(ACPI.h)
@@ -41,7 +43,22 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, uint32_t mbiph
 	new (cmos_space) Cmos;
 	new (pit_space) PIT;
 
-	// TODO: Check and enable CPU dependent features.
+#ifdef ELF32
+	if(bspcpu().HasLongMode())
+		Console::WriteMessage(Console::Style::WARNING, "64 Bit CPU detected, OS level:", "32 Bit");
+#endif
+
+	unsigned long cr4 = CR4::Read();
+	if(bspcpu().HasPGE())
+		cr4 |= CR4::PAGE_GLOBAL_ENABLE;
+	if(bspcpu().HasFXSR())
+		cr4 |= CR4::OS_FXSR_SUPPORT;
+	if(bspcpu().HasXSR())
+	{
+		cr4 |= CR4::OS_XSR_SUPPORT;
+		asm volatile ( "xsetbv" : : "a" (0x7), "d" (0x0), "c" (0x0) );
+	}
+	CR4::Write(cr4);
 
 	// Figure out where to look for SMP / ACPI information.
 #if defined CONFIG_SMP || defined CONFIG_ACPI
