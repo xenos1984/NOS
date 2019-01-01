@@ -8,6 +8,7 @@ noinst_LIBRARIES = liba32.a
 
 liba32_a_SOURCES = \
 	Interrupt.h \
+	Symbol.h \
 	SystemRegs.h \
 	\
 	Interrupt.cpp \
