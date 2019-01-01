@@ -171,7 +171,7 @@ namespace Kernel
 		}
 
 		int GetISAIRQ(int n);
-	};
+	}
 }
 #endif
 #endif

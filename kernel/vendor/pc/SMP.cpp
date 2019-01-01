@@ -96,6 +96,7 @@ namespace Kernel
 				case 2:
 					smpdefconfig.intin[2].Type = 255;
 					smpdefconfig.intin[13].Type = 255;
+					[[fallthrough]];
 				case 3:
 				case 6:
 					smpdefconfig.bus[0].TypeString[0] = 'E';
@@ -105,6 +106,7 @@ namespace Kernel
 					break;
 				case 7:
 					smpdefconfig.intin[0].Type = 255;
+					[[fallthrough]];
 				case 4:
 					smpdefconfig.bus[0].TypeString[0] = 'M';
 					smpdefconfig.bus[0].TypeString[1] = 'C';
