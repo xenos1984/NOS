@@ -10,6 +10,8 @@ namespace Kernel
 
 	namespace Tasker
 	{
+		unsigned int numcpus;
+
 		Process* CreateProcess(Elf* elf, const char* cmd)
 		{
 			// Create process image.

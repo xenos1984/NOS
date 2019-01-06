@@ -28,6 +28,7 @@ libx86_a_SOURCES = \
 	Processor.h \
 	Symbol.h \
 	SysCall.h \
+	Tasker.h \
 	Thread.h \
 	\
 	Apic.cpp \
@@ -36,5 +37,6 @@ libx86_a_SOURCES = \
 	FPU.cpp \
 	Interrupt.cpp \
 	Pager.cpp \
-	Processor.cpp
+	Processor.cpp \
+	Tasker.cpp
 

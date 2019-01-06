@@ -16,6 +16,7 @@ libia32_a_SOURCES = \
 	Registers.h \
 	Symbol.h \
 	SysCall.h \
+	Tasker.h \
 	Thread.h \
 	\
 	Core.cpp \
@@ -24,6 +25,7 @@ libia32_a_SOURCES = \
 	InterruptStub.S \
 	Pager.cpp \
 	Registers.cpp \
+	Tasker.cpp \
 	Thread.cpp \
 	User.cpp
 

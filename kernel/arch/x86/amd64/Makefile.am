@@ -15,6 +15,7 @@ libamd64_a_SOURCES = \
 	Registers.h \
 	Symbol.h \
 	SysCall.h \
+	Tasker.h \
 	Thread.h \
 	X86_64TaskManager.h \
 	\
@@ -23,6 +24,7 @@ libamd64_a_SOURCES = \
 	InterruptStub.S \
 	Pager.cpp \
 	Registers.cpp \
+	Tasker.cpp \
 	Thread.cpp \
 	User.cpp \
 	X86_64TaskManager.cpp
