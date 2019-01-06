@@ -21,6 +21,9 @@ namespace Kernel
 		unsigned int state;
 
 	public:
+		static Processor* bsp;
+		static Processor* procs;
+
 		Processor(void); /**< Create "default" processor by testing the cpu this code is running at. */
 
 #ifdef CONFIG_ACPI

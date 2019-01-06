@@ -17,6 +17,9 @@ extern bool apflag;
 extern "C" unsigned long apstack;
 extern "C" unsigned char apentry[];
 
+Processor* Processor::bsp = nullptr;
+Processor* Processor::procs = nullptr;
+
 SECTION(".init.text") Processor::Processor(void)
 {
 	physID = bspcpu().GetPhysID();
