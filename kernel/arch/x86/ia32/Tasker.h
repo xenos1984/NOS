@@ -10,6 +10,8 @@ namespace Kernel
 
 	namespace Tasker
 	{
+		static const uintptr_t KernelStackAddr = 0xf0000000;
+		static const uintptr_t KernelStackSize = 0x1000;
 	}
 }
 #endif
