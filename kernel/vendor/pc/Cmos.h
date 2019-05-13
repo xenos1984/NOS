@@ -4,7 +4,7 @@
 #define __ARCH_X86_CMOS_H__
 
 #include <Clock.h>
-#include <AtomicOps.h>
+#include <SpinLock.h>
 #include INC_ARCH(Port.h)
 
 #define READ_WRITE_REG(name, reg) \
@@ -48,7 +48,7 @@ namespace Kernel
 			REG_CENT     = 0x32  /**< Century */
 		};
 
-		AtomicLock lock;
+		SpinLock lock;
 
 		enum RegAddr : uint8_t
 		{

@@ -19,6 +19,7 @@ extern "C" unsigned char apentry[];
 
 Processor* Processor::bsp = nullptr;
 Processor* Processor::procs = nullptr;
+unsigned int Processor::count = 0;
 
 SECTION(".init.text") Processor::Processor(void)
 {

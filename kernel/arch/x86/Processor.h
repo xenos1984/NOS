@@ -23,6 +23,7 @@ namespace Kernel
 	public:
 		static Processor* bsp;
 		static Processor* procs;
+		static unsigned int count;
 
 		Processor(void); /**< Create "default" processor by testing the cpu this code is running at. */
 

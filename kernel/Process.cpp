@@ -48,8 +48,8 @@ Process::~Process(void)
 void Process::AddThread(Thread* t)
 {
 	t->owner = this;
-	threads.IncAndFetch();
-	lock.Enter();
+	threads++;
+	lock.Lock();
 	if(thread == nullptr) // Is this the first thread?
 	{
 		thread = t;
@@ -63,7 +63,7 @@ void Process::AddThread(Thread* t)
 		thread->prevP->nextP = t;
 		thread->prevP = t;
 	}
-	lock.Exit();
+	lock.Unlock();
 }
 
 void Process::RemoveThread(Thread* t)
@@ -71,8 +71,8 @@ void Process::RemoveThread(Thread* t)
 	if(t->owner != this)
 		return;
 
-	threads.DecAndFetch();
-	lock.Enter();
+	threads--;
+	lock.Lock();
 	if(t->nextP == t) // Is this the only thread?
 		t->nextP = t->prevP = thread = nullptr;
 	else
@@ -83,6 +83,6 @@ void Process::RemoveThread(Thread* t)
 		t->prevP->nextP = t->nextP;
 		t->nextP = t->prevP = nullptr;
 	}
-	lock.Exit();
+	lock.Unlock();
 	t->owner = nullptr;
 }

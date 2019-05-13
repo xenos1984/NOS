@@ -4,7 +4,7 @@
 #define __ARCH_X86_IOAPIC_H__
 
 #include <cstdint>
-#include <AtomicOps.h>
+#include <SpinLock.h>
 
 namespace Kernel
 {
@@ -14,7 +14,7 @@ namespace Kernel
 		volatile uint32_t* regsel;
 		volatile uint32_t* win;
 		unsigned int irqbase, irqcount;
-		AtomicLock lock;
+		SpinLock lock;
 
 		enum RegIndex : int
 		{

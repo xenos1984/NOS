@@ -3,13 +3,13 @@
 #include <cstdarg>
 #include <cstdint>
 #include <Console.h>
-#include <AtomicOps.h>
+#include <SpinLock.h>
 
 namespace Kernel
 {
 	namespace Console
 	{
-		static AtomicLock lock;
+		static SpinLock lock;
 
 		void Write(char chr)
 		{
@@ -30,14 +30,14 @@ namespace Kernel
 		{
 			char c;
 
-			lock.Enter();
+			lock.Lock();
 			while((c = *string++) != 0)
 				PutChar(c);
 
 			// Advance to the next line.
 			PutChar('\n');
 			MoveCursor();
-			lock.Exit();
+			lock.Unlock();
 		}
 
 		/** Convert an integer to a formatted string.
@@ -213,19 +213,19 @@ namespace Kernel
 		void WriteFormat(const char *format, ...)
 		{
 			va_list arg;
-			lock.Enter();
+			lock.Lock();
 			va_start(arg, format);
 			SetStyle(Style::TEXT);
 			writef(format, &arg);
 			va_end(arg);
-			lock.Exit();
+			lock.Unlock();
 		}
 
 		void WriteMessage(Style style, const char *message, const char *result, ...)
 		{
 			va_list arg;
 
-			lock.Enter();
+			lock.Lock();
 			va_start(arg, result);
 			SetStyle(Style::TEXT);
 			writef(message, &arg);
@@ -234,7 +234,7 @@ namespace Kernel
 			writef(result, &arg);
 			Write('\n');
 			va_end(arg);
-			lock.Exit();
+			lock.Unlock();
 		}
 	}
 }

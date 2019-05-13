@@ -5,7 +5,7 @@
 #include <Chunker.h>
 #include <Pager.h>
 #include <Symbol.h>
-#include <AtomicOps.h>
+#include <SpinLock.h>
 #include <Console.h>
 #include <heap/Heap.h>
 #include <new>
@@ -42,7 +42,7 @@ namespace Kernel
 		static constexpr size_t bs = 1 << Memory::MinPageBits;
 		static constexpr unsigned int cpb = bs / sizeof(MemoryPointer);
 
-		static AtomicLock lock;
+		static SpinLock lock;
 
 		inline MemoryPointer& MemPtr(unsigned long index)
 		{
@@ -141,7 +141,7 @@ namespace Kernel
 		{
 			MemoryPointer* mp = &root;
 
-			lock.Enter();
+			lock.Lock();
 			do
 			{
 				if(mp->mem == (uintptr_t)addr)
@@ -153,13 +153,13 @@ namespace Kernel
 						Merge(mp);
 					if(mp->prev->free && mp != &root)
 						Merge(mp->prev);
-					lock.Exit();
+					lock.Unlock();
 					return;
 				}
 				mp = mp->next;
 			}
 			while(mp != &root);
-			lock.Exit();
+			lock.Unlock();
 		}
 
 		void* Alloc(size_t bytes, bool physalloc)
@@ -170,7 +170,7 @@ namespace Kernel
 			if(count == CountMax())
 				return(nullptr);
 
-			lock.Enter();
+			lock.Lock();
 			do
 			{
 				if(mp->free && mp->length >= n)
@@ -180,13 +180,13 @@ namespace Kernel
 					mp->free = 0;
 					if(physalloc)
 						AllocChunk(mp);
-					lock.Exit();
+					lock.Unlock();
 					return((void*)(mp->mem));
 				}
 				mp = mp->next;
 			}
 			while(mp != &root);
-			lock.Exit();
+			lock.Unlock();
 
 			return(nullptr);
 		}
@@ -199,7 +199,7 @@ namespace Kernel
 			if(count == CountMax())
 				return(nullptr);
 
-			lock.Enter();
+			lock.Lock();
 			do
 			{
 				if(mp->free && mp->length >= RoundDiff(mp->mem, align) + n)
@@ -214,13 +214,13 @@ namespace Kernel
 					mp->free = 0;
 					if(physalloc)
 						AllocChunk(mp);
-					lock.Exit();
+					lock.Unlock();
 					return((void*)(mp->mem));
 				}
 				mp = mp->next;
 			}
 			while(mp != &root);
-			lock.Exit();
+			lock.Unlock();
 
 			return(nullptr);
 		}
@@ -231,15 +231,14 @@ namespace Kernel
 
 			Console::WriteFormat("count = 0x%8x, cpb = 0x%8x, size = 0x%8x, total = 0x%8x\n", count, cpb, sizeof(MemoryPointer), CountMax());
 			Console::WriteLine("Heap map:");
-			lock.Enter();
+			lock.Lock();
 			do
 			{
 				Console::WriteFormat("Block 0x%p of length 0x%p at 0x%p, %s\n", mp, mp->length, mp->mem, (mp->free ? "free" : "allocated"));
 				mp = mp->next;
 			}
 			while(mp != &root);
-			lock.Exit();
+			lock.Unlock();
 		}
 	}
 }
-

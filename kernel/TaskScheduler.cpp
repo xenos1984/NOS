@@ -22,34 +22,34 @@ SECTION(".init.text") TaskScheduler::TaskScheduler(unsigned long n) : threadCoun
 
 void TaskScheduler::CreateThread(Thread* t)
 {
-	t->id = threadCount.IncAndFetch();
+	t->id = ++threadCount;
 	t->priority = 255;
 	ready.Store(t);
 }
 
 void TaskScheduler::CreateProcess(Process* p)
 {
-	lock.Enter();
-	p->id = processCount.IncAndFetch();
+	lock.Lock();
+	p->id = ++processCount;
 	p->next = &kprocess();
 	p->prev = kprocess().prev;
 	kprocess().prev->next = p;
 	kprocess().prev = p;
-	lock.Exit();
+	lock.Unlock();
 }
 
 void TaskScheduler::DeleteThread(Thread* t)
 {
 	Process* p;
 
-	lock.Enter();
+	lock.Lock();
 	p = t->owner;
 	//Console::WriteFormat("Delete thread @ 0x%8x, owner = 0x%8x, threads = %d\n", t, p, p->threads.Value());
 	p->RemoveThread(t);
-	if(p->threads.Value() == 0)
+	if(p->threads.load(std::memory_order_seq_cst) == 0)
 		DeleteProcess(p);
 	taskman().DeleteThread(t);
-	lock.Exit();
+	lock.Unlock();
 }
 
 void TaskScheduler::DeleteProcess(Process* p)

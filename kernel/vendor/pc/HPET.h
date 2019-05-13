@@ -4,7 +4,7 @@
 #define __ARCH_X86_HPET_H__
 
 #include <cstdint>
-#include <AtomicOps.h>
+#include <SpinLock.h>
 
 namespace Kernel
 {
@@ -68,7 +68,7 @@ namespace Kernel
 				volatile uint64_t Space5;
 			} Timer[32];
 		} PACKED *base;
-		AtomicLock lock;
+		SpinLock lock;
 
 		public:
 		HPET(unsigned long addr);

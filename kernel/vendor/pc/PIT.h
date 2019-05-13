@@ -3,7 +3,7 @@
 #ifndef __ARCH_X86_PIT_H__
 #define __ARCH_X86_PIT_H__
 
-#include <AtomicOps.h>
+#include <SpinLock.h>
 #include INC_ARCH(Port.h)
 
 namespace Kernel
@@ -15,7 +15,7 @@ namespace Kernel
 	class PIT
 	{
 	private:
-		AtomicLock lock;
+		SpinLock lock;
 
 		enum PortAddr : uint8_t
 		{

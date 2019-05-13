@@ -155,7 +155,7 @@ namespace Kernel
 			if(ehdr->Type == Elf::ET_EXEC)
 			{
 				Process* p = taskman().CreateProcess(elf);
-				Console::WriteMessage(Console::Style::OK, "Executable Module at 0x%8x:", "Started with %d bytes.", ModStart, p->memory.Value());
+				Console::WriteMessage(Console::Style::OK, "Executable Module at 0x%8x:", "Started with %d bytes.", ModStart, p->memory.load(std::memory_order_relaxed));
 				return true;
 			}
 

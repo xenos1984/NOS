@@ -4,7 +4,7 @@
 #define __THREADQUEUE_H__
 
 #include <Thread.h>
-#include <AtomicOps.h>
+#include <SpinLock.h>
 
 namespace Kernel
 {
@@ -12,7 +12,7 @@ namespace Kernel
 	{
 	private:
 		Thread* first[256];
-		AtomicLock lock;
+		SpinLock lock;
 		unsigned char priority;
 
 	public:

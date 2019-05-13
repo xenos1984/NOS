@@ -221,7 +221,7 @@ Process* X86_64TaskManager::CreateProcess(Elf* elf)
 			if(Pager::MappedSize(base + (k << Memory::PGB_4K)) == Memory::PGB_INV)
 			{
 				Memory::AllocBlock<Memory::PGB_4K>(base + (k << Memory::PGB_4K), Memory::MemType::USER_RW);
-				p->memory.FetchAndAdd(Memory::PGS_4K);
+				p->memory += Memory::PGS_4K;
 			}
 		}
 

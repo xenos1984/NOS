@@ -3,19 +3,20 @@
 #ifndef __TASKSCHEDULER_H__
 #define __TASKSCHEDULER_H__
 
+#include <atomic>
 #include <TaskManager.h>
 #include <Thread.h>
 #include <ThreadQueue.h>
 #include <Process.h>
-#include <AtomicOps.h>
+#include <SpinLock.h>
 
 namespace Kernel
 {
 	class TaskScheduler
 	{
 	private:
-		AtomicLock lock;
-		AtomicCounter<int> threadCount, processCount;
+		SpinLock lock;
+		std::atomic<int> threadCount, processCount;
 		Thread** current;
 		ThreadQueue ready;
 

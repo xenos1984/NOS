@@ -1,6 +1,5 @@
 // Cmos.cpp - Support for MC146818 CMOS RAM / Real Time Clock.
 
-#include <AtomicOps.h>
 #include <Console.h>
 #include INC_ARCH(Port.h)
 #include INC_VENDOR(Cmos.h)
@@ -13,12 +12,12 @@ Cmos::Cmos(void)
 {
 	uint8_t sec, min, hour, day, mon, year, cent, mode;
 
-	lock.Enter();
+	lock.Lock();
 
 	Port::WriteU8(CMOS_ADDR, REG_STATUS_D);
 	if((Port::ReadU8(CMOS_DATA) & D_VALID) == 0)
 	{
-		lock.Exit();
+		lock.Unlock();
 		Console::WriteMessage(Console::Style::WARNING, "CMOS time:", "Invalid");
 		return;
 	}
@@ -50,7 +49,7 @@ Cmos::Cmos(void)
 	Port::WriteU8(CMOS_ADDR, REG_STATUS_B);
 	mode = Port::ReadU8(CMOS_DATA);
 
-	lock.Exit();
+	lock.Unlock();
 
 	if(mode & B_BCD)
 		Console::WriteMessage(Console::Style::OK, "CMOS time (Dec):", "%2d%2d/%2d/%2d, %2d:%2d:%2d", cent, year, mon, day, hour, min, sec);
@@ -62,19 +61,19 @@ uint8_t Cmos::ReadRegister(uint8_t reg)
 {
 	uint8_t tmp;
 
-	lock.Enter();
+	lock.Lock();
 	Port::WriteU8(CMOS_ADDR, reg);
 	tmp = Port::ReadU8(CMOS_DATA);
-	lock.Exit();
+	lock.Unlock();
 	return(tmp);
 }
 
 void Cmos::WriteRegister(uint8_t reg, uint8_t value)
 {
-	lock.Enter();
+	lock.Lock();
 	Port::WriteU8(CMOS_ADDR, reg);
 	Port::WriteU8(CMOS_DATA, value);
-	lock.Exit();
+	lock.Unlock();
 }
 
 Time Cmos::GetTime(void)
@@ -83,12 +82,12 @@ Time Cmos::GetTime(void)
 	uint8_t mode;
 	static const unsigned long dateoffs[13] = {0, 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
 
-	lock.Enter();
+	lock.Lock();
 
 	Port::WriteU8(CMOS_ADDR, REG_STATUS_D);
 	if((Port::ReadU8(CMOS_DATA) & D_VALID) == 0)
 	{
-		lock.Exit();
+		lock.Unlock();
 		return Time(0);
 	}
 
@@ -119,7 +118,7 @@ Time Cmos::GetTime(void)
 	Port::WriteU8(CMOS_ADDR, REG_STATUS_B);
 	mode = Port::ReadU8(CMOS_DATA);
 
-	lock.Exit();
+	lock.Unlock();
 
 	if((mode & B_BCD) == 0)
 	{
@@ -139,18 +138,18 @@ void Cmos::WaitForSecond(void)
 {
 	uint8_t sec;
 
-	lock.Enter();
+	lock.Lock();
 	Port::WriteU8(CMOS_ADDR, REG_STATUS_A);
 	while(Port::ReadU8(CMOS_DATA) & A_UPDATE) ;
 	Port::WriteU8(CMOS_ADDR, REG_SEC);
 	sec = Port::ReadU8(CMOS_DATA);
 	while(sec == Port::ReadU8(CMOS_DATA));
-	lock.Exit();
+	lock.Unlock();
 }
 
 void Cmos::SetPeriodic(uint8_t div)
 {
-	lock.Enter();
+	lock.Lock();
 	Port::WriteU8(CMOS_ADDR, REG_STATUS_A);
 	while(Port::ReadU8(CMOS_DATA) & A_UPDATE) ; // wait for update-in-progress
 	Port::WriteU8(CMOS_DATA, (Port::ReadU8(CMOS_DATA) & 0xf0) | (div & 0x0f)); // set rate
@@ -158,5 +157,5 @@ void Cmos::SetPeriodic(uint8_t div)
 	Port::WriteU8(CMOS_DATA, Port::ReadU8(CMOS_DATA) | IRQ_PER); // enable periodic interrupt
 	Port::WriteU8(CMOS_ADDR, REG_STATUS_C);
 	Port::ReadU8(CMOS_DATA); // clear interrupt pending
-	lock.Exit();
+	lock.Unlock();
 }

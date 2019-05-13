@@ -4,7 +4,8 @@
 #define __THREAD_H__
 
 #include <cstdint>
-#include <AtomicOps.h>
+#include <atomic>
+#include <SpinLock.h>
 #include INC_ARCH(Thread.h)
 
 namespace Kernel
@@ -61,8 +62,8 @@ namespace Kernel
 		unsigned char priority; /**< Current thread priority. */
 		unsigned int slice; /**< Time slice for this thread. */
 		unsigned int delta; /**< Delta value for wakeup queue. */
-		AtomicCounter<uint64_t> total; /**< Total time consumed by this thread. */
-		AtomicLock lock; /**< Lock this thread when it is attached to a CPU. */
+		std::atomic<uint64_t> total; /**< Total time consumed by this thread. */
+		SpinLock lock; /**< Lock this thread when it is attached to a CPU. */
 
 		ThreadData data; /**< Architecture specific data needed for each thread. */
 

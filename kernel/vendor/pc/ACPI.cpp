@@ -4,6 +4,7 @@
 #include INC_VENDOR(ACPI.h)
 #include INC_VENDOR(AML.h)
 #include INC_ARCH(Apic.h)
+#include INC_ARCH(Processor.h)
 #include INC_VENDOR(IOApic.h)
 #include INC_VENDOR(HPET.h)
 #include <Pager.h>
@@ -186,7 +187,24 @@ namespace Kernel
 					break;
 				}
 			}
-		}
+/*
+			if(numcpus > 0)
+			{
+				Processor::count = numcpus;
+				Processor::procs = reinterpret_cast<Processor*>(new char[numcpus * sizeof(Processor)]);
+				Processor::bsp = Processor::procs;
+
+				for(int i = 0; i < numcpus; i++)
+				{
+					new (&(Processor::procs[i])) Processor(cpus[i]->ApicID);
+					if((i > 0) && (cpus[i]->Flags & CPU_ENABLED))
+						Processor::procs[i].Startup(
+				}
+			}
+			else
+			{
+			}
+*/		}
 
 		void SECTION(".init.text") ParseFadt(FadTable* fadt)
 		{

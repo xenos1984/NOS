@@ -31,29 +31,29 @@ unsigned int IOApic::GetID(void)
 {
 	unsigned int tmp;
 
-	lock.Enter();
+	lock.Lock();
 	*regsel = APICID;
 	tmp = *win;
-	lock.Exit();
+	lock.Unlock();
 	return(tmp);
 }
 
 void IOApic::SetID(unsigned int id)
 {
-	lock.Enter();
+	lock.Lock();
 	*regsel = APICID;
 	*win = id;
-	lock.Exit();
+	lock.Unlock();
 }
 
 unsigned char IOApic::GetVersion(void)
 {
 	unsigned char tmp;
 
-	lock.Enter();
+	lock.Lock();
 	*regsel = APICVER;
 	tmp = *win & 0xff;
-	lock.Exit();
+	lock.Unlock();
 	return(tmp);
 }
 
@@ -61,10 +61,10 @@ unsigned char IOApic::GetMaxEntry(void)
 {
 	unsigned char tmp;
 
-	lock.Enter();
+	lock.Lock();
 	*regsel = APICVER;
 	tmp = (*win >> 16) & 0xff;
-	lock.Exit();
+	lock.Unlock();
 	return(tmp);
 }
 
@@ -72,10 +72,10 @@ unsigned int IOApic::GetArbitration(void)
 {
 	unsigned int tmp;
 
-	lock.Enter();
+	lock.Lock();
 	*regsel = APICARB;
 	tmp = *win;
-	lock.Exit();
+	lock.Unlock();
 	return(tmp);
 }
 
@@ -83,7 +83,7 @@ void IOApic::SetIRQ(unsigned char n, unsigned char dest, unsigned char vect, uns
 {
 	unsigned int tmp;
 
-	lock.Enter();
+	lock.Lock();
 	*regsel = REDTBL + 2 * n + 1;
 	tmp = *win;
 	tmp = (tmp & 0x00ffffff) | ((unsigned int)dest << 24);
@@ -93,21 +93,21 @@ void IOApic::SetIRQ(unsigned char n, unsigned char dest, unsigned char vect, uns
 	tmp = *win;
 	tmp = (tmp & 0xfffea000) | ((vect | flags) & 0x00015fff);
 	*win = tmp;
-	lock.Exit();
+	lock.Unlock();
 }
 
 void IOApic::MaskIRQ(unsigned char n)
 {
-	lock.Enter();
+	lock.Lock();
 	*regsel = REDTBL + 2 * n;
 	*win |= INT_MASK;
-	lock.Exit();
+	lock.Unlock();
 }
 
 void IOApic::UnmaskIRQ(unsigned char n)
 {
-	lock.Enter();
+	lock.Lock();
 	*regsel = REDTBL + 2 * n;
 	*win &= ~INT_MASK;
-	lock.Exit();
+	lock.Unlock();
 }

@@ -9,11 +9,11 @@ ThreadQueue::ThreadQueue(void)
 {
 	int i;
 
-	lock.Enter();
+	lock.Lock();
 	for(i = 0; i < 256; i++)
 		first[i] = nullptr;
 	priority = 0;
-	lock.Exit();
+	lock.Unlock();
 }
 
 ThreadQueue::~ThreadQueue(void)
@@ -23,7 +23,7 @@ ThreadQueue::~ThreadQueue(void)
 void ThreadQueue::Store(Thread* t)
 {
 //	Console::WriteFormat("[%d] Store(0x%16lx)\n", taskman().GetCurrentCPU(), t);
-	lock.Enter();
+	lock.Lock();
 	if(first[t->priority] == nullptr)
 	{
 		first[t->priority] = t;
@@ -38,14 +38,14 @@ void ThreadQueue::Store(Thread* t)
 	// If necessary, raise priority.
 	if(t->priority > priority)
 		priority = t->priority;
-	lock.Exit();
+	lock.Unlock();
 }
 
 Thread* ThreadQueue::Retrieve(void)
 {
 	Thread* t = nullptr;
 
-	lock.Enter();
+	lock.Lock();
 	if(priority > 0)
 		t = first[priority];
 	if(t != nullptr)
@@ -64,7 +64,7 @@ Thread* ThreadQueue::Retrieve(void)
 		}
 		t->prevQ = t->nextQ = nullptr;
 	}
-	lock.Exit();
+	lock.Unlock();
 //	Console::WriteFormat("[%d] Retrieve = 0x%16lx\n", taskman().GetCurrentCPU(), t);
 	return(t);
 }
@@ -74,7 +74,7 @@ Thread* ThreadQueue::Exchange(Thread* from)
 	Thread* to = from;
 
 //	Console::WriteFormat("[%d] Exchange(0x%16lx)\n", taskman().GetCurrentCPU(), from);
-	lock.Enter();
+	lock.Lock();
 	if(priority == from->priority)
 	{
 		// We have a thread with the same priority - get it and put the old thread into the queue.
@@ -115,7 +115,7 @@ Thread* ThreadQueue::Exchange(Thread* from)
 		}
 	}
 	to->prevQ = to->nextQ = nullptr;
-	lock.Exit();
+	lock.Unlock();
 //	Console::WriteFormat("[%d] Exchange = 0x%16lx\n", taskman().GetCurrentCPU(), to);
 	return(to);
 }

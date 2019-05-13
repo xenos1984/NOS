@@ -4,7 +4,8 @@
 #define __PROCESS_H__
 
 #include <cstdint>
-#include <AtomicOps.h>
+#include <atomic>
+#include <SpinLock.h>
 #include <Elf.h>
 #include <Pager.h>
 #include INC_ARCH(Process.h)
@@ -30,10 +31,10 @@ namespace Kernel
 		ProcessState state; /**< Process state. */
 		unsigned char priority; /**< Current priority used for new threads. */
 		Thread* thread; /**< Pointer to first thread. */
-		AtomicCounter<int> threads; /**< Number of threads. */
-		AtomicCounter<unsigned long> memory; /**< Total memory occupied by this process. */
-		AtomicCounter<uint64_t> time; /**< Total time consumed by this process. */
-		AtomicLock lock; /**< Lock used to safely maintain the thread list. */
+		std::atomic<int> threads; /**< Number of threads. */
+		std::atomic<std::size_t> memory; /**< Total memory occupied by this process. */
+		std::atomic<uint64_t> time; /**< Total time consumed by this process. */
+		SpinLock lock; /**< Lock used to safely maintain the thread list. */
 
 		ProcessData data; /**< Architecture specific data needed for each process. */
 		Pager::Context context;
