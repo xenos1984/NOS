@@ -23,6 +23,7 @@ libkernel_a_SOURCES = \
 	Pager.h \
 	Process.h \
 	Segment.h \
+	SpinLock.h \
 	Symbol.h \
 	Tasker.h \
 	TaskManager.h \
@@ -38,6 +39,7 @@ libkernel_a_SOURCES = \
 	Memory.cpp \
 	Pager.cpp \
 	Process.cpp \
+	SpinLock.cpp \
 	Tasker.cpp \
 	TaskScheduler.cpp \
 	Thread.cpp \
