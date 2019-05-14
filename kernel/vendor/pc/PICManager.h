@@ -1,7 +1,7 @@
 // PICManager.h - Interrupt manager for PIC based systems.
 
-#ifndef __ARCH_X86_PICMANAGER_H__
-#define __ARCH_X86_PICMANAGER_H__
+#ifndef __VENDOR_PC_PICMANAGER_H__
+#define __VENDOR_PC_PICMANAGER_H__
 
 #include <IRQManager.h>
 #include INC_VENDOR(PIC.h)

@@ -1,7 +1,7 @@
 // PITClock.h - System clock based on PIT
 
-#ifndef __ARCH_X86_PITCLOCK_H__
-#define __ARCH_X86_PITCLOCK_H__
+#ifndef __VENDOR_PC_PITCLOCK_H__
+#define __VENDOR_PC_PITCLOCK_H__
 
 #include <Clock.h>
 

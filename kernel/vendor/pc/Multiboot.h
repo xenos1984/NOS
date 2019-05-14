@@ -1,7 +1,7 @@
 // Multiboot.h - Multiboot support for the kernel.
 
-#ifndef __ARCH_X86_MULTIBOOT_H__
-#define __ARCH_X86_MULTIBOOT_H__
+#ifndef __VENDOR_PC_MULTIBOOT_H__
+#define __VENDOR_PC_MULTIBOOT_H__
 
 #include <cstdint>
 #include <Memory.h>

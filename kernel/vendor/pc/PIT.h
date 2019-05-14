@@ -1,7 +1,7 @@
 // PIT.h - Support for programmable interval timer (Intel 8253).
 
-#ifndef __ARCH_X86_PIT_H__
-#define __ARCH_X86_PIT_H__
+#ifndef __VENDOR_PC_PIT_H__
+#define __VENDOR_PC_PIT_H__
 
 #include <SpinLock.h>
 #include INC_ARCH(Port.h)

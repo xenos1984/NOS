@@ -1,7 +1,7 @@
 // PIC.h - Programmable Interrupt Controller
 
-#ifndef __ARCH_X86_PIC_H__
-#define __ARCH_X86_PIC_H__
+#ifndef __VENDOR_PC_PIC_H__
+#define __VENDOR_PC_PIC_H__
 
 #include <cstdint>
 #include INC_ARCH(Port.h)

@@ -1,7 +1,7 @@
 // HPET.h - High Precision Event Timer
 
-#ifndef __ARCH_X86_HPET_H__
-#define __ARCH_X86_HPET_H__
+#ifndef __VENDOR_PC_HPET_H__
+#define __VENDOR_PC_HPET_H__
 
 #include <cstdint>
 #include <SpinLock.h>

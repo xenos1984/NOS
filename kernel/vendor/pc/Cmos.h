@@ -1,7 +1,7 @@
 // Cmos.h - Support for MC146818 CMOS RAM / Real Time Clock.
 
-#ifndef __ARCH_X86_CMOS_H__
-#define __ARCH_X86_CMOS_H__
+#ifndef __VENDOR_PC_CMOS_H__
+#define __VENDOR_PC_CMOS_H__
 
 #include <Clock.h>
 #include <SpinLock.h>

@@ -1,7 +1,7 @@
 // IOApicManager.h - Interrupt manager for IOApic based systems.
 
-#ifndef __ARCH_X86_IOAPICMANAGER_H__
-#define __ARCH_X86_IOAPICMANAGER_H__
+#ifndef __VENDOR_PC_IOAPICMANAGER_H__
+#define __VENDOR_PC_IOAPICMANAGER_H__
 
 #include <IRQManager.h>
 #include INC_VENDOR(IOApic.h)

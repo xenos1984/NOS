@@ -1,7 +1,7 @@
 // IOApic.h - I/O Apic support
 
-#ifndef __ARCH_X86_IOAPIC_H__
-#define __ARCH_X86_IOAPIC_H__
+#ifndef __VENDOR_PC_IOAPIC_H__
+#define __VENDOR_PC_IOAPIC_H__
 
 #include <cstdint>
 #include <SpinLock.h>

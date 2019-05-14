@@ -1,7 +1,7 @@
 // Console.h - VGA text mode console driver.
 
-#ifndef __ARCH_X86_CONSOLE_H__
-#define __ARCH_X86_CONSOLE_H__
+#ifndef __VENDOR_PC_CONSOLE_H__
+#define __VENDOR_PC_CONSOLE_H__
 
 namespace Kernel
 {

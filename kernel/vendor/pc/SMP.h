@@ -1,7 +1,7 @@
 // SMP.h - Symmetric multiprocessing management.
 
-#ifndef __ARCH_X86_SMP_H__
-#define __ARCH_X86_SMP_H__
+#ifndef __VENDOR_PC_SMP_H__
+#define __VENDOR_PC_SMP_H__
 
 #include <cstdint>
 #include <Memory.h>

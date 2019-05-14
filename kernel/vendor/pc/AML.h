@@ -1,7 +1,7 @@
 // AML.h - ACPI Machine Language
 
-#ifndef __ARCH_X86_AML_H__
-#define __ARCH_X86_AML_H__
+#ifndef __VENDOR_PC_AML_H__
+#define __VENDOR_PC_AML_H__
 
 #include INC_VENDOR(ACPI.h)
 

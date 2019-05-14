@@ -1,7 +1,7 @@
 // ACPI.h - Advanced Configuration and Power Interface.
 
-#ifndef __ARCH_X86_ACPI_H__
-#define __ARCH_X86_ACPI_H__
+#ifndef __VENDOR_PC_ACPI_H__
+#define __VENDOR_PC_ACPI_H__
 
 #include <cstdint>
 #include <Memory.h>
