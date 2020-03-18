@@ -15,7 +15,7 @@ Operating system project
 
 *	Configure the target architecture (replace &lt;target triplet&gt; with the target triplet):
 
-		./configure <target-triplet>
+		./configure --host=<target-triplet>
 
 *	Build:
 
