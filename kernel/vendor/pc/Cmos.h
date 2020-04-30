@@ -3,6 +3,7 @@
 #ifndef __VENDOR_PC_CMOS_H__
 #define __VENDOR_PC_CMOS_H__
 
+#include <cstdint>
 #include <Clock.h>
 #include <SpinLock.h>
 #include INC_ARCH(Port.h)
