@@ -22,12 +22,12 @@ void PITIRQ(void)
 SECTION(".init.text") PITClock::PITClock(Time t0, int i) : Clock(t0, Time::Second(65536) / PIT::Frequency), irq(i)
 {
 	tabIDT.CreateInterruptGate(FIRST_IRQ + irq, KERNEL_CODE, &PITIRQWrapper);
-	pit().SetPeriodic(0, 0);
+	PIT::SetPeriodic(0, 0);
 	irqman().Unmask(irq);
 	Console::WriteMessage(Console::Style::OK, "Clock:", "PIT at IRQ #%d, offset = %ld, tick = %ld", irq, offset.raw, tick.raw);
 }
 
 Time PITClock::GetTime(void)
 {
-	return(offset + Time::Second(65536 - pit().GetCurrent(0)) / PIT::Frequency);
+	return(offset + Time::Second(65536 - PIT::GetCurrent(0)) / PIT::Frequency);
 }

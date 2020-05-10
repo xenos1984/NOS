@@ -63,26 +63,26 @@ void SECTION(".init.text") Processor::Startup(unsigned long stack)
 	Apic::ClearError();
 	Apic::SendIPI(physID, 0, Apic::DEST_FIELD | Apic::DM_INIT); // deassert INIT IPI
 	while(Apic::SendPending()) ;
-	pit().SetOneShot(0, 11932); // 10ms
-	while(pit().GetCurrent(0) <= 11932) ;
+	PIT::SetOneShot(0, 11932); // 10ms
+	while(PIT::GetCurrent(0) <= 11932) ;
 	if(Apic::GetVersion() >= 0x10)
 	{
 		Apic::ClearError();
 		Apic::SendIPI(physID, AP_INIT_ADDR >> 12, Apic::DEST_FIELD | Apic::DM_STARTUP);
 		while(Apic::SendPending()) ;
-		pit().SetOneShot(0, 239); // 200µs
-		while(pit().GetCurrent(0) <= 239) ;
+		PIT::SetOneShot(0, 239); // 200µs
+		while(PIT::GetCurrent(0) <= 239) ;
 		if(!apflag)
 		{
 			Apic::ClearError();
 			Apic::SendIPI(physID, AP_INIT_ADDR >> 12, Apic::DEST_FIELD | Apic::DM_STARTUP);
 			while(Apic::SendPending()) ;
-			pit().SetOneShot(0, 239); // 200µs
-			while(pit().GetCurrent(0) <= 239) ;
+			PIT::SetOneShot(0, 239); // 200µs
+			while(PIT::GetCurrent(0) <= 239) ;
 		}
 	}
-	pit().SetOneShot(0, 11932); // 10ms
-	while((pit().GetCurrent(0) <= 11932) && !apflag) ;
+	PIT::SetOneShot(0, 11932); // 10ms
+	while((PIT::GetCurrent(0) <= 11932) && !apflag) ;
 	Cmos::SetShutdownStatus(Cmos::SH_NORMAL);
 	if(apflag)
 		Console::WriteMessage(Console::Style::OK, "AP no. 0x%2x: ", "booted", physID);

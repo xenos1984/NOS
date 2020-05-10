@@ -5,9 +5,9 @@
 
 using namespace Kernel;
 
-char pit_space[sizeof(PIT)];
+SpinLock PIT::lock;
 
-PIT::PIT(void)
+void PIT::Init(void)
 {
 }
 

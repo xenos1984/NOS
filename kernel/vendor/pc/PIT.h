@@ -12,11 +12,8 @@ namespace Kernel
 	 * Programmable interval timer.
 	 * The PIT can be used for periodic interrupts, memory refresh and the pc speaker. It is accessed via registers 0x40 - 0x43.
 	 */
-	class PIT
+	namespace PIT
 	{
-	private:
-		SpinLock lock;
-
 		enum PortAddr : uint8_t
 		{
 			baseaddr = 0x40,
@@ -41,8 +38,7 @@ namespace Kernel
 			MODE_LSB_MSB     = 0x30
 		};
 
-	public:
-		PIT(void);
+		void Init(void);
 
 		void SetPeriodic(uint8_t timer, uint16_t count);
 		void SetSquareWave(uint8_t timer, uint16_t count);
@@ -50,10 +46,9 @@ namespace Kernel
 		uint16_t GetCurrent(uint8_t timer);
 
 		static const unsigned int Frequency = 0x1234dd;
-	};
-}
 
-extern char pit_space[];
-inline Kernel::PIT& pit(void) { return(reinterpret_cast<Kernel::PIT&>(pit_space)); }
+		extern SpinLock lock;
+	}
+}
 
 #endif

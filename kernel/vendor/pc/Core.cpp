@@ -40,7 +40,7 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, uint32_t mbiph
 
 	// Init further hardware components.
 	Cmos::Init();
-	new (pit_space) PIT;
+	PIT::Init();
 
 #ifdef ELF32
 	if(bspcpu().HasLongMode())
