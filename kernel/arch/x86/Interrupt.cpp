@@ -440,7 +440,7 @@ KERNINT(SSEFault)
 TIMER(CMOSTimerIRQ)
 {
 	tasksched().Schedule();
-	cmos().GetStatusC();
+	Cmos::GetStatusC();
 	irqman().SendEOI(8);
 }
 

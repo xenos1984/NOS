@@ -39,8 +39,7 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, uint32_t mbiph
 	Multiboot::Info* mbi = Multiboot::InitMemory(mbiphys);
 
 	// Init further hardware components.
-	// TODO: Move Cmos and PIT from arch to vendor.
-	new (cmos_space) Cmos;
+	Cmos::Init();
 	new (pit_space) PIT;
 
 #ifdef ELF32

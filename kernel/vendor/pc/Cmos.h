@@ -25,9 +25,8 @@ namespace Kernel
 	 * Real Time Clock / CMOS chip.
 	 * The RTC / CMOS chip provides time and configuration data. It can be accessed via ports 70h and 71h.
 	 */
-	class Cmos
+	namespace Cmos
 	{
-	private:
 		enum RegIndex : uint8_t
 		{
 			REG_SEC      = 0x00, /**< Seconds */
@@ -49,8 +48,6 @@ namespace Kernel
 			REG_CENT     = 0x32  /**< Century */
 		};
 
-		SpinLock lock;
-
 		enum RegAddr : uint8_t
 		{
 			CMOS_ADDR = 0x70,
@@ -60,8 +57,7 @@ namespace Kernel
 		uint8_t ReadRegister(uint8_t reg);
 		void WriteRegister(uint8_t reg, uint8_t value);
 
-	public:
-		Cmos(void);
+		void Init(void);
 
 		enum RegValue : uint8_t
 		{
@@ -104,30 +100,29 @@ namespace Kernel
 			D_VALID       = 0x80  /**< RTC data valid */
 		};
 
-		READ_WRITE_REG(Second, REG_SEC);
-		READ_WRITE_REG(Minute, REG_MIN);
-		READ_WRITE_REG(Hour, REG_HOUR);
-		READ_WRITE_REG(DayOfWeek, REG_DOW);
-		READ_WRITE_REG(Day, REG_DAY);
-		READ_WRITE_REG(Month, REG_MONTH);
-		READ_WRITE_REG(Year, REG_YEAR);
-		READ_WRITE_REG(Century, REG_CENT);
+		READ_WRITE_REG(Second, REG_SEC)
+		READ_WRITE_REG(Minute, REG_MIN)
+		READ_WRITE_REG(Hour, REG_HOUR)
+		READ_WRITE_REG(DayOfWeek, REG_DOW)
+		READ_WRITE_REG(Day, REG_DAY)
+		READ_WRITE_REG(Month, REG_MONTH)
+		READ_WRITE_REG(Year, REG_YEAR)
+		READ_WRITE_REG(Century, REG_CENT)
 
-		READ_WRITE_REG(StatusA, REG_STATUS_A);
-		READ_WRITE_REG(StatusB, REG_STATUS_B);
-		READ_WRITE_REG(StatusC, REG_STATUS_C);
-		READ_WRITE_REG(StatusD, REG_STATUS_D);
+		READ_WRITE_REG(StatusA, REG_STATUS_A)
+		READ_WRITE_REG(StatusB, REG_STATUS_B)
+		READ_WRITE_REG(StatusC, REG_STATUS_C)
+		READ_WRITE_REG(StatusD, REG_STATUS_D)
 
-		READ_WRITE_REG(ShutdownStatus, REG_SHUTDOWN);
+		READ_WRITE_REG(ShutdownStatus, REG_SHUTDOWN)
 
 		Time GetTime(void);
 		void WaitForSecond(void);
 		void SetPeriodic(uint8_t div); /**< Periodic interrupt with frequency 2Hz * 2^(15 - div) */
-	};
-}
 
-extern char cmos_space[];
-inline Kernel::Cmos& cmos(void) { return(reinterpret_cast<Kernel::Cmos&>(cmos_space)); }
+		extern SpinLock lock;
+	}
+}
 
 #undef READ_WRITE_REG
 

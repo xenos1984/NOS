@@ -55,7 +55,7 @@ void SECTION(".init.text") Processor::Startup(unsigned long stack)
 		((unsigned char*)(AP_INIT_ADDR + Symbol::kernelOffset.Addr()))[i] = apentry[i];
 
 	apflag = false;
-	cmos().SetShutdownStatus(Cmos::SH_JMP467);
+	Cmos::SetShutdownStatus(Cmos::SH_JMP467);
 	*(unsigned int *)(0x00000467 + Symbol::kernelOffset.Addr()) = (AP_INIT_ADDR >> 12);
 	Apic::ClearError();
 	Apic::SendIPI(physID, 0, Apic::DEST_FIELD | Apic::INT_ASSERT | Apic::DM_INIT); // assert INIT IPI
@@ -83,7 +83,7 @@ void SECTION(".init.text") Processor::Startup(unsigned long stack)
 	}
 	pit().SetOneShot(0, 11932); // 10ms
 	while((pit().GetCurrent(0) <= 11932) && !apflag) ;
-	cmos().SetShutdownStatus(Cmos::SH_NORMAL);
+	Cmos::SetShutdownStatus(Cmos::SH_NORMAL);
 	if(apflag)
 		Console::WriteMessage(Console::Style::OK, "AP no. 0x%2x: ", "booted", physID);
 	else

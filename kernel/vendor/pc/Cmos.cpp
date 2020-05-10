@@ -6,9 +6,9 @@
 
 using namespace Kernel;
 
-char cmos_space[sizeof(Cmos)];
+SpinLock Cmos::lock;
 
-Cmos::Cmos(void)
+void Cmos::Init(void)
 {
 	uint8_t sec, min, hour, day, mon, year, cent, mode;
 
