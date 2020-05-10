@@ -147,7 +147,7 @@ AC_DEFUN([NOS_SET_HOST], [
 
 AC_DEFUN([NOS_SET_FLAGS], [
 	CFLAGS="${CFLAGS} -ffreestanding -fno-leading-underscore -Wall -Wextra -Wpedantic"
-	CXXFLAGS="${CFLAGS} -fno-rtti -fno-exceptions -std=c++17"
+	CXXFLAGS="${CFLAGS} -fno-rtti -fno-exceptions -std=c++20"
 	LDFLAGS="${LDFLAGS} -nostartfiles -nostdlib -fno-rtti -fno-exceptions"
 ])
 
