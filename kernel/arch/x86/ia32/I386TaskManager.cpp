@@ -75,7 +75,7 @@ void SECTION(".init.text") I386TaskManager::Init(void)
 	else
 	{
 		Console::WriteMessage(Console::Style::WARNING, "APIC:", "Not present.");
-		cmos().SetPeriodic(7); // 512Hz
+		Cmos::SetPeriodic(7); // 512Hz
 		irqman().Unmask(8);
 	}
 }
