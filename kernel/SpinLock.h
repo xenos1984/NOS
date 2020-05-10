@@ -11,7 +11,7 @@ namespace Kernel
 	{
 	private:
 #if ATOMIC_BOOL_LOCK_FREE == 2
-		std::atomic<bool> lock = false;
+		std::atomic_bool lock = false;
 #else
 		std::atomic_flag lock = ATOMIC_FLAG_INIT;
 #endif

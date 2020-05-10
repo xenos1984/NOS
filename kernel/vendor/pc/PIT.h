@@ -46,8 +46,6 @@ namespace Kernel
 		uint16_t GetCurrent(uint8_t timer);
 
 		static const unsigned int Frequency = 0x1234dd;
-
-		extern SpinLock lock;
 	}
 }
 

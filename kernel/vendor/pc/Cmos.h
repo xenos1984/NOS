@@ -119,8 +119,6 @@ namespace Kernel
 		Time GetTime(void);
 		void WaitForSecond(void);
 		void SetPeriodic(uint8_t div); /**< Periodic interrupt with frequency 2Hz * 2^(15 - div) */
-
-		extern SpinLock lock;
 	}
 }
 
