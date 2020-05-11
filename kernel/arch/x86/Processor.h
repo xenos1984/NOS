@@ -3,10 +3,6 @@
 #ifndef __ARCH_X86_PROCESSOR_H__
 #define __ARCH_X86_PROCESSOR_H__
 
-#include INC_VENDOR(ACPI.h)
-#include INC_VENDOR(SMP.h)
-#include <Thread.h>
-
 namespace Kernel
 {
 	/** Single x86 CPU (maybe in a multi-processor environment).
@@ -27,19 +23,14 @@ namespace Kernel
 
 		Processor(void); /**< Create "default" processor by testing the cpu this code is running at. */
 
-#ifdef CONFIG_ACPI
-		Processor(ACPI::LApic* ala); /**< Create processor from ACPI data. */
-#endif
-#ifdef CONFIG_SMP
-		Processor(SMP::Cpu* sc); /**< Create processor from SMP data. */
-#endif
-
-		~Processor(void);
-
 #if defined CONFIG_SMP || defined CONFIG_ACPI
+		Processor(unsigned char pid); /**< Create processor with given local APIC physical ID. */
+
 		void Startup(unsigned long stack); /**< Put processor in a wait loop, ready for executing. */
 		void Shutdown(void); /**< Shut down processor. */
 #endif
+
+		~Processor(void);
 
 		/** Physical CPU ID. */
 		inline unsigned char GetPhysID(void) const

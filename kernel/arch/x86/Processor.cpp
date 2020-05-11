@@ -5,8 +5,6 @@
 #include <Symbol.h>
 #include INC_VENDOR(Cmos.h)
 #include INC_VENDOR(PIT.h)
-#include INC_VENDOR(ACPI.h)
-#include INC_VENDOR(SMP.h)
 #include INC_ARCH(Apic.h)
 #include INC_ARCH(Processor.h)
 #include INC_ARCH(CPU.h)
@@ -26,25 +24,15 @@ SECTION(".init.text") Processor::Processor(void)
 	physID = bspcpu().GetPhysID();
 }
 
-#ifdef CONFIG_ACPI
-SECTION(".init.text") Processor::Processor(ACPI::LApic* ala)
-{
-	physID = ala->ApicID;
-}
-#endif
-
-#ifdef CONFIG_SMP
-SECTION(".init.text") Processor::Processor(SMP::Cpu* sc)
-{
-	physID = sc->LocalApicID;
-}
-#endif
-
 Processor::~Processor(void)
 {
 }
 
 #if defined CONFIG_SMP || defined CONFIG_ACPI
+SECTION(".init.text") Processor::Processor(unsigned char pid) : physID(pid)
+{
+}
+
 void SECTION(".init.text") Processor::Startup(unsigned long stack)
 {
 	long i;

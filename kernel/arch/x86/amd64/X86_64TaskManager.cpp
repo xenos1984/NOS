@@ -90,7 +90,7 @@ void SECTION(".init.text") X86_64TaskManager::InitAcpi(void)
 	for(i = 0; i < x86_64taskman().numcpus; i++)
 	{
 		ala = ACPI::GetProcessor(i);
-		new (&(x86_64taskman().cpu[i])) Processor(ala);
+		new (&(x86_64taskman().cpu[i])) Processor(ala->ApicID);
 		pr = &(x86_64taskman().cpu[i]);
 		if(i == 0) // Hey, it's me!
 		{
@@ -127,7 +127,7 @@ void SECTION(".init.text") X86_64TaskManager::InitSmp(void)
 	for(i = 0; i < x86_64taskman().numcpus; i++)
 	{
 		sc = SMP::GetProcessor(i);
-		new (&(x86_64taskman().cpu[i])) Processor(sc);
+		new (&(x86_64taskman().cpu[i])) Processor(sc->LocalApicID);
 		pr = &(x86_64taskman().cpu[i]);
 		if(sc->Flags & SMP::CPU_BSP) // Hey, it's me!
 		{

@@ -99,7 +99,7 @@ void SECTION(".init.text") I386TaskManager::InitAcpi(void)
 	for(i = 0; i < i386taskman().numcpus; i++)
 	{
 		ala = ACPI::GetProcessor(i);
-		new (&(i386taskman().cpu[i])) Processor(ala);
+		new (&(i386taskman().cpu[i])) Processor(ala->ApicID);
 		pr = &(i386taskman().cpu[i]);
 		if(i == 0) // Hey, it's me!
 		{
@@ -131,7 +131,7 @@ void SECTION(".init.text") I386TaskManager::InitSmp(void)
 	for(i = 0; i < i386taskman().numcpus; i++)
 	{
 		sc = SMP::GetProcessor(i);
-		new (&(i386taskman().cpu[i])) Processor(sc);
+		new (&(i386taskman().cpu[i])) Processor(sc->LocalApicID);
 		pr = &(i386taskman().cpu[i]);
 		if(sc->Flags & SMP::CPU_BSP) // Hey, it's me!
 		{
