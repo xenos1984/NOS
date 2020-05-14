@@ -4,6 +4,13 @@
 
 using namespace Kernel;
 
+inline void SpinLock::DefaultIdle(void)
+{
+#if defined(__i386__) || defined(__amd64__)
+	asm volatile ("pause");
+#endif
+}
+
 #if ATOMIC_BOOL_LOCK_FREE == 2
 template<typename IdleFunc> void SpinLock::Lock(IdleFunc idle)
 {
@@ -16,6 +23,20 @@ template<typename IdleFunc> void SpinLock::Lock(IdleFunc idle)
 		}
 
 		idle();
+	}
+}
+
+void SpinLock::Lock(void)
+{
+	while(true)
+	{
+		if(!lock.load(std::memory_order_acquire))
+		{
+			if(!lock.exchange(true, std::memory_order_acquire))
+				return;
+		}
+
+		DefaultIdle();
 	}
 }
 
@@ -39,6 +60,12 @@ template<typename IdleFunc> void SpinLock::Lock(IdleFunc idle)
 {
 	while(lock.test_and_set(std::memory_order_acquire))
 		idle();
+}
+
+void SpinLock::Lock(void)
+{
+	while(lock.test_and_set(std::memory_order_acquire))
+		DefaultIdle();
 }
 
 bool SpinLock::Try(void)

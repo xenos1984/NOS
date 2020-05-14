@@ -16,8 +16,11 @@ namespace Kernel
 		std::atomic_flag lock = ATOMIC_FLAG_INIT;
 #endif
 
+		inline static void DefaultIdle(void);
+
 	public:
-		template<typename IdleFunc = void()> void Lock(IdleFunc idle = []{});
+		template<typename IdleFunc = void()> void Lock(IdleFunc idle);
+		void Lock(void);
 		bool Try(void);
 		void Unlock(void);
 	};
