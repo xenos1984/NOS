@@ -11,7 +11,6 @@ AM_CPPFLAGS = -imacros $(top_srcdir)/config.h -I$(top_srcdir)/kernel -I$(top_src
 noinst_LIBRARIES = libarm.a
 
 libarm_a_SOURCES = \
-	AtomicOps.h \
 	Delay.h \
 	Extensions.h \
 	Memory.h \

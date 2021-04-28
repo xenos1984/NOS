@@ -12,7 +12,6 @@ noinst_LIBRARIES = libx86.a
 
 libx86_a_SOURCES = \
 	Apic.h \
-	AtomicOps.h \
 	ControlRegisters.h \
 	CPU.h \
 	DescriptorTable.h \
