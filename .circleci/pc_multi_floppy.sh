@@ -4,7 +4,7 @@ fs=$2
 #prep="http://hexagon.fi.tartu.ee/~manuel/$fs.img.bz2"
 
 folder=~/nos/$1
-loop=`losetup -f`
+loop=`sudo losetup -f`
 image=$folder/NOS-$fs.img
 mnt=/mnt/floppy
 
