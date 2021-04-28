@@ -335,11 +335,11 @@ jobs:
         steps:
             - attach_workspace:
                 at: ~/nos
-            - run: sudo apt-get install dosfstools e2fsprogs grub-pc-bin bzip2 netcat-openbsd wget
-            - run: sudo ~/nos/source/.circleci/pc_multi_floppy.sh i686-pc-elf fat12
-            - run: sudo ~/nos/source/.circleci/pc_multi_floppy.sh i686-pc-elf ext2
-            - run: sudo ~/nos/source/.circleci/pc_multi_floppy.sh x86_64-pc-elf fat12
-            - run: sudo ~/nos/source/.circleci/pc_multi_floppy.sh x86_64-pc-elf ext2
+            - run: sudo apt install dosfstools e2fsprogs grub-pc-bin bzip2 netcat-openbsd wget
+            - run: ~/nos/source/.circleci/pc_multi_floppy.sh i686-pc-elf fat12
+            - run: ~/nos/source/.circleci/pc_multi_floppy.sh i686-pc-elf ext2
+            - run: ~/nos/source/.circleci/pc_multi_floppy.sh x86_64-pc-elf fat12
+            - run: ~/nos/source/.circleci/pc_multi_floppy.sh x86_64-pc-elf ext2
             - persist_to_workspace:
                 root: ~/nos
                 paths:
