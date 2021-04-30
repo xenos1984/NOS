@@ -1,15 +1,11 @@
 #!/bin/bash
 
 fs=$2
-#prep="http://hexagon.fi.tartu.ee/~manuel/$fs.img.bz2"
 
 folder=~/nos/$1
 loop=`sudo losetup -f`
 image=$folder/NOS-$fs.img
 mnt=/mnt/floppy
-
-#wget -O $image.bz2 $prep
-#bunzip2 $image.bz2
 
 dd if=/dev/zero of=$image bs=512 count=2880
 sudo losetup $loop $image
