@@ -10,15 +10,23 @@
 #include INC_ARCH(CPU.h)
 #include INC_ARCH(DescriptorTable.h)
 #include INC_ARCH(ControlRegisters.h)
+#include INC_SUBARCH(Entry.h)
+#include INC_SUBARCH(PMode.h)
 #include INC_VENDOR(Cmos.h)
 #include INC_VENDOR(PIT.h)
 #include INC_VENDOR(ACPI.h)
 #include INC_VENDOR(SMP.h)
+#include INC_VENDOR(PICManager.h)
+#include INC_VENDOR(IOApicManager.h)
 
 using namespace Kernel;
 
+extern "C" unsigned long bspStack;
+
 extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, uint32_t mbiphys)
 {
+	unsigned int ncpu = 1, bspid = 0;
+
 	// Init console and show message.
 	Core::Welcome();
 
@@ -67,11 +75,13 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, uint32_t mbiph
 	uint32_t physaddr = ((uint32_t)segaddr) << 4;
 #endif
 
-	// TODO: Move ACPI and SMP from arch to vendor.
 #ifdef CONFIG_ACPI
-	if(ACPI::SearchPointer(physaddr, physaddr + 0x400) || ACPI::SearchPointer(0x000e0000, 0x00100000))
+	if((ACPI::SearchPointer(physaddr, physaddr + 0x400) || ACPI::SearchPointer(0x000e0000, 0x00100000)) && ACPI::GetProcessorCount() > 0)
 	{
 		// TODO: Perform IRQ, tasker, clock initialization from ACPI.
+
+		ncpu = ACPI::GetProcessorCount();
+		IOApicManager::InitAcpi();
 	}
 	else
 #endif
@@ -79,12 +89,39 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, uint32_t mbiph
 	if(SMP::SearchPointer(physaddr, physaddr + 0x400) || SMP::SearchPointer(0x000f0000, 0x00100000))
 	{
 		// TODO: Perform IRQ, tasker, clock initialization from MP tables.
+
+		ncpu = SMP::GetProcessorCount();
+		IOApicManager::InitSmp();
+
+		for(unsigned int i = 0; i < ncpu; i++)
+		{
+			SMP::Cpu* sc = SMP::GetProcessor(i);
+			if(sc->Flags & SMP::CPU_BSP)
+				bspid = i;
+		}
 	}
 	else
 #endif
 	{
 		// TODO: Perform IRQ, tasker, clock initialization in single CPU mode.
 	}
+
+
+	for(unsigned int i = 0; i < ncpu; i++)
+	{
+		TSS* tss = (TSS*)Memory::AllocBlock<Memory::PGB_4K>(TSS_LIN_ADDR + i * TSS_LENGTH, Memory::MemType::KERNEL_RW);
+		tss->iobase = 0x1000;
+		tabGDT.CreateTSS(FIRST_TSS + i, tss, 0x1000);
+	}
+
+	Pager::Map((uintptr_t)&bspStack - Symbol::kernelOffset.Addr() - STACK_SIZE, STACK_LIN_ADDR + bspid * STACK_SIZE, STACK_SIZE, Memory::MemType::KERNEL_RW);
+#ifdef ELF32
+	asm volatile("addl %0, %%esp" : : "r"(STACK_LIN_ADDR + (bspid + 1) * STACK_SIZE - (uintptr_t)&bspStack));
+	SetTaskReg((FIRST_TSS + bspid) << 3);
+#else
+	asm volatile("addq %0, %%rsp" : : "r"(STACK_LIN_ADDR + (bspid + 1) * STACK_SIZE - (uintptr_t)&bspStack));
+	SetTaskReg((FIRST_TSS + bspid) << 4);
+#endif
 
 	// Start multiboot modules.
 	mbi->InitModules();

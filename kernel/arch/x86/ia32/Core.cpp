@@ -1,5 +1,5 @@
 // Core.cpp - Core kernel implementation
-
+/*
 #include <new>
 #include <Core.h>
 #include <TaskScheduler.h>
@@ -24,7 +24,7 @@
 #include INC_ARCH(CPU.h)
 
 using namespace Kernel;
-/*
+
 extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, uint32_t mbiphys)
 {
 	// Init console and show message.

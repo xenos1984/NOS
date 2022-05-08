@@ -11,20 +11,6 @@
 namespace Kernel
 {
 	/**
-	 * x86_64 Task State Segment.
-	 */
-	struct TSS
-	{
-		uint32_t pad0;
-		uint64_t rsp[3];
-		uint64_t pad1;
-		uint64_t ist[7];
-		uint64_t pad2;
-		uint16_t pad3;
-		uint16_t iobase;
-	} PACKED;
-
-	/**
 	 * Architecture specific task manager class.
 	 * This class is the actual task switcher for the x86_64 architecture. It supports the use of multiple CPUs.
 	 */

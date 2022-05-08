@@ -1,5 +1,5 @@
 // Core.cpp - Core kernel implementation
-
+/*
 #include <cstdint>
 #include <new>
 #include <Core.h>
@@ -30,7 +30,7 @@
 #include INC_VENDOR(IOApicManager.h)
 
 using namespace Kernel;
-/*
+
 extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, uint32_t mbiphys)
 {
 	// Init console and show message.
