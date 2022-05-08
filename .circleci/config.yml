@@ -287,11 +287,11 @@ jobs:
                 at: ~/nos
             - run:
                 name: QEMU raspi2 MP
-                command: ~/nos/source/.circleci/qemu_raspi.sh arm raspi2 cortex-a7 mp
+                command: ~/nos/source/.circleci/qemu_raspi.sh arm raspi2b cortex-a7 mp
                 no_output_timeout: 60s
             - run:
                 name: QEMU raspi2 SP
-                command: ~/nos/source/.circleci/qemu_raspi.sh arm raspi2 cortex-a7 sp
+                command: ~/nos/source/.circleci/qemu_raspi.sh arm raspi2b cortex-a7 sp
                 no_output_timeout: 60s
             - persist_to_workspace:
                 root: ~/nos
@@ -312,11 +312,19 @@ jobs:
                 at: ~/nos
             - run:
                 name: QEMU raspi3 MP
-                command: ~/nos/source/.circleci/qemu_raspi.sh aarch64 raspi3 cortex-a53 mp
+                command: ~/nos/source/.circleci/qemu_raspi.sh aarch64 raspi3b cortex-a53 mp
                 no_output_timeout: 60s
             - run:
                 name: QEMU raspi3 SP
-                command: ~/nos/source/.circleci/qemu_raspi.sh aarch64 raspi3 cortex-a53 sp
+                command: ~/nos/source/.circleci/qemu_raspi.sh aarch64 raspi3b cortex-a53 sp
+                no_output_timeout: 60s
+            - run:
+                name: QEMU raspi3 MP
+                command: ~/nos/source/.circleci/qemu_raspi.sh aarch64 raspi3ap cortex-a53 mp
+                no_output_timeout: 60s
+            - run:
+                name: QEMU raspi3 SP
+                command: ~/nos/source/.circleci/qemu_raspi.sh aarch64 raspi3ap cortex-a53 sp
                 no_output_timeout: 60s
             - persist_to_workspace:
                 root: ~/nos
