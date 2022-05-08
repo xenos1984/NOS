@@ -4,6 +4,7 @@ jobs:
     autogen:
         docker:
             - image: xenos1984/cross-tools:latest
+        resource_class: small
         working_directory: ~/nos/source
         steps:
             - checkout
@@ -21,6 +22,7 @@ jobs:
     build_i686:
         docker:
             - image: xenos1984/cross-i686-pc-elf:latest
+        resource_class: small
         working_directory: ~/nos/source
         steps:
             - attach_workspace:
@@ -42,6 +44,7 @@ jobs:
     build_x86_64:
         docker:
             - image: xenos1984/cross-x86_64-pc-elf:latest
+        resource_class: small
         working_directory: ~/nos/source
         steps:
             - attach_workspace:
@@ -63,6 +66,7 @@ jobs:
     build_raspi2:
         docker:
             - image: xenos1984/cross-arm-raspi2-eabi:latest
+        resource_class: small
         working_directory: ~/nos/source
         steps:
             - attach_workspace:
@@ -81,6 +85,7 @@ jobs:
     build_raspi3:
         docker:
             - image: xenos1984/cross-aarch64-raspi3-elf:latest
+        resource_class: small
         working_directory: ~/nos/source
         steps:
             - attach_workspace:
@@ -99,6 +104,7 @@ jobs:
     qemu_i686:
         docker:
             - image: xenos1984/test-qemu:latest
+        resource_class: small
         working_directory: ~/nos/i686-pc-elf
         steps:
             - attach_workspace:
@@ -198,6 +204,7 @@ jobs:
     qemu_x86_64:
         docker:
             - image: xenos1984/test-qemu:latest
+        resource_class: small
         working_directory: ~/nos/x86_64-pc-elf
         steps:
             - attach_workspace:
@@ -297,6 +304,7 @@ jobs:
     qemu_raspi2:
         docker:
             - image: xenos1984/test-qemu:latest
+        resource_class: small
         working_directory: ~/nos/arm-raspi2-eabi
         steps:
             - attach_workspace:
@@ -322,6 +330,7 @@ jobs:
     qemu_raspi3:
         docker:
             - image: xenos1984/test-qemu:latest
+        resource_class: small
         working_directory: ~/nos/aarch64-raspi3-elf
         steps:
             - attach_workspace:
@@ -355,6 +364,7 @@ jobs:
     images:
         machine:
           image: ubuntu-2004:202101-01
+        resource_class: small
         working_directory: ~/nos
         steps:
             - attach_workspace:
@@ -379,6 +389,7 @@ jobs:
     collect:
         docker:
             - image: xenos1984/cross-tools:latest
+        resource_class: small
         working_directory: ~/nos
         steps:
             - attach_workspace:
