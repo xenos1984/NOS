@@ -23,4 +23,3 @@ base64=`printf "$nick\0$nick\0$IRCPASS" | base64`
 	sleep 5
 	printf "QUIT :Bye!\r\n"
 ) | nc -q 15 $server $port
-

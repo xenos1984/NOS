@@ -16,4 +16,3 @@ cp kernel/vendor/raspi/Kernel.map $folder/
 $target-objdump -x -d -C -g -S $folder/Kernel.elf > $folder/Kernel.dump
 
 make clean
-

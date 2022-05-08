@@ -17,4 +17,3 @@ cp images/pc/NOS.iso $folder/
 $target-objdump -x -d -C -g -S $folder/Kernel.elf > $folder/Kernel.dump
 
 make clean
-

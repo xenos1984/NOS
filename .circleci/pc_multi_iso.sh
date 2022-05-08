@@ -13,4 +13,3 @@ genisoimage -R -c boot/boot.cat -b boot/grub/eltorito.img -no-emul-boot -boot-lo
 	nos/sp-noacpi/Kernel.elf=$folder/sp-noacpi/Kernel.elf
 
 bzip2 $folder/NOS.iso
-

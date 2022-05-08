@@ -28,4 +28,3 @@ curl -X POST -u xenos1984:$GHTOKEN -H 'Content-Type: application/octet-stream' -
 
 # x86_64 floppy image (EXT2)
 curl -X POST -u xenos1984:$GHTOKEN -H 'Content-Type: application/octet-stream' --data-binary @x86_64-pc-elf/NOS-ext2.img.bz2 "https://uploads.github.com/repos/xenos1984/NOS/releases/9063364/assets?name=nos-x86_64-ext2.img.bz2&label=NOS%20bootable%20floppy%20%28x86_64-EXT2%29"
-
