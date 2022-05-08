@@ -34,6 +34,10 @@ jobs:
                 root: ~/nos
                 paths:
                     - i686-pc-elf
+            - run:
+                name: IRC notify
+                command: ~/nos/source/.circleci/irc.sh
+                when: always
 
     build_x86_64:
         docker:
@@ -51,6 +55,10 @@ jobs:
                 root: ~/nos
                 paths:
                     - x86_64-pc-elf
+            - run:
+                name: IRC notify
+                command: ~/nos/source/.circleci/irc.sh
+                when: always
 
     build_raspi2:
         docker:
@@ -65,6 +73,10 @@ jobs:
                 root: ~/nos
                 paths:
                     - arm-raspi2-eabi
+            - run:
+                name: IRC notify
+                command: ~/nos/source/.circleci/irc.sh
+                when: always
 
     build_raspi3:
         docker:
@@ -79,6 +91,10 @@ jobs:
                 root: ~/nos
                 paths:
                     - aarch64-raspi3-elf
+            - run:
+                name: IRC notify
+                command: ~/nos/source/.circleci/irc.sh
+                when: always
 
     qemu_i686:
         docker:
@@ -425,4 +441,3 @@ workflows:
                     - qemu_x86_64
                     - qemu_raspi2
                     - qemu_raspi3
-
