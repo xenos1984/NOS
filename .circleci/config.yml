@@ -63,38 +63,38 @@ jobs:
                 command: ~/nos/source/.circleci/irc.sh
                 when: always
 
-    build_raspi1:
-        docker:
-            - image: xenos1984/cross-arm-eabi:latest
-        resource_class: small
-        working_directory: ~/nos/source
-        steps:
-            - attach_workspace:
-                at: ~/nos
-            - run: .circleci/build_raspi.sh arm-raspi1-eabi sp --disable-smp
-            - persist_to_workspace:
-                root: ~/nos
-                paths:
-                    - arm-raspi1-eabi
-            - run:
-                name: IRC notify
-                command: ~/nos/source/.circleci/irc.sh
-                when: always
+                  #    build_raspi1:
+                  #        docker:
+                  #            - image: xenos1984/cross-arm-eabi:latest
+                  #        resource_class: small
+                  #        working_directory: ~/nos/source
+                  #        steps:
+                  #            - attach_workspace:
+                  #                at: ~/nos
+                  #            - run: .circleci/build_raspi.sh arm-raspi1-eabi sp --disable-smp
+                  #            - persist_to_workspace:
+                  #                root: ~/nos
+                  #                paths:
+                  #                    - arm-raspi1-eabi
+                  #            - run:
+                  #                name: IRC notify
+                  #                command: ~/nos/source/.circleci/irc.sh
+                  #                when: always
 
     build_raspi2:
         docker:
-            - image: xenos1984/cross-arm-eabi:latest
+            - image: xenos1984/cross-arm-eabihf:latest
         resource_class: small
         working_directory: ~/nos/source
         steps:
             - attach_workspace:
                 at: ~/nos
-            - run: .circleci/build_raspi.sh arm-raspi2-eabi mp
-            - run: .circleci/build_raspi.sh arm-raspi2-eabi sp --disable-smp
+            - run: .circleci/build_raspi.sh arm-raspi2-eabihf mp
+            - run: .circleci/build_raspi.sh arm-raspi2-eabihf sp --disable-smp
             - persist_to_workspace:
                 root: ~/nos
                 paths:
-                    - arm-raspi2-eabi
+                    - arm-raspi2-eabihf
             - run:
                 name: IRC notify
                 command: ~/nos/source/.circleci/irc.sh
@@ -319,36 +319,36 @@ jobs:
                 command: ~/nos/source/.circleci/irc.sh
                 when: always
 
-    qemu_raspi1:
-        docker:
-            - image: xenos1984/test-qemu:latest
-        resource_class: small
-        working_directory: ~/nos/arm-raspi1-eabi
-        steps:
-            - attach_workspace:
-                at: ~/nos
-            - run:
-                name: QEMU raspiz
-                command: ~/nos/source/.circleci/qemu_raspi.sh arm raspiz arm1176 512 sp
-                no_output_timeout: 60s
-            - run:
-                name: QEMU raspi1ap
-                command: ~/nos/source/.circleci/qemu_raspi.sh arm raspi1ap arm1176 512 sp
-                no_output_timeout: 60s
-            - persist_to_workspace:
-                root: ~/nos
-                paths:
-                    - arm-raspi-eabi/sp/qemu*
-            - run:
-                name: IRC notify
-                command: ~/nos/source/.circleci/irc.sh
-                when: always
+                  #    qemu_raspi1:
+                  #        docker:
+                  #            - image: xenos1984/test-qemu:latest
+                  #        resource_class: small
+                  #        working_directory: ~/nos/arm-raspi1-eabi
+                  #        steps:
+                  #            - attach_workspace:
+                  #                at: ~/nos
+                  #            - run:
+                  #                name: QEMU raspiz
+                  #                command: ~/nos/source/.circleci/qemu_raspi.sh arm raspiz arm1176 512 sp
+                  #                no_output_timeout: 60s
+                  #            - run:
+                  #                name: QEMU raspi1ap
+                  #                command: ~/nos/source/.circleci/qemu_raspi.sh arm raspi1ap arm1176 512 sp
+                  #                no_output_timeout: 60s
+                  #            - persist_to_workspace:
+                  #                root: ~/nos
+                  #                paths:
+                  #                    - arm-raspi-eabi/sp/qemu*
+                  #            - run:
+                  #                name: IRC notify
+                  #                command: ~/nos/source/.circleci/irc.sh
+                  #                when: always
 
     qemu_raspi2:
         docker:
             - image: xenos1984/test-qemu:latest
         resource_class: small
-        working_directory: ~/nos/arm-raspi2-eabi
+        working_directory: ~/nos/arm-raspi2-eabihf
         steps:
             - attach_workspace:
                 at: ~/nos
@@ -363,8 +363,8 @@ jobs:
             - persist_to_workspace:
                 root: ~/nos
                 paths:
-                    - arm-raspi2-eabi/mp/qemu*
-                    - arm-raspi2-eabi/sp/qemu*
+                    - arm-raspi2-eabihf/mp/qemu*
+                    - arm-raspi2-eabihf/sp/qemu*
             - run:
                 name: IRC notify
                 command: ~/nos/source/.circleci/irc.sh
@@ -443,12 +443,12 @@ jobs:
             - store_artifacts:
                 path: ~/nos/x86_64-pc-elf
                 destination: x86_64-pc-elf
+                  #- store_artifacts:
+                  #path: ~/nos/arm-raspi1-eabi
+                  #destination: arm-raspi1-eabi
             - store_artifacts:
-                path: ~/nos/arm-raspi1-eabi
-                destination: arm-raspi1-eabi
-            - store_artifacts:
-                path: ~/nos/arm-raspi2-eabi
-                destination: arm-raspi2-eabi
+                path: ~/nos/arm-raspi2-eabihf
+                destination: arm-raspi2-eabihf
             - store_artifacts:
                 path: ~/nos/aarch64-raspi3-elf
                 destination: aarch64-raspi3-elf
@@ -469,9 +469,9 @@ workflows:
             - build_x86_64:
                 requires:
                     - autogen
-            - build_raspi1:
-                requires:
-                    - autogen
+                      #- build_raspi1:
+                      #requires:
+                      #- autogen
             - build_raspi2:
                 requires:
                     - autogen
@@ -484,9 +484,9 @@ workflows:
             - qemu_x86_64:
                 requires:
                     - build_x86_64
-            - qemu_raspi1:
-                requires:
-                    - build_raspi1
+                      #- qemu_raspi1:
+                      #requires:
+                      #- build_raspi1
             - qemu_raspi2:
                 requires:
                     - build_raspi2
@@ -502,6 +502,6 @@ workflows:
                     - images
                     - qemu_i686
                     - qemu_x86_64
-                    - qemu_raspi1
+                      #- qemu_raspi1
                     - qemu_raspi2
                     - qemu_raspi3
