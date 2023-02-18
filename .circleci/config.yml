@@ -407,7 +407,7 @@ jobs:
     images:
         machine:
           image: ubuntu-2004:202101-01
-        resource_class: small
+        resource_class: medium
         working_directory: ~/nos
         steps:
             - attach_workspace:
