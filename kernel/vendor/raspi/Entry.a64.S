@@ -116,7 +116,7 @@ EL1:
 // Map peripherals into virtual memory
 	ldr x4, =tabPGL2 + 0x3c0 - KERNEL_OFFSET
 	add x9, x4, #64
-	ldr x5, =0x3f000605
+	ldr x5, =0x605 + PERI_PHYS
 	b 6f
 
 5:

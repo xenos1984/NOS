@@ -84,7 +84,7 @@ EntryBSP:
 // Map peripherals into virtual memory
 	ldr r4, =tabPGDIR - KERNEL_OFFSET + (PERI_OFFSET >> 18)
 	add r9, r4, #64
-	ldr r5, =#0x3f050412
+	ldr r5, =#0x50412 + PERI_PHYS
 	b 8f
 
 7:

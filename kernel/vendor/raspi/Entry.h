@@ -15,5 +15,17 @@
 #define PERI_OFFSET 0xCF000000
 #endif
 
+#ifdef ARCH_ARM_1176JZFS
+#define PERI_PHYS 0x20000000
+#endif
+#ifdef ARCH_ARM_CORTEX_A7
+#define PERI_PHYS 0x3F000000
+#endif
+#ifdef ARCH_ARM_CORTEX_A53
+#define PERI_PHYS 0x3F000000
+#endif
+#ifdef ARCH_ARM_CORTEX_A72
+#define PERI_PHYS 0xFE000000
 #endif
 
+#endif
