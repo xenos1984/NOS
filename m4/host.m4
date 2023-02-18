@@ -9,6 +9,7 @@ AC_DEFUN([NOS_SET_HOST], [
 		subarch_subdir=ia32
 		host_bfd=elf32-i386
 		copy_flags="-I ${host_bfd} -O ${host_bfd}"
+		ac_tool_prefix="${host_cpu}-elf-"
 		CFLAGS="${CFLAGS} -mgeneral-regs-only"
 		AC_DEFINE([ELF32])
 		AC_DEFINE([uintX_t], [uint32_t])
@@ -28,6 +29,7 @@ AC_DEFUN([NOS_SET_HOST], [
 		subarch_subdir=amd64
 		host_bfd=elf64-x86-64
 		copy_flags="-I ${host_bfd} -O ${host_bfd}"
+		ac_tool_prefix="x86_64-elf-"
 		CFLAGS="${CFLAGS} -mcmodel=kernel -mno-red-zone -mgeneral-regs-only"
 		LDFLAGS="${LDFLAGS} -Wl,-z -Wl,max-page-size=0x1000"
 		AC_DEFINE([ELF64])
@@ -57,6 +59,7 @@ AC_DEFUN([NOS_SET_HOST], [
 			CFLAGS="${CFLAGS} -mcpu=arm1176jzf-s"
 			subarch_subdir=v6
 			vendor_subdir=raspi
+			ac_tool_prefix="arm-eabi-"
 			AC_DEFINE([ARCH_ARM_V6], [1], [Define to 1 for ARMv6 targets.])
 			AC_DEFINE([ARCH_ARM_1176JZFS], [1], [Define to 1 for ARM 1176JZF-S targets.])
 			;;
@@ -64,15 +67,9 @@ AC_DEFUN([NOS_SET_HOST], [
 			CFLAGS="${CFLAGS} -mcpu=cortex-a7"
 			subarch_subdir=v7
 			vendor_subdir=raspi
+			ac_tool_prefix="arm-eabihf-"
 			AC_DEFINE([ARCH_ARM_V7], [1], [Define to 1 for ARMv7 targets.])
 			AC_DEFINE([ARCH_ARM_CORTEX_A7], [1], [Define to 1 for ARM Cortex-A7 targets.])
-			;;
-		raspi3)
-			CFLAGS="${CFLAGS} -mcpu=cortex-a53"
-			subarch_subdir=v8
-			vendor_subdir=raspi
-			AC_DEFINE([ARCH_ARM_V8], [1], [Define to 1 for ARMv8 targets.])
-			AC_DEFINE([ARCH_ARM_CORTEX_A53], [1], [Define to 1 for ARM Cortex-A53 targets.])
 			;;
 		*)
 			AC_MSG_ERROR([unsupported host vendor])
@@ -86,6 +83,7 @@ AC_DEFUN([NOS_SET_HOST], [
 		bits_subdir=a64
 		host_bfd=elf64-littleaarch64
 		copy_flags="-I ${host_bfd} -O ${host_bfd}"
+		ac_tool_prefix="aarch64-elf-"
 		AC_DEFINE([ELF64])
 		AC_DEFINE([uintX_t], [uint64_t])
 		AC_DEFINE([intX_t], [int64_t])
@@ -109,6 +107,7 @@ AC_DEFUN([NOS_SET_HOST], [
 		arch_subdir=m68k
 		host_bfd=elf32-m68k
 		copy_flags="-I ${host_bfd} -O ${host_bfd}"
+		ac_tool_prefix="m68k-elf-"
 		AC_DEFINE([ELF32])
 		AC_DEFINE([uintX_t], [uint32_t])
 		AC_DEFINE([intX_t], [int32_t])
