@@ -55,7 +55,7 @@ AC_DEFUN([NOS_SET_HOST], [
 		AC_DEFINE([intX_t], [int32_t])
 		AC_DEFINE([ARCH_ARM], [1], [Define to 1 for ARM targets.])
 		case "${host_vendor}" in
-		raspiz|raspizw|raspi1ap|raspi1bp)
+		raspiz|raspizw|raspi1ap|raspi1bp|raspi1)
 			CFLAGS="${CFLAGS} -mcpu=arm1176jzf-s"
 			subarch_subdir=v6
 			vendor_subdir=raspi
@@ -63,7 +63,7 @@ AC_DEFUN([NOS_SET_HOST], [
 			AC_DEFINE([ARCH_ARM_V6], [1], [Define to 1 for ARMv6 targets.])
 			AC_DEFINE([ARCH_ARM_1176JZFS], [1], [Define to 1 for ARM 1176JZF-S targets.])
 			;;
-		raspi2b)
+		raspi2b|raspi2)
 			CFLAGS="${CFLAGS} -mcpu=cortex-a7"
 			subarch_subdir=v7
 			vendor_subdir=raspi
@@ -89,14 +89,14 @@ AC_DEFUN([NOS_SET_HOST], [
 		AC_DEFINE([intX_t], [int64_t])
 		AC_DEFINE([ARCH_ARM], [1], [Define to 1 for ARM targets.])
 		case "${host_vendor}" in
-		raspi3b|raspiz2w)
+		raspi3ap|raspi3b|raspi3bp|raspiz2w|raspi3)
 			CFLAGS="${CFLAGS} -mcpu=cortex-a53 -mgeneral-regs-only"
 			subarch_subdir=v8
 			vendor_subdir=raspi
 			AC_DEFINE([ARCH_ARM_V8], [1], [Define to 1 for ARMv8 targets.])
 			AC_DEFINE([ARCH_ARM_CORTEX_A53], [1], [Define to 1 for ARM Cortex-A53 targets.])
 			;;
-		raspi4b)
+		raspi4b|raspi4)
 			CFLAGS="${CFLAGS} -mcpu=cortex-a72 -mgeneral-regs-only"
 			subarch_subdir=v8
 			vendor_subdir=raspi
