@@ -21,7 +21,7 @@ jobs:
 
     build_i686:
         docker:
-            - image: xenos1984/cross-i686-pc-elf:latest
+            - image: xenos1984/cross-i686-elf:latest
         resource_class: small
         working_directory: ~/nos/source
         steps:
@@ -43,7 +43,7 @@ jobs:
 
     build_x86_64:
         docker:
-            - image: xenos1984/cross-x86_64-pc-elf:latest
+            - image: xenos1984/cross-x86_64-elf:latest
         resource_class: small
         working_directory: ~/nos/source
         steps:
@@ -65,18 +65,18 @@ jobs:
 
     build_raspi2:
         docker:
-            - image: xenos1984/cross-arm-raspi2-eabi:latest
+            - image: xenos1984/cross-arm-eabi:latest
         resource_class: small
         working_directory: ~/nos/source
         steps:
             - attach_workspace:
                 at: ~/nos
-            - run: .circleci/build_raspi.sh arm-raspi2-eabi mp
-            - run: .circleci/build_raspi.sh arm-raspi2-eabi sp --disable-smp
+            - run: .circleci/build_raspi.sh arm-raspi2b-eabi mp
+            - run: .circleci/build_raspi.sh arm-raspi2b-eabi sp --disable-smp
             - persist_to_workspace:
                 root: ~/nos
                 paths:
-                    - arm-raspi2-eabi
+                    - arm-raspi2b-eabi
             - run:
                 name: IRC notify
                 command: ~/nos/source/.circleci/irc.sh
@@ -84,18 +84,18 @@ jobs:
 
     build_raspi3:
         docker:
-            - image: xenos1984/cross-aarch64-raspi3-elf:latest
+            - image: xenos1984/cross-aarch64-elf:latest
         resource_class: small
         working_directory: ~/nos/source
         steps:
             - attach_workspace:
                 at: ~/nos
-            - run: .circleci/build_raspi.sh aarch64-raspi3-elf mp
-            - run: .circleci/build_raspi.sh aarch64-raspi3-elf sp --disable-smp
+            - run: .circleci/build_raspi.sh aarch64-raspi3b-elf mp
+            - run: .circleci/build_raspi.sh aarch64-raspi3b-elf sp --disable-smp
             - persist_to_workspace:
                 root: ~/nos
                 paths:
-                    - aarch64-raspi3-elf
+                    - aarch64-raspi3b-elf
             - run:
                 name: IRC notify
                 command: ~/nos/source/.circleci/irc.sh
@@ -305,7 +305,7 @@ jobs:
         docker:
             - image: xenos1984/test-qemu:latest
         resource_class: small
-        working_directory: ~/nos/arm-raspi2-eabi
+        working_directory: ~/nos/arm-raspi2b-eabi
         steps:
             - attach_workspace:
                 at: ~/nos
@@ -331,7 +331,7 @@ jobs:
         docker:
             - image: xenos1984/test-qemu:latest
         resource_class: small
-        working_directory: ~/nos/aarch64-raspi3-elf
+        working_directory: ~/nos/aarch64-raspi3b-elf
         steps:
             - attach_workspace:
                 at: ~/nos
@@ -401,11 +401,11 @@ jobs:
                 path: ~/nos/x86_64-pc-elf
                 destination: x86_64-pc-elf
             - store_artifacts:
-                path: ~/nos/arm-raspi2-eabi
-                destination: arm-raspi2-eabi
+                path: ~/nos/arm-raspi2b-eabi
+                destination: arm-raspi2b-eabi
             - store_artifacts:
-                path: ~/nos/aarch64-raspi3-elf
-                destination: aarch64-raspi3-elf
+                path: ~/nos/aarch64-raspi3b-elf
+                destination: aarch64-raspi3b-elf
             - run: ~/nos/source/.circleci/release.sh
             - run:
                 name: IRC notify
