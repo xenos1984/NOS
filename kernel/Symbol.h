@@ -12,7 +12,7 @@ namespace Kernel
 		class ExtSymbol
 		{
 		public:
-			inline constexpr uintptr_t Addr(void) const
+			inline uintptr_t Addr(void) const
 			{
 				return (uintptr_t)this;
 			}
