@@ -14,13 +14,15 @@ AC_CONFIG_HEADERS([config.h])
 # Set target and flags.
 NOS_SET_HOST
 
+AC_CHECK_TOOL([STRIP], [strip])
+
 AC_ARG_ENABLE([debug],
-	AC_HELP_STRING([--enable-debug], [generate debug symbols (default is NO)]),
+	AS_HELP_STRING([--enable-debug], [generate debug symbols (default is NO)]),
 	[CFLAGS="${CFLAGS} -g"]
 )
 
 AC_ARG_ENABLE([opt],
-	AC_HELP_STRING([--disable-opt], [optimize code (default is YES)]),
+	AS_HELP_STRING([--disable-opt], [optimize code (default is YES)]),
 	[case "${enableval}" in
 	no | 0)
 		CFLAGS="${CFLAGS} -O0"
@@ -46,7 +48,7 @@ NOS_SET_FLAGS
 # Kernel config options.
 AH_TEMPLATE([CONFIG_ACPI], [Define to 1 if ACPI support should be included.])
 AC_ARG_ENABLE([acpi],
-	AC_HELP_STRING([--disable-acpi], [disable ACPI support]),
+	AS_HELP_STRING([--disable-acpi], [disable ACPI support]),
 	[if test "$enableval" != "no"; then
 		AC_DEFINE([CONFIG_ACPI])
 	fi],
@@ -55,7 +57,7 @@ AC_ARG_ENABLE([acpi],
 
 AH_TEMPLATE([CONFIG_SMP], [Define to 1 if SMP support should be included.])
 AC_ARG_ENABLE([smp],
-	AC_HELP_STRING([--disable-smp], [disable SMP support]),
+	AS_HELP_STRING([--disable-smp], [disable SMP support]),
 	[if test "$enableval" != "no"; then
 		AC_DEFINE([CONFIG_SMP])
 	fi],
