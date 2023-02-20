@@ -13,4 +13,3 @@ liba64_a_SOURCES = \
 	\
 	Interrupt.cpp \
 	InterruptStub.S
-

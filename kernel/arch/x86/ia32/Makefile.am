@@ -28,4 +28,3 @@ libia32_a_SOURCES = \
 	Tasker.cpp \
 	Thread.cpp \
 	User.cpp
-

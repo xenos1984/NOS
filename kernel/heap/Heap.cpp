@@ -63,4 +63,3 @@ void operator delete[](void* pointer, size_t size __attribute__((unused)), std::
 {
 	Kernel::Heap::Free(pointer);
 }
-

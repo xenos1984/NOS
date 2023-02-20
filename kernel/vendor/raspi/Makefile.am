@@ -35,4 +35,3 @@ Kernel_elf_LDFLAGS = \
 	-T kernel.${bits_subdir}.lds \
 	-Wl,-Map,Kernel.map \
 	-Wl,-u,Entry
-

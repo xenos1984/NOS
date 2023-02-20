@@ -18,4 +18,3 @@ libarm_a_SOURCES = \
 	Process.h \
 	Symbol.h \
 	Thread.h
-

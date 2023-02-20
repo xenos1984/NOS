@@ -46,4 +46,3 @@ Kernel_elf_LDFLAGS = \
 	-T kernel.${subarch_subdir}.lds \
 	-Wl,-Map,Kernel.map \
 	-Wl,-u,Entry
-

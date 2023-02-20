@@ -106,7 +106,6 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, uint32_t mbiph
 		// TODO: Perform IRQ, tasker, clock initialization in single CPU mode.
 	}
 
-
 	for(unsigned int i = 0; i < ncpu; i++)
 	{
 		TSS* tss = (TSS*)Memory::AllocBlock<Memory::PGB_4K>(TSS_LIN_ADDR + i * TSS_LENGTH, Memory::MemType::KERNEL_RW);
@@ -142,4 +141,3 @@ extern "C" void SECTION(".init.text") ApplicationEntry()
 	// TODO: Set flag to indicate CPU is booted.
 }
 #endif
-

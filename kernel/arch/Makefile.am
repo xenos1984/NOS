@@ -3,4 +3,3 @@
 SUBDIRS = ${arch_subdir}
 
 DIST_SUBDIRS = x86 arm m68k
-

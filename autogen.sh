@@ -17,4 +17,3 @@ touch Makefile.am configure.ac
 } &&
 	echo "autogen complete" >&2 ||
 	echo "ERROR: autogen failed" >&2
-

@@ -38,4 +38,3 @@ libx86_a_SOURCES = \
 	Pager.cpp \
 	Processor.cpp \
 	Tasker.cpp
-

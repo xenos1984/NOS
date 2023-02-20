@@ -86,4 +86,3 @@ then
 fi
 
 sudo ln -s -f $prefix/bin/* /usr/local/bin/
-

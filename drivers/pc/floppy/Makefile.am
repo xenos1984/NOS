@@ -12,4 +12,3 @@ Floppy_elf_DEPENDENCIES = \
 
 Floppy_elf_LDFLAGS = \
 	-T $(top_srcdir)/drivers/arch/$(arch_subdir)/ldscript
-

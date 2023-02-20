@@ -28,4 +28,3 @@ libamd64_a_SOURCES = \
 	Thread.cpp \
 	User.cpp \
 	X86_64TaskManager.cpp
-

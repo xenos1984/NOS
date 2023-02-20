@@ -29,4 +29,3 @@ namespace Kernel
 }
 
 #endif
-

@@ -3,4 +3,3 @@
 SUBDIRS = ${vendor_subdir}
 
 DIST_SUBDIRS = pc raspi
-

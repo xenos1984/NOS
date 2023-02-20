@@ -13,4 +13,3 @@ libv7_a_SOURCES = \
 	\
 	Pager.cpp \
 	PageTableEntry.cpp
-

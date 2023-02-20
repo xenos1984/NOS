@@ -88,4 +88,3 @@ SECTIONS
 		*(.rela.*)
 	}
 }
-
