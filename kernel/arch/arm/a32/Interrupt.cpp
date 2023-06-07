@@ -116,10 +116,10 @@ extern "C" void PrefetchAbort(RegisterSet* regs)
 	uint32_t ifar = Sysreg::IFAR::Read();
 
 	Console::WriteFormat("Prefetch abort occurred\n");
+	regs->Dump();
 	Console::WriteFormat("IFAR = 0x%8x, IFSR = 0x%8x\n", ifar, ifsr);
 	DumpFaultStatus(ifsr);
 	DumpFaultAddr(ifar);
-	regs->Dump();
 }
 
 extern "C" void DataAbort(RegisterSet* regs)
@@ -128,8 +128,8 @@ extern "C" void DataAbort(RegisterSet* regs)
 	uint32_t dfar = Sysreg::DFAR::Read();
 
 	Console::WriteFormat("Data abort occurred\n");
+	regs->Dump();
 	Console::WriteFormat("DFAR = 0x%8x, DFSR = 0x%8x\n", dfar, dfsr);
 	DumpFaultStatus(dfsr);
 	DumpFaultAddr(dfar);
-	regs->Dump();
 }
