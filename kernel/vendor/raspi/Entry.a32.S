@@ -15,7 +15,6 @@ Entry:
 
 // This is an application processor (CPU > 0), put into idle loop for now.
 EntryAP:
-	dsb
 	wfe
 	b EntryAP
 
