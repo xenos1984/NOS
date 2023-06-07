@@ -329,7 +329,7 @@ jobs:
                   #                at: ~/nos
                   #            - run:
                   #                name: QEMU raspiz
-                  #                command: ~/nos/source/.circleci/qemu_raspi.sh arm raspiz arm1176 512 sp
+                  #                command: ~/nos/source/.circleci/qemu_raspi.sh arm raspi0 arm1176 512 sp
                   #                no_output_timeout: 60s
                   #            - run:
                   #                name: QEMU raspi1ap
