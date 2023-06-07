@@ -52,10 +52,8 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t r0, uint32_t r1, uint
 	Heap::ShowMap();
 	int* b = new int;
 	Heap::ShowMap();
-	delete a;
-	Heap::ShowMap();
-	delete b;
-	Heap::ShowMap();
+
+	Console::WriteFormat("a = %p, b = %p\n", a, b);
 
 	uintptr_t virt = 0x80000000UL;
 	do
@@ -65,4 +63,9 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t r0, uint32_t r1, uint
 			Console::WriteFormat("0x%8x => 0x%8x\n", virt, phys);
 		virt += 0x1000;
 	} while(virt);
+
+	delete a;
+	Heap::ShowMap();
+	delete b;
+	Heap::ShowMap();
 }
