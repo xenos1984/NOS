@@ -4,6 +4,7 @@
 #define __SYMBOL_H__
 
 #include <cstdint>
+#include <cstddef>
 
 namespace Kernel
 {
@@ -42,46 +43,50 @@ namespace Kernel
 			}
 		};
 
-		template <class T> class ExtObject
+		template<class T> class ExtObject
 		{
+		private:
+			T t;
+
 		public:
-			inline constexpr uintptr_t Addr(void) const
+			inline constexpr T* operator->()
 			{
-				return (uintptr_t)this;
+				return &t;
 			}
 
-			inline T* Ptr(void) const
+			inline constexpr T* operator&()
 			{
-				return (T*)this;
-			}
-
-			inline T* operator->(void) const
-			{
-				return (T*)this;
+				return &t;
 			}
 		};
 
-		template <class T> class ConstObject
+		template<class T, uintptr_t addr> class ConstObject
+		{
+		public:
+			inline constexpr T* operator->()
+			{
+				return reinterpret_cast<T*>(addr);
+			}
+		};
+
+		template<class T, size_t s> class ExtArray
 		{
 		private:
-			const uintptr_t addr;
+			T t[s];
 
 		public:
-			constexpr ConstObject(uintptr_t a) : addr(a) {}
-
-			inline constexpr uintptr_t Addr(void) const
+			T& operator[](size_t i)
 			{
-				return addr;
+				return t[i];
 			}
+		};
 
-			inline T* Ptr(void) const
+		template<class T, size_t s, uintptr_t addr> class ConstArray
+		{
+		public:
+			T& operator[](size_t i)
 			{
-				return (T*)addr;
-			}
-
-			inline T* operator->(void) const
-			{
-				return (T*)addr;
+				return (reinterpret_cast<T*>(addr))[i];
 			}
 		};
 
