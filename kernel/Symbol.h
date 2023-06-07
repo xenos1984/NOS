@@ -79,6 +79,16 @@ namespace Kernel
 			{
 				return t[i];
 			}
+
+			T* begin(void)
+			{
+				return &t[0];
+			}
+
+			T* end(void)
+			{
+				return &t[s];
+			}
 		};
 
 		template<class T, size_t s, uintptr_t addr> class ConstArray
@@ -87,6 +97,16 @@ namespace Kernel
 			T& operator[](size_t i)
 			{
 				return (reinterpret_cast<T*>(addr))[i];
+			}
+
+			T* begin(void)
+			{
+				return reinterpret_cast<T*>(addr);
+			}
+
+			T* end(void)
+			{
+				return reinterpret_cast<T*>(addr + s * sizeof(T));
 			}
 		};
 
