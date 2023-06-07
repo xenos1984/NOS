@@ -69,14 +69,14 @@ namespace Kernel
 
 		PageTableL2& PageTableL2::Create(unsigned long i, Memory::MemType type)
 		{
-			uintptr_t virt = (i < MinKernelL1Entry ? UserPTL2Base : KernelPTL2Base) + i * sizeof(PageTableL2);
+			uintptr_t virt = (i < PageTablesUser ? UserPTL2Base : KernelPTL2Base) + i * sizeof(PageTableL2);
 
 			if(VirtToPhys(virt) == ~0UL)
 				Memory::AllocBlock<Memory::PGB_4K>(virt & ~Memory::PGM_4K, type);
 
 			new (reinterpret_cast<PageTableL2*>(virt)) PageTableL2;
 
-			KernelPTL1().Entry(i).Set<Memory::PGB_4K>(VirtToPhys(virt), type);
+			tabPGDIR->Entry(i).Set<Memory::PGB_4K>(VirtToPhys(virt), type);
 
 			return *reinterpret_cast<PageTableL2*>(virt);
 		}
@@ -126,14 +126,14 @@ namespace Kernel
 
 			if(pt.IsEmpty())
 			{
-				KernelPTL1().Entry(table).Clear();
+				tabPGDIR->Entry(table).Clear();
 
 				unsigned long t0 = table & ~0x3UL;
 				unsigned long t1 = table & 0x3UL;
 
-				if(KernelPTL1().Entry(t0 | ((t1 + 1) % 4)).IsClear() && KernelPTL1().Entry(t0 | ((t1 + 2) % 4)).IsClear() && KernelPTL1().Entry(t0 | ((t1 + 3) % 4)).IsClear())
+				if(tabPGDIR->Entry(t0 | ((t1 + 1) % 4)).IsClear() && tabPGDIR->Entry(t0 | ((t1 + 2) % 4)).IsClear() && tabPGDIR->Entry(t0 | ((t1 + 3) % 4)).IsClear())
 				{
-					uintptr_t virt = (t0 < MinKernelL1Entry ? UserPTL2Base : KernelPTL2Base) + t0 * sizeof(PageTableL2);
+					uintptr_t virt = (t0 < PageTablesUser ? UserPTL2Base : KernelPTL2Base) + t0 * sizeof(PageTableL2);
 					Memory::FreeBlock<Memory::PGB_4K>(virt);
 				}
 			}
@@ -169,14 +169,14 @@ namespace Kernel
 
 			if(pt.IsEmpty())
 			{
-				KernelPTL1().Entry(table).Clear();
+				tabPGDIR->Entry(table).Clear();
 
 				unsigned long t0 = table & ~0x3UL;
 				unsigned long t1 = table & 0x3UL;
 
-				if(KernelPTL1().Entry(t0 | ((t1 + 1) % 4)).IsClear() && KernelPTL1().Entry(t0 | ((t1 + 2) % 4)).IsClear() && KernelPTL1().Entry(t0 | ((t1 + 3) % 4)).IsClear())
+				if(tabPGDIR->Entry(t0 | ((t1 + 1) % 4)).IsClear() && tabPGDIR->Entry(t0 | ((t1 + 2) % 4)).IsClear() && tabPGDIR->Entry(t0 | ((t1 + 3) % 4)).IsClear())
 				{
-					uintptr_t virt = (t0 < MinKernelL1Entry ? UserPTL2Base : KernelPTL2Base) + t0 * sizeof(PageTableL2);
+					uintptr_t virt = (t0 < PageTablesUser ? UserPTL2Base : KernelPTL2Base) + t0 * sizeof(PageTableL2);
 					Memory::FreeBlock<Memory::PGB_4K>(virt);
 				}
 			}
@@ -184,13 +184,13 @@ namespace Kernel
 
 		template<> void MapPage<Memory::PGB_1M>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type)
 		{
-			PageTableEntryL1& pte = KernelPTL1().Entry(virt >> Memory::PGB_1M);
+			PageTableEntryL1& pte = tabPGDIR->Entry(virt >> Memory::PGB_1M);
 			pte.Set<Memory::PGB_1M>(phys, type);
 		}
 
 		template<> void UnmapPage<Memory::PGB_1M>(uintptr_t virt)
 		{
-			PageTableEntryL1& pte = KernelPTL1().Entry(virt >> Memory::PGB_1M);
+			PageTableEntryL1& pte = tabPGDIR->Entry(virt >> Memory::PGB_1M);
 			pte.Clear();
 			InvalidateMVAAll(virt);
 		}
@@ -199,7 +199,7 @@ namespace Kernel
 		{
 			for(unsigned int i = 0; i < 16; i++)
 			{
-				PageTableEntryL1& pte = KernelPTL1().Entry(((virt & ~Memory::PGM_16M) >> Memory::PGB_1M) + i);
+				PageTableEntryL1& pte = tabPGDIR->Entry(((virt & ~Memory::PGM_16M) >> Memory::PGB_1M) + i);
 				pte.Set<Memory::PGB_16M>(phys, type);
 			}
 		}
@@ -208,7 +208,7 @@ namespace Kernel
 		{
 			for(unsigned int i = 0; i < 16; i++)
 			{
-				PageTableEntryL1& pte = KernelPTL1().Entry(((virt & ~Memory::PGM_16M) >> Memory::PGB_1M) + i);
+				PageTableEntryL1& pte = tabPGDIR->Entry(((virt & ~Memory::PGM_16M) >> Memory::PGB_1M) + i);
 				pte.Clear();
 			}
 			InvalidateMVAAll(virt);
@@ -219,7 +219,7 @@ namespace Kernel
 			unsigned int tab = addr >> Memory::PGB_1M;
 			unsigned int entry = (addr >> Memory::PGB_4K) & 0xff;
 
-			PageTableEntryL1& pgl1 = KernelPTL1().Entry(tab);
+			PageTableEntryL1& pgl1 = tabPGDIR->Entry(tab);
 
 			// Console::WriteFormat("Addr 0x%8x -> PT1 Entry 0x%3x : 0x%8x\n", addr, tab, pgl1);
 
@@ -231,6 +231,9 @@ namespace Kernel
 
 			if(pgl1.IsSection())
 				return pgl1.Phys() | (addr & Memory::PGM_1M);
+
+			// Console::WriteFormat("L2 table @ 0x%8x\n", &PageTableL2::Table(tab));
+			// Console::WriteFormat("L2 table entry @ 0x%8x\n", &PageTableL2::Table(tab).Entry(entry));
 
 			PageTableEntryL2& pgl2 = PageTableL2::Table(tab).Entry(entry);
 
