@@ -69,23 +69,24 @@ namespace Kernel
 
 		PageTableL2& PageTableL2::Create(unsigned long i, Memory::MemType type)
 		{
-			uintptr_t virt = (i < PageTablesUser ? UserPTL2Base : KernelPTL2Base) + i * sizeof(PageTableL2);
+			uintptr_t virt = (i < PageTablesUser ? UserPTL2Base : KernelPTL2Base - PageTablesUser * sizeof(PageTableL2)) + i * sizeof(PageTableL2);
+			PageTableL2* pt = reinterpret_cast<PageTableL2*>(virt);
 
 			if(VirtToPhys(virt) == ~0UL)
 				Memory::AllocBlock<Memory::PGB_4K>(virt & ~Memory::PGM_4K, type);
 
-			new (reinterpret_cast<PageTableL2*>(virt)) PageTableL2;
+			new (pt) PageTableL2;
 
-			tabPGDIR->Entry(i).Set<Memory::PGB_4K>(VirtToPhys(virt), type);
+			PageTableTop::Entry(i).Set<Memory::PGB_4K>(VirtToPhys(virt), type);
 
-			return *reinterpret_cast<PageTableL2*>(virt);
+			return *pt;
 		}
 
 		bool PageTableL2::IsEmpty()
 		{
-			for(unsigned int i = 0; i < 256; i++)
+			for(const PageTableEntryL2& e: entry)
 			{
-				if(!entry[i].IsClear())
+				if(!e.IsClear())
 					return false;
 			}
 
@@ -126,14 +127,18 @@ namespace Kernel
 
 			if(pt.IsEmpty())
 			{
-				tabPGDIR->Entry(table).Clear();
+				PageTableTop::Entry(table).Clear();
 
 				unsigned long t0 = table & ~0x3UL;
-				unsigned long t1 = table & 0x3UL;
 
-				if(tabPGDIR->Entry(t0 | ((t1 + 1) % 4)).IsClear() && tabPGDIR->Entry(t0 | ((t1 + 2) % 4)).IsClear() && tabPGDIR->Entry(t0 | ((t1 + 3) % 4)).IsClear())
+				if(
+					PageTableTop::Entry(t0).IsClear() &&
+					PageTableTop::Entry(t0 + 1).IsClear() &&
+					PageTableTop::Entry(t0 + 2).IsClear() &&
+					PageTableTop::Entry(t0 + 3).IsClear()
+				)
 				{
-					uintptr_t virt = (t0 < PageTablesUser ? UserPTL2Base : KernelPTL2Base) + t0 * sizeof(PageTableL2);
+					uintptr_t virt = (t0 < PageTablesUser ? UserPTL2Base : KernelPTL2Base - PageTablesUser * sizeof(PageTableL2)) + t0 * sizeof(PageTableL2);
 					Memory::FreeBlock<Memory::PGB_4K>(virt);
 				}
 			}
@@ -169,14 +174,18 @@ namespace Kernel
 
 			if(pt.IsEmpty())
 			{
-				tabPGDIR->Entry(table).Clear();
+				PageTableTop::Entry(table).Clear();
 
 				unsigned long t0 = table & ~0x3UL;
-				unsigned long t1 = table & 0x3UL;
 
-				if(tabPGDIR->Entry(t0 | ((t1 + 1) % 4)).IsClear() && tabPGDIR->Entry(t0 | ((t1 + 2) % 4)).IsClear() && tabPGDIR->Entry(t0 | ((t1 + 3) % 4)).IsClear())
+				if(
+					PageTableTop::Entry(t0).IsClear() &&
+					PageTableTop::Entry(t0 + 1).IsClear() &&
+					PageTableTop::Entry(t0 + 2).IsClear() &&
+					PageTableTop::Entry(t0 + 3).IsClear()
+				)
 				{
-					uintptr_t virt = (t0 < PageTablesUser ? UserPTL2Base : KernelPTL2Base) + t0 * sizeof(PageTableL2);
+					uintptr_t virt = (t0 < PageTablesUser ? UserPTL2Base : KernelPTL2Base - PageTablesUser * sizeof(PageTableL2)) + t0 * sizeof(PageTableL2);
 					Memory::FreeBlock<Memory::PGB_4K>(virt);
 				}
 			}
@@ -184,13 +193,13 @@ namespace Kernel
 
 		template<> void MapPage<Memory::PGB_1M>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type)
 		{
-			PageTableEntryL1& pte = tabPGDIR->Entry(virt >> Memory::PGB_1M);
+			PageTableEntryL1& pte = PageTableTop::Entry(virt >> Memory::PGB_1M);
 			pte.Set<Memory::PGB_1M>(phys, type);
 		}
 
 		template<> void UnmapPage<Memory::PGB_1M>(uintptr_t virt)
 		{
-			PageTableEntryL1& pte = tabPGDIR->Entry(virt >> Memory::PGB_1M);
+			PageTableEntryL1& pte = PageTableTop::Entry(virt >> Memory::PGB_1M);
 			pte.Clear();
 			InvalidateMVAAll(virt);
 		}
@@ -199,7 +208,7 @@ namespace Kernel
 		{
 			for(unsigned int i = 0; i < 16; i++)
 			{
-				PageTableEntryL1& pte = tabPGDIR->Entry(((virt & ~Memory::PGM_16M) >> Memory::PGB_1M) + i);
+				PageTableEntryL1& pte = PageTableTop::Entry(((virt & ~Memory::PGM_16M) >> Memory::PGB_1M) + i);
 				pte.Set<Memory::PGB_16M>(phys, type);
 			}
 		}
@@ -208,7 +217,7 @@ namespace Kernel
 		{
 			for(unsigned int i = 0; i < 16; i++)
 			{
-				PageTableEntryL1& pte = tabPGDIR->Entry(((virt & ~Memory::PGM_16M) >> Memory::PGB_1M) + i);
+				PageTableEntryL1& pte = PageTableTop::Entry(((virt & ~Memory::PGM_16M) >> Memory::PGB_1M) + i);
 				pte.Clear();
 			}
 			InvalidateMVAAll(virt);
@@ -219,7 +228,7 @@ namespace Kernel
 			unsigned int tab = addr >> Memory::PGB_1M;
 			unsigned int entry = (addr >> Memory::PGB_4K) & 0xff;
 
-			PageTableEntryL1& pgl1 = tabPGDIR->Entry(tab);
+			PageTableEntryL1& pgl1 = PageTableTop::Entry(tab);
 
 			// Console::WriteFormat("Addr 0x%8x -> PT1 Entry 0x%3x : 0x%8x\n", addr, tab, pgl1);
 
