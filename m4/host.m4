@@ -149,6 +149,7 @@ AC_DEFUN([NOS_SET_HOST], [
 	AC_SUBST(vendor_subdir)
 	AC_SUBST(host_bfd)
 	AC_SUBST(copy_flags)
+	AC_SUBST(ac_tool_prefix)
 ])
 
 AC_DEFUN([NOS_SET_FLAGS], [
