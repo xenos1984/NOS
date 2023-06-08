@@ -55,12 +55,12 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t r0, uint32_t r1, uint
 
 	Console::WriteFormat("a = %p, b = %p\n", a, b);
 
-	uintptr_t virt = 0x80000000UL;
+	uintptr_t virt = Symbol::kernelStart.Addr();
 	do
 	{
 		Memory::PhysAddr phys = Pager::VirtToPhys(virt);
 		if(phys != ~0UL)
-			Console::WriteFormat("0x%8x => 0x%8x\n", virt, phys);
+			Console::WriteFormat("0x%p => 0x%8x\n", virt, phys);
 		virt += 0x1000;
 	} while(virt);
 
