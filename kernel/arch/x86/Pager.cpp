@@ -11,7 +11,7 @@ namespace Kernel
 {
 	namespace Pager
 	{
-		static uintptr_t VirtMapEnd = Symbol::kernelEnd.Addr();
+		static uintptr_t VirtMapEnd = reinterpret_cast<uintptr_t>(Symbol::kernelEnd.Ptr());
 
 		inline void Invalidate(uintptr_t virt)
 		{

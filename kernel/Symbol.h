@@ -15,10 +15,10 @@ namespace Kernel
 		public:
 			inline uintptr_t Addr(void) const
 			{
-				return (uintptr_t)this;
+				return reinterpret_cast<uintptr_t>(this);
 			}
 
-			inline void* Ptr(void) const
+			inline constexpr void* Ptr(void) const
 			{
 				return const_cast<void*>((void*)this);
 			}
