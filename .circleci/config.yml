@@ -452,6 +452,9 @@ jobs:
             - store_artifacts:
                 path: ~/nos/aarch64-raspi3-elf
                 destination: aarch64-raspi3-elf
+            - store_artifacts:
+                path: ~/nos/output.html
+                destination: output.html
             - run: ~/nos/source/.circleci/release.sh
             - run:
                 name: IRC notify
