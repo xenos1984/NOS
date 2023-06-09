@@ -9,6 +9,34 @@ do
 	curl -X DELETE -u xenos1984:$GHTOKEN $asset
 done
 
+# Merge HTML files
+
+cat << EOF > output.html
+<!DOCTYPE html>
+<html>
+<head>
+<style type="text/css">
+pre {
+  font-family: mono;
+  font-size: 10pt;
+  background-color: black;
+}
+</style>
+<title>Output</title>
+</head>
+<body>
+EOF
+
+for f in `find -name 'qemu-*.html'`
+do
+	cat $f | sed -z -e 's/^.*<title>\(.*\)<\/title>.*\(<pre>.*<\/pre>\).*$/<h1>\1<\/h1>\n\2/' >> output.html
+done
+
+cat << EOF >> output.html
+</body>
+</html>
+EOF
+
 # Upload freshly built release assets.
 
 # i686 CD image
@@ -28,3 +56,6 @@ curl -X POST -u xenos1984:$GHTOKEN -H 'Content-Type: application/octet-stream' -
 
 # x86_64 floppy image (EXT2)
 curl -X POST -u xenos1984:$GHTOKEN -H 'Content-Type: application/octet-stream' --data-binary @x86_64-pc-elf/NOS-ext2.img.bz2 "https://uploads.github.com/repos/xenos1984/NOS/releases/9063364/assets?name=nos-x86_64-ext2.img.bz2&label=NOS%20bootable%20floppy%20%28x86_64-EXT2%29"
+
+# Merged console output
+curl -X POST -u xenos1984:$GHTOKEN -H 'Content-Type: text/html' --data-binary @output.html "https://uploads.github.com/repos/xenos1984/NOS/releases/9063364/assets?name=output.html&label=NOS%20boot%20console%20output"
