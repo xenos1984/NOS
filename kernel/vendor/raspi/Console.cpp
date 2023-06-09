@@ -12,8 +12,14 @@ namespace Kernel
 			UART::Init();
 		}
 */
-		void SetStyle(Style s __attribute__((unused)))
+		void SetColor(unsigned char color)
 		{
+			char buf[10];
+
+			ColorToAnsi(buf, color);
+
+			for(char* p = buf; *p; p++)
+				UART::SendChar(*p);
 		}
 
 		void Clear(void)

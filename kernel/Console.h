@@ -14,7 +14,7 @@ namespace Kernel
 	  */
 	namespace Console
 	{
-		enum class Style
+		enum class Style : unsigned char
 		{
 			TEXT,
 			INFO,
@@ -23,10 +23,32 @@ namespace Kernel
 			ERROR
 		};
 
+		enum class Color : unsigned char
+		{
+			BLACK         = 0x00,
+			RED           = 0x01,
+			GREEN         = 0x02,
+			BROWN         = 0x03,
+			BLUE          = 0x04,
+			MAGENTA       = 0x05,
+			CYAN          = 0x06,
+			LIGHT_GRAY    = 0x07,
+			GRAY          = 0x08,
+			LIGHT_RED     = 0x09,
+			LIGHT_GREEN   = 0x0a,
+			YELLOW        = 0x0b,
+			LIGHT_BLUE    = 0x0c,
+			LIGHT_MAGENTA = 0x0d,
+			LIGHT_CYAN    = 0x0e,
+			WHITE         = 0x0f
+		};
+
 		void PutChar(unsigned char c); /**< Put character on the screen. */
 		void MoveCursor(void); /**< Set cursor position. */
 		void Clear(void); /**< Clear console device. */
 		void SetStyle(Style s);
+		void SetColor(unsigned char color);
+		void ColorToAnsi(char* buf, unsigned char color);
 
 		/**
 		  * Prompts a formatted message to the user.

@@ -2,6 +2,7 @@
 
 #include <cstdarg>
 #include <cstdint>
+#include <utility>
 #include <Console.h>
 #include <SpinLock.h>
 
@@ -10,6 +11,43 @@ namespace Kernel
 	namespace Console
 	{
 		static SpinLock lock;
+
+		static const Color msgColors[] = {
+			Color::LIGHT_GRAY,
+			Color::WHITE,
+			Color::GREEN,
+			Color::YELLOW,
+			Color::RED
+		};
+
+		void ColorToAnsi(char* buf, unsigned char color)
+		{
+			unsigned char fg = color & 0x0f;
+			unsigned char bg = color >> 4;
+
+			*buf++ = 0x1b;
+			*buf++ = '[';
+			*buf++ = (fg & 0x08 ? '3' : '9');
+			*buf++ = '0' + (fg & 0x07);
+			*buf++ = ';';
+			if(bg & 0x08)
+			{
+				*buf++ = '1';
+				*buf++ = '0';
+			}
+			else
+			{
+				*buf++ = '4';
+			}
+			*buf++ = '0' + (bg & 0x07);
+			*buf++ = 'm';
+			*buf++ = 0;
+		}
+
+		void SetStyle(Style s)
+		{
+			SetColor((std::to_underlying(Color::BLACK) << 4) | std::to_underlying(msgColors[std::to_underlying(s)]));
+		}
 
 		void Write(char chr)
 		{
@@ -46,7 +84,7 @@ namespace Kernel
 		  * @param number Integer to be converted.
 		  * @param length Minimum length of the output, pad with 0 if necessary.
 		  */
-		template<class T> void itoa(char *buf, T divisor, T number, int length)
+		template<class T> void itoa(char* buf, T divisor, T number, int length)
 		{
 			char *p = buf;
 			char *p1, *p2;
