@@ -229,19 +229,19 @@ jobs:
                 at: ~/nos
             - run:
                 name: QEMU (64 bit, 1 CPU, ISA PC; MP, ACPI)
-                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 isapc 1 mp-acpi
+                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 isapc 1 mp-acpi -cpu athlon
                 no_output_timeout: 60s
             - run:
                 name: QEMU (64 bit, 1 CPU, ISA PC; MP, no ACPI)
-                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 isapc 1 mp-noacpi
+                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 isapc 1 mp-noacpi -cpu athlon
                 no_output_timeout: 60s
             - run:
                 name: QEMU (64 bit, 1 CPU, ISA PC; SP, ACPI)
-                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 isapc 1 sp-acpi
+                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 isapc 1 sp-acpi -cpu athlon
                 no_output_timeout: 60s
             - run:
                 name: QEMU (64 bit, 1 CPU, ISA PC; SP, no ACPI)
-                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 isapc 1 sp-noacpi
+                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 isapc 1 sp-noacpi -cpu athlon
                 no_output_timeout: 60s
             - run:
                 name: QEMU (64 bit, 1 CPU, i440FX + PIIX; MP, ACPI)
