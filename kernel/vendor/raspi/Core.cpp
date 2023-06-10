@@ -31,11 +31,11 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t r0, uint32_t r1, uint
 #endif
 
 	Console::WriteFormat("Register arguments: r0 = 0x%8x, r1 = 0x%8x, r2 = 0x%8x\n", r0, r1, r2);
-	Console::WriteFormat("SCTLR = 0x%8x\n", Sysreg::SCTLR::Read());
+/*	Console::WriteFormat("SCTLR = 0x%8x\n", Sysreg::SCTLR::Read());
 	Console::WriteFormat("MIDR = 0x%8x\n", Sysreg::MIDR::Read());
 	Console::WriteFormat("VBAR = 0x%8x\n", Sysreg::VBAR::Read());
-//	Console::WriteFormat("CNTFRQ = %d\n", Sysreg::CNTFRQ::Read());
-
+	Console::WriteFormat("CNTFRQ = %d\n", Sysreg::CNTFRQ::Read());
+*/
 	Console::WriteFormat("Firmware revision: 0x%8x\n", Mailbox::GetFirmwareRev());
 	Console::WriteFormat("Board model: 0x%8x\n", Mailbox::GetBoardModel());
 	Console::WriteFormat("Board revision: 0x%8x\n", Mailbox::GetBoardRev());
