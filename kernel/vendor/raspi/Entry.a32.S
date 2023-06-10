@@ -105,9 +105,10 @@ EntryBSP:
 // Set Domain Access Control Register
 	mov r4, #5
 	mcr p15, 0, r4, c3, c0
-// Enable MMU
+// Enable MMU, disable subpages
 	mrc p15, 0, r4, c1, c0
-	orr r4, r4, #1
+	ldr r7, =#0x800001
+	orr r4, r4, r7
 	mcr p15, 0, r4, c1, c0
 	nop
 	nop
