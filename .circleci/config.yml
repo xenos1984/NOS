@@ -456,6 +456,9 @@ jobs:
             - store_artifacts:
                 path: ~/nos/output.html
                 destination: output.html
+            - store_artifacts:
+                path: ~/nos/build.html
+                destination: build.html
             - run:
                 name: IRC notify
                 command: ~/nos/source/.circleci/irc.sh

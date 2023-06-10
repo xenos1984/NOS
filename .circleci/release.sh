@@ -20,6 +20,7 @@ pre {
   font-family: mono;
   font-size: 10pt;
   background-color: black;
+	color: white;
 }
 </style>
 <title>Output</title>
@@ -27,12 +28,24 @@ pre {
 <body>
 EOF
 
+cp output.html build.html
+
 for f in `find -name 'qemu-*.html' | sort -u`
 do
 	cat $f | sed -z -e 's/^.*<title>\(.*\)<\/title>.*\(<pre>.*<\/pre>\).*$/<h1>\1<\/h1>\n\2/' >> output.html
 done
 
+for f in `find -name 'build.html' | sort -u`
+do
+	cat $f | sed -z -e 's/^.*<title>\(.*\)<\/title>.*\(<pre>.*<\/pre>\).*$/<h1>\1<\/h1>\n\2/' >> build.html
+done
+
 cat << EOF >> output.html
+</body>
+</html>
+EOF
+
+cat << EOF >> build.html
 </body>
 </html>
 EOF
@@ -59,3 +72,6 @@ curl -X POST -u xenos1984:$GHTOKEN -H 'Content-Type: application/octet-stream' -
 
 # Merged console output
 curl -X POST -u xenos1984:$GHTOKEN -H 'Content-Type: text/html' --data-binary @output.html "https://uploads.github.com/repos/xenos1984/NOS/releases/9063364/assets?name=output.html&label=NOS%20boot%20console%20output"
+
+# Merged build log
+curl -X POST -u xenos1984:$GHTOKEN -H 'Content-Type: text/html' --data-binary @build.html "https://uploads.github.com/repos/xenos1984/NOS/releases/9063364/assets?name=build.html&label=NOS%20build%20log"
