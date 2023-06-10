@@ -338,7 +338,7 @@ jobs:
             - persist_to_workspace:
                 root: ~/nos
                 paths:
-                    - arm-raspi-eabi/sp/qemu*
+                    - arm-raspi1-eabi/sp/qemu*
             - run:
                 name: IRC notify
                 command: ~/nos/source/.circleci/irc.sh
