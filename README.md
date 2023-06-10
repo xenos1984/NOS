@@ -3,6 +3,12 @@
 # NOS
 Operating system project
 
+## Design goals
+* microkernel
+* portability: targeting multiple architectures
+* using latest C++ standards
+* clean and maintainable codebase
+
 ## Compile instructions
 *	Make sure you have a [GCC / Binutils cross compiler toolchain](http://wiki.osdev.org/GCC_Cross-Compiler) configured for the desired target triplet.
 *	Download the source code:
@@ -21,15 +27,12 @@ Operating system project
 
 		make
 
-## Supported target triplets:
-* i[3456]86-pc-elf (active)
-* x86\_64-pc-elf (active)
-* m68k-atari-elf (temporarily not supported)
-* arm-raspi2-eabi (active)
-* aarch64-raspi3-elf (active)
+## Supported target triplets
+* **i[3456]86-pc-elf** - requires toolchain targeting **i[3456]86-elf**
+* **x86\_64-pc-elf** - requires toolchain targeting **x86\_64-elf**
+* **arm-raspi2-eabihf** - requires toolchain targeting **arm-eabihf**
+* **aarch64-raspi3-elf** - requires toolchain targeting **aarch64-elf**
+* **m68k-atari-elf** - requires toolchain targeting **m68k-elf** (temporarily not supported)
 
-## Latest builds:
-* [i686-pc-elf GRUB2 bootable iso image](http://manuelhohmann.ddns.net/osdev/nosrelease.php?file=i686-pc-elf/mp-acpi/NOS.iso) ([config log](http://manuelhohmann.ddns.net/osdev/nosrelease.php?file=i686-pc-elf/mp-acpi/config.log), [build log](http://manuelhohmann.ddns.net/osdev/nosrelease.php?file=i686-pc-elf/mp-acpi/build.log))
-* [x86\_64-pc-elf GRUB2 bootable iso image](http://manuelhohmann.ddns.net/osdev/nosrelease.php?file=x86_64-pc-elf/mp-acpi/NOS.iso) ([config log](http://manuelhohmann.ddns.net/osdev/nosrelease.php?file=x86_64-pc-elf/mp-acpi/config.log), [build log](http://manuelhohmann.ddns.net/osdev/nosrelease.php?file=x86_64-pc-elf/mp-acpi/build.log))
-* [arm-raspi2-eabi ELF kernel](http://manuelhohmann.ddns.net/osdev/nosrelease.php?file=arm-raspi2-eabi/mp/Kernel.elf) ([config log](http://manuelhohmann.ddns.net/osdev/nosrelease.php?file=arm-raspi2-eabi/mp/config.log), [build log](http://manuelhohmann.ddns.net/osdev/nosrelease.php?file=arm-raspi2-eabi/mp/build.log))
-* [aarch64-raspi3-elf ELF kernel](http://manuelhohmann.ddns.net/osdev/nosrelease.php?file=aarch64-raspi3-elf/mp/Kernel.elf) ([config log](http://manuelhohmann.ddns.net/osdev/nosrelease.php?file=aarch64-raspi3-elf/mp/config.log), [build log](http://manuelhohmann.ddns.net/osdev/nosrelease.php?file=aarch64-raspi3-elf/mp/build.log))
+## Latest builds
+A snapshot of the latest commit can be found as the [latest release](https://github.com/xenos1984/NOS/releases/tag/latest). It includes an automatically generated [build log](https://github.com/xenos1984/NOS/releases/download/latest/build.html) and [boot console output](https://github.com/xenos1984/NOS/releases/download/latest/output.html) for a number of target platforms.
