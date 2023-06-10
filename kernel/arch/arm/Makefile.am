@@ -2,7 +2,7 @@
 
 SUBDIRS = ${subarch_subdir} ${bits_subdir} .
 
-DIST_SUBDIRS = a32 a64 v7 v8
+DIST_SUBDIRS = a32 a64 v6 v7 v8
 
 AUTOMAKE_OPTIONS = nostdinc
 
