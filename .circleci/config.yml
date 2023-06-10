@@ -129,19 +129,19 @@ jobs:
                 at: ~/nos
             - run:
                 name: QEMU (32 bit, 1 CPU, ISA PC; MP, ACPI)
-                command: ~/nos/source/.circleci/qemu_pc.sh i386 isapc 1 mp-acpi -cpu pentium2
+                command: ~/nos/source/.circleci/qemu_pc.sh i386 isapc 1 mp-acpi -cpu qemu32
                 no_output_timeout: 60s
             - run:
                 name: QEMU (32 bit, 1 CPU, ISA PC; MP, no ACPI)
-                command: ~/nos/source/.circleci/qemu_pc.sh i386 isapc 1 mp-noacpi -cpu pentium2
+                command: ~/nos/source/.circleci/qemu_pc.sh i386 isapc 1 mp-noacpi -cpu qemu32
                 no_output_timeout: 60s
             - run:
                 name: QEMU (32 bit, 1 CPU, ISA PC; SP, ACPI)
-                command: ~/nos/source/.circleci/qemu_pc.sh i386 isapc 1 sp-acpi -cpu pentium2
+                command: ~/nos/source/.circleci/qemu_pc.sh i386 isapc 1 sp-acpi -cpu qemu32
                 no_output_timeout: 60s
             - run:
                 name: QEMU (32 bit, 1 CPU, ISA PC; SP, no ACPI)
-                command: ~/nos/source/.circleci/qemu_pc.sh i386 isapc 1 sp-noacpi -cpu pentium2
+                command: ~/nos/source/.circleci/qemu_pc.sh i386 isapc 1 sp-noacpi -cpu qemu32
                 no_output_timeout: 60s
             - run:
                 name: QEMU (32 bit, 1 CPU, i440FX + PIIX; MP, ACPI)
@@ -229,19 +229,19 @@ jobs:
                 at: ~/nos
             - run:
                 name: QEMU (64 bit, 1 CPU, ISA PC; MP, ACPI)
-                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 isapc 1 mp-acpi -cpu athlon
+                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 isapc 1 mp-acpi -cpu qemu64
                 no_output_timeout: 60s
             - run:
                 name: QEMU (64 bit, 1 CPU, ISA PC; MP, no ACPI)
-                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 isapc 1 mp-noacpi -cpu athlon
+                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 isapc 1 mp-noacpi -cpu qemu64
                 no_output_timeout: 60s
             - run:
                 name: QEMU (64 bit, 1 CPU, ISA PC; SP, ACPI)
-                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 isapc 1 sp-acpi -cpu athlon
+                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 isapc 1 sp-acpi -cpu qemu64
                 no_output_timeout: 60s
             - run:
                 name: QEMU (64 bit, 1 CPU, ISA PC; SP, no ACPI)
-                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 isapc 1 sp-noacpi -cpu athlon
+                command: ~/nos/source/.circleci/qemu_pc.sh x86_64 isapc 1 sp-noacpi -cpu qemu64
                 no_output_timeout: 60s
             - run:
                 name: QEMU (64 bit, 1 CPU, i440FX + PIIX; MP, ACPI)
