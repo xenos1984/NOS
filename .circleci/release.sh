@@ -28,14 +28,29 @@ pre {
 <body>
 EOF
 
-cp output.html build.html
+cat << EOF > build.html
+<!DOCTYPE html>
+<html>
+<head>
+<style type="text/css">
+pre {
+  font-family: mono;
+  font-size: 10pt;
+  background-color: black;
+	color: white;
+}
+</style>
+<title>Output</title>
+</head>
+<body>
+EOF
 
 for f in `find -name 'qemu-*.html' | sort -u`
 do
 	cat $f | sed -z -e 's/^.*<title>\(.*\)<\/title>.*\(<pre>.*<\/pre>\).*$/<h1>\1<\/h1>\n\2/' >> output.html
 done
 
-for f in `find -name 'build.html' | sort -u`
+for f in `find -mindepth 1 -name 'build.html' | sort -u`
 do
 	cat $f | sed -z -e 's/^.*<title>\(.*\)<\/title>.*\(<pre>.*<\/pre>\).*$/<h1>\1<\/h1>\n\2/' >> build.html
 done
