@@ -8,6 +8,7 @@
 .extern KernelEntry
 
 Entry:
+#ifdef ARCH_ARM_V7
 // Check for CPU ID - let CPU 0 set up the basic structures, before others join.
 	mrc p15, 0, r4, c0, c0, 5
 	ands r4, r4, #3
@@ -19,6 +20,7 @@ EntryAP:
 	b EntryAP
 
 EntryBSP:
+#endif
 // Set stack pointer to kernel stack.
 	ldr sp, =bspStack
 
