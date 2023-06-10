@@ -1,7 +1,7 @@
 // PageTableEntry.h - Single entry in a page table.
 
-#ifndef __ARCH_ARM_V7_PAGETABLEENTRY_H__
-#define __ARCH_ARM_V7_PAGETABLEENTRY_H__
+#ifndef __ARCH_ARM_A32_PAGETABLEENTRY_H__
+#define __ARCH_ARM_A32_PAGETABLEENTRY_H__
 
 #include <type_traits>
 #include <Memory.h>

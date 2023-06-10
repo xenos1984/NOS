@@ -1,7 +1,7 @@
 // PageTable.h - ARMv7 page table class.
 
-#ifndef __ARCH_ARM_V7_PAGETABLE_H__
-#define __ARCH_ARM_V7_PAGETABLE_H__
+#ifndef __ARCH_ARM_A32_PAGETABLE_H__
+#define __ARCH_ARM_A32_PAGETABLE_H__
 
 #include INC_BITS(PageTableEntry.h)
 #include INC_VENDOR(Entry.h)

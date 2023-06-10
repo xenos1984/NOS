@@ -2,7 +2,7 @@
 
 #include INC_BITS(Interrupt.h)
 #include INC_BITS(SystemRegs.h)
-//#include INC_SUBARCH(PageTable.h)
+//#include INC_BITS(PageTable.h)
 #include <Console.h>
 
 namespace Kernel
