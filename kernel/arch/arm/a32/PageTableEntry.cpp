@@ -1,6 +1,6 @@
 // PageTableEntry.cpp - Single entry in a page table.
 
-#include INC_SUBARCH(PageTableEntry.h)
+#include INC_BITS(PageTableEntry.h)
 #include <Memory.h>
 
 namespace Kernel

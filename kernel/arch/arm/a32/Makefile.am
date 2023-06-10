@@ -8,8 +8,13 @@ noinst_LIBRARIES = liba32.a
 
 liba32_a_SOURCES = \
 	Interrupt.h \
+	Pager.h \
+	PageTable.h \
+	PageTableEntry.h \
 	Symbol.h \
 	SystemRegs.h \
 	\
 	Interrupt.cpp \
-	InterruptStub.S
+	InterruptStub.S \
+	Pager.cpp \
+	PageTableEntry.cpp

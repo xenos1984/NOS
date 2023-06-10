@@ -8,8 +8,12 @@ noinst_LIBRARIES = liba64.a
 
 liba64_a_SOURCES = \
 	Interrupt.h \
+	Pager.h \
+	PageTable.h \
+	PageTableEntry.h \
 	Symbol.h \
 	SystemRegs.h \
 	\
 	Interrupt.cpp \
-	InterruptStub.S
+	InterruptStub.S \
+	Pager.cpp

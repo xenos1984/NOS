@@ -5,7 +5,7 @@
 #include <Pager.h>
 #include <Symbol.h>
 #include <Console.h>
-#include INC_SUBARCH(PageTable.h)
+#include INC_BITS(PageTable.h)
 #include INC_BITS(SystemRegs.h)
 
 namespace Kernel

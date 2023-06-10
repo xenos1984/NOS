@@ -3,7 +3,7 @@
 #ifndef __ARCH_ARM_V7_PAGETABLE_H__
 #define __ARCH_ARM_V7_PAGETABLE_H__
 
-#include INC_SUBARCH(PageTableEntry.h)
+#include INC_BITS(PageTableEntry.h)
 #include INC_VENDOR(Entry.h)
 #include <Symbol.h>
 #include <Memory.h>
