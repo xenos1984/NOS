@@ -40,7 +40,7 @@ pre {
 	color: white;
 }
 </style>
-<title>Output</title>
+<title>Build logs</title>
 </head>
 <body>
 EOF
@@ -50,7 +50,7 @@ do
 	cat $f | sed -z -e 's/^.*<title>\(.*\)<\/title>.*\(<pre>.*<\/pre>\).*$/<h1>\1<\/h1>\n\2/' >> output.html
 done
 
-for f in `find -mindepth 1 -name 'build.html' | sort -u`
+for f in `find -mindepth 2 -name 'build.html' | sort -u`
 do
 	cat $f | sed -z -e 's/^.*<title>\(.*\)<\/title>.*\(<pre>.*<\/pre>\).*$/<h1>\1<\/h1>\n\2/' >> build.html
 done
