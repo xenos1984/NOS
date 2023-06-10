@@ -39,7 +39,7 @@ namespace Kernel
 		ProcessData data; /**< Architecture specific data needed for each process. */
 		Pager::Context context;
 
-		Process(Elf* elf);
+		Process(const ProcessData& pd);
 		Process(void);
 		~Process(void);
 

@@ -8,29 +8,8 @@ using namespace Kernel;
 
 char kprocess_space[sizeof(Process)];
 
-Process::Process(Elf* elf)
+Process::Process(const ProcessData& pd) : data(pd)
 {
-	Elf::Header* fh = elf->GetHeader();
-	Elf::ProgramHeader* ph = elf->GetProgramHeader();
-	Memory::MemType mt;
-
-	// TODO: Create new context and switch to it.
-
-	// Go through the program header table.
-	for(int i = 0; i < fh->PHNum; i++)
-	{
-		// Only do something if segment is loadable.
-		if(ph[i].Type != Elf::PT_LOAD)
-			continue;
-
-		// Determine memory type to use from segment flags.
-		if(ph[i].Flags & Elf::PF_X)
-			mt = Memory::MemType::USER_EXEC;
-		else if(ph[i].Flags & Elf::PF_W)
-			mt = Memory::MemType::USER_RW;
-		else
-			mt = Memory::MemType::USER_RO;
-	}
 }
 
 Process::Process(void)
