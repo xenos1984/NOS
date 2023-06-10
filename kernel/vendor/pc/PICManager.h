@@ -17,6 +17,8 @@ namespace Kernel
 		PICManager(void);
 		~PICManager(void);
 
+		static void Init(void);
+
 		void Mask(unsigned int irq);
 		void Unmask(unsigned int irq);
 		void SendEOI(unsigned int irq);

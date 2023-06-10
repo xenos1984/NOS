@@ -15,6 +15,11 @@ SECTION(".init.text") PICManager::PICManager(void) : IRQManager(16), master(0x20
 	Console::WriteMessage(Console::Style::OK, "Interrupts:", "Enabled in PIC mode.");
 }
 
+void SECTION(".init.text") PICManager::Init(void)
+{
+	new (irqman_space) PICManager();
+}
+
 void PICManager::Mask(unsigned int irq)
 {
 	if(irq < 8)
