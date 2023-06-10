@@ -6,7 +6,7 @@ kernelOffset = 0xffffffffc0000000;
 kernelStart = kernelOffset + 0x8000;
 initStart = kernelStart;
 
-GROUP(../../arch/arm/v8/libv8.a ../../arch/arm/a64/liba64.a ../../arch/arm/libarm.a ../../libkernel.a libraspi.a)
+GROUP(../../arch/arm/a64/liba64.a ../../arch/arm/libarm.a ../../libkernel.a libraspi.a)
 INPUT(libgcc.a)
 
 PHDRS

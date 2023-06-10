@@ -23,7 +23,11 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t r0, uint32_t r1, uint
 #ifdef ELF64
 	Sysreg::VBAR_EL1::Write(Symbol::ExceptionVectorBase.Addr());
 #else
+#ifdef ARM_EXT_SECURITY
 	Sysreg::VBAR::Write(Symbol::ExceptionVectorBase.Addr());
+#else
+	// TODO: Map exception vector base and set to high vectors.
+#endif
 #endif
 
 	Console::WriteFormat("Register arguments: r0 = 0x%8x, r1 = 0x%8x, r2 = 0x%8x\n", r0, r1, r2);
