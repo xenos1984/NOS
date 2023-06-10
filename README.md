@@ -30,6 +30,7 @@ Operating system project
 ## Supported target triplets
 * **i[3456]86-pc-elf** - requires toolchain targeting **i[3456]86-elf**
 * **x86\_64-pc-elf** - requires toolchain targeting **x86\_64-elf**
+* **arm-raspi1-eabi** - requires toolchain targeting **arm-eabi**
 * **arm-raspi2-eabihf** - requires toolchain targeting **arm-eabihf**
 * **aarch64-raspi3-elf** - requires toolchain targeting **aarch64-elf**
 * **m68k-atari-elf** - requires toolchain targeting **m68k-elf** (temporarily not supported)
