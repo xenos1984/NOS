@@ -3,18 +3,15 @@
 #ifndef __CHUNKER_BITMAP_CHUNKER_H__
 #define __CHUNKER_BITMAP_CHUNKER_H__
 
-#include <Chunker.h>
+#include <type_traits>
+#include <Memory.h>
+#include <Pager.h>
 
 namespace Kernel
 {
 	namespace Chunker
 	{
-		static const unsigned long ValidSizes = 1UL << Memory::MinPageBits;
-
-		constexpr bool IsValidSize(Memory::PageBits size)
-		{
-			return Memory::IsValidSize(size, ValidSizes);
-		}
+		static const std::underlying_type<Memory::PageSize>::type ValidSizes = 1ULL << Pager::MinPageBits;
 	}
 }
 

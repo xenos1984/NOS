@@ -3,7 +3,7 @@
 //#include <limits>
 #include <atomic>
 #include <new>
-#include <chunker/bitmap/Chunker.h>
+#include <Chunker.h>
 #include <Memory.h>
 #include <Symbol.h>
 #include <Console.h>
