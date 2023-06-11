@@ -18,10 +18,10 @@ namespace Kernel
 
 		template<Memory::PageBits size> typename std::enable_if<IsValidSize(size), uintptr_t>::type TryMapPage(Memory::PhysAddr phys, uintptr_t virt, uintptr_t length, Memory::MemType type)
 		{
-			if((((virt | phys) & ((1 << size) - 1)) == 0) && (length >= (1 << size)))
+			if((((virt | phys) & ((1ULL << size) - 1)) == 0) && (length >= (1ULL << size)))
 			{
 				MapPage<size>(phys, virt, type);
-				return (1 << size);
+				return (1ULL << size);
 			}
 			else
 				return TryMapPage<(Memory::PageBits)(size - 1)>(phys, virt, length, type);
