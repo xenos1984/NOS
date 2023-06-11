@@ -37,8 +37,7 @@ namespace Kernel
 
 		static MemoryPointer root = MemoryPointer(0, 0, 1, &root, &root);
 		static unsigned long count = 0;
-		static constexpr size_t bs = 1 << Allocator::MinPageBits;
-		static constexpr unsigned int cpb = bs / sizeof(MemoryPointer);
+		static const unsigned int cpb = Allocator::MinPageSize / sizeof(MemoryPointer);
 
 		static SpinLock lock;
 
@@ -67,36 +66,36 @@ namespace Kernel
 		{
 			unsigned long lower, upper;
 
-			if((mp->prev->free && RoundDown(mp->mem, bs) >= (unsigned long)mp->prev->mem) || mp == &root)
-				lower = RoundDown(mp->mem, bs);
+			if((mp->prev->free && RoundDown(mp->mem, Allocator::MinPageSize) >= (unsigned long)mp->prev->mem) || mp == &root)
+				lower = RoundDown(mp->mem, Allocator::MinPageSize);
 			else
-				lower = RoundUp(mp->mem, bs);
+				lower = RoundUp(mp->mem, Allocator::MinPageSize);
 
-			if((mp->next->free && RoundUp(mp->next->mem, bs) <= (unsigned long)mp->next->mem + mp->next->length) || mp->next == &root)
-				upper = RoundUp(mp->next->mem, bs);
+			if((mp->next->free && RoundUp(mp->next->mem, Allocator::MinPageSize) <= (unsigned long)mp->next->mem + mp->next->length) || mp->next == &root)
+				upper = RoundUp(mp->next->mem, Allocator::MinPageSize);
 			else
-				upper = RoundDown(mp->next->mem, bs);
+				upper = RoundDown(mp->next->mem, Allocator::MinPageSize);
 
 			if(upper > lower)
-				Allocator::AllocBlocks<Allocator::MinPageBits>(lower, (upper - lower) / bs);
+				Allocator::AllocBlocks<Allocator::MinPageBits>(lower, (upper - lower) / Allocator::MinPageSize);
 		}
 
 		void FreeChunk(MemoryPointer* mp)
 		{
 			unsigned long lower, upper;
 
-			if(mp != &root && mp->prev->free && RoundDown(mp->mem, bs) >= (unsigned long)mp->prev->mem)
-				lower = RoundDown(mp->mem, bs);
+			if(mp != &root && mp->prev->free && RoundDown(mp->mem, Allocator::MinPageSize) >= (unsigned long)mp->prev->mem)
+				lower = RoundDown(mp->mem, Allocator::MinPageSize);
 			else
-				lower = RoundUp(mp->mem, bs);
+				lower = RoundUp(mp->mem, Allocator::MinPageSize);
 
-			if(mp->next != &root && mp->next->free && RoundUp(mp->next->mem, bs) <= (unsigned long)mp->next->mem + mp->next->length)
-				upper = RoundUp(mp->next->mem, bs);
+			if(mp->next != &root && mp->next->free && RoundUp(mp->next->mem, Allocator::MinPageSize) <= (unsigned long)mp->next->mem + mp->next->length)
+				upper = RoundUp(mp->next->mem, Allocator::MinPageSize);
 			else
-				upper = RoundDown(mp->next->mem, bs);
+				upper = RoundDown(mp->next->mem, Allocator::MinPageSize);
 
 			if(upper > lower)
-				Allocator::FreeBlocks<Allocator::MinPageBits>(lower, (upper - lower) / bs);
+				Allocator::FreeBlocks<Allocator::MinPageBits>(lower, (upper - lower) / Allocator::MinPageSize);
 		}
 
 		void Merge(MemoryPointer* mp)
@@ -110,16 +109,7 @@ namespace Kernel
 			MemoryPointer& last = MemPtr(count);
 			if(mpn != &last)
 				new (mpn) MemoryPointer(std::move(last));
-/*			{
-				mpn->mem = table[count].mem;
-				mpn->length = table[count].length;
-				mpn->free = table[count].free;
-				mpn->prev = table[count].prev;
-				mpn->next = table[count].next;
-				mpn->prev->next = mpn;
-				mpn->next->prev = mpn;
-			}
-*/			if(count % cpb == 0)
+			if(count % cpb == 0)
 			Allocator::FreeBlock<Allocator::MinPageBits>(MemAddr(count));
 		}
 
