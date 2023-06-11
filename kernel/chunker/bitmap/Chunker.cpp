@@ -32,6 +32,14 @@ namespace Kernel
 				return(addr >= start && addr - start < length);
 			}
 
+			bool IsAlloc(Memory::PhysAddr addr)
+			{
+				unsigned long n = ((addr - start) >> Memory::MinPageBits) / bitwidth;
+				unsigned long b = ((addr - start) >> Memory::MinPageBits) % bitwidth;
+
+				return bitmap[n] & (1UL << b);
+			}
+
 			void Free(Memory::PhysAddr addr)
 			{
 				unsigned long n = ((addr - start) >> Memory::MinPageBits) / bitwidth;
@@ -212,18 +220,26 @@ namespace Kernel
 			return nullptr;
 		}
 
+		State IsAlloc(Memory::PhysAddr addr)
+		{
+			Region* r = FindRegion(addr);
+
+			if(r == nullptr)
+				return State::Invalid;
+
+			return r->IsAlloc(addr) ? State::Alloc : State::Free;
+		}
+
 		template<> bool Free<Memory::MinPageBits>(Memory::PhysAddr addr)
 		{
 			Region* r = FindRegion(addr);
 
 			// Console::WriteFormat("Free memory at 0x%p\n", addr);
-			if(r != nullptr)
-			{
-				r->Free(addr);
-				return true;
-			}
-			else
+			if(r == nullptr)
 				return false;
+
+			r->Free(addr);
+			return true;
 		}
 
 		bool Free(Memory::PhysAddr first, Memory::PhysAddr last)
@@ -231,39 +247,33 @@ namespace Kernel
 			Region* r = FindRegion(first);
 
 			// Console::WriteFormat("Free memory from 0x%p to 0x%p\n", first, last);
-			if(r != nullptr)
-			{
-				r->Free(first, last);
-				return true;
-			}
-			else
+			if(r == nullptr)
 				return false;
+
+			r->Free(first, last);
+			return true;
 		}
 
 		template<> bool Reserve<Memory::MinPageBits>(Memory::PhysAddr addr)
 		{
 			Region* r = FindRegion(addr);
 
-			if(r != nullptr)
-			{
-				r->Reserve(addr);
-				return true;
-			}
-			else
+			if(r == nullptr)
 				return false;
+
+			r->Reserve(addr);
+			return true;
 		}
 
 		bool Reserve(Memory::PhysAddr first, Memory::PhysAddr last)
 		{
 			Region* r = FindRegion(first);
 
-			if(r != nullptr)
-			{
-				r->Reserve(first, last);
-				return true;
-			}
-			else
+			if(r == nullptr)
 				return false;
+
+			r->Reserve(first, last);
+			return true;
 		}
 	}
 }

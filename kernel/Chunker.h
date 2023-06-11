@@ -10,6 +10,14 @@ namespace Kernel
 {
 	namespace Chunker
 	{
+		/** Chunk state. */
+		enum class State
+		{
+			Alloc = 1,
+			Free = 0,
+			Invalid = -1
+		};
+
 		/** Initialize the chunker with the first area of available memory. */
 		void Init(Memory::PhysAddr start, Memory::PhysAddr length, Memory::Zone zone);
 		/** Add another region of available memory to the chunker. */
@@ -21,6 +29,9 @@ namespace Kernel
 		template<Memory::PageBits bits> bool Free(Memory::PhysAddr addr);
 		/** Mark a chunk of memory as reserved. */
 		template<Memory::PageBits bits> bool Reserve(Memory::PhysAddr addr);
+
+		/** Check state of chunk at a given address. */
+		State IsAlloc(Memory::PhysAddr addr);
 
 		/** Mark a range of memory as free. */
 		bool Free(Memory::PhysAddr first, Memory::PhysAddr last);
