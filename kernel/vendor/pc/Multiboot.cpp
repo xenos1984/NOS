@@ -109,9 +109,9 @@ namespace Kernel
 			if(HasMemMap() && (MemoryMapLength > 0))
 				Chunker::Reserve(MemoryMapAddress, MemoryMapAddress + MemoryMapLength);
 			if(HasLoaderName())
-				Chunker::Reserve(BootLoaderName, BootLoaderName + (1UL << Memory::MinPageBits));
+				Chunker::Reserve(BootLoaderName, BootLoaderName + Chunker::MinPageSize);
 			if(HasCmdline())
-				Chunker::Reserve(CommandLine, CommandLine + (1UL << Memory::MinPageBits));
+				Chunker::Reserve(CommandLine, CommandLine + Chunker::MinPageSize);
 			if(HasModules() && (ModuleCount > 0))
 				Chunker::Reserve(ModuleAddress, ModuleAddress + ModuleCount * sizeof(Module));
 		}

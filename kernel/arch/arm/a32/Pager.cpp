@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <new>
 #include <Pager.h>
+#include <Allocator.h>
 #include <Symbol.h>
 #include <Console.h>
 #include INC_BITS(PageTable.h)
@@ -73,7 +74,7 @@ namespace Kernel
 			PageTableL2* pt = reinterpret_cast<PageTableL2*>(virt);
 
 			if(VirtToPhys(virt) == ~0UL)
-				Memory::AllocBlock<Memory::PGB_4K>(virt & ~Memory::PGM_4K, type);
+				Allocator::AllocBlock<Memory::PGB_4K>(virt & ~Memory::PGM_4K, type);
 
 			new (pt) PageTableL2;
 
@@ -139,7 +140,7 @@ namespace Kernel
 				)
 				{
 					uintptr_t virt = (t0 < PageTablesUser ? UserPTL2Base : KernelPTL2Base - PageTablesUser * sizeof(PageTableL2)) + t0 * sizeof(PageTableL2);
-					Memory::FreeBlock<Memory::PGB_4K>(virt);
+					Allocator::FreeBlock<Memory::PGB_4K>(virt);
 				}
 			}
 		}
@@ -186,7 +187,7 @@ namespace Kernel
 				)
 				{
 					uintptr_t virt = (t0 < PageTablesUser ? UserPTL2Base : KernelPTL2Base - PageTablesUser * sizeof(PageTableL2)) + t0 * sizeof(PageTableL2);
-					Memory::FreeBlock<Memory::PGB_4K>(virt);
+					Allocator::FreeBlock<Memory::PGB_4K>(virt);
 				}
 			}
 		}

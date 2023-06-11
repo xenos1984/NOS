@@ -5,8 +5,8 @@
 #include INC_SUBARCH(X86_64TaskManager.h)
 #include <Thread.h>
 #include <Process.h>
-#include <Memory.h>
 #include <Pager.h>
+#include <Allocator.h>
 #include INC_ARCH(Processor.h)
 #include INC_ARCH(ControlRegisters.h)
 #include INC_ARCH(MSR.h)
@@ -44,7 +44,7 @@ SECTION(".init.text") X86_64TaskManager::X86_64TaskManager(unsigned int nc)
 
 	for(i = 0; i < numcpus; i++)
 	{
-		tss = (TSS*)Memory::AllocBlock<Memory::PGB_4K>(TSS_LIN_ADDR + i * TSS_LENGTH, Memory::MemType::KERNEL_RW);
+		tss = (TSS*)Allocator::AllocBlock<Memory::PGB_4K>(TSS_LIN_ADDR + i * TSS_LENGTH, Memory::MemType::KERNEL_RW);
 		tss->iobase = 0x1000;
 		tabGDT.CreateTSS(FIRST_TSS + i, (void*)(TSS_LIN_ADDR + i * TSS_LENGTH), 0x1000);
 	}
@@ -101,7 +101,7 @@ void SECTION(".init.text") X86_64TaskManager::InitAcpi(void)
 			asm volatile("addq %0, %%rsp" : : "r"(STACK_LIN_ADDR + STACK_SIZE - (unsigned long)&bspStack));
 		}
 		else if(ala->Flags & ACPI::CPU_ENABLED)
-			pr->Startup(STACK_SIZE + (uintptr_t)(Memory::AllocBlocks<Memory::PGB_4K>(STACK_LIN_ADDR + i * STACK_SIZE, STACK_SIZE >> Memory::PGB_4K)));
+			pr->Startup(STACK_SIZE + (uintptr_t)(Allocator::AllocBlocks<Memory::PGB_4K>(STACK_LIN_ADDR + i * STACK_SIZE, STACK_SIZE >> Memory::PGB_4K)));
 	}
 	*((unsigned long*)0xffffff7fbfc00000) = 0;
 	*((unsigned long*)0xffffff7fbfdfe000) = 0;
@@ -138,7 +138,7 @@ void SECTION(".init.text") X86_64TaskManager::InitSmp(void)
 			asm volatile("addq %0, %%rsp" : : "r"(STACK_LIN_ADDR + (i + 1) * STACK_SIZE - (unsigned long)&bspStack));
 		}
 		else if(sc->Flags & SMP::CPU_ENABLED)
-			pr->Startup(STACK_SIZE + (uintptr_t)(Memory::AllocBlocks<Memory::PGB_4K>(STACK_LIN_ADDR + i * STACK_SIZE, STACK_SIZE >> Memory::PGB_4K)));
+			pr->Startup(STACK_SIZE + (uintptr_t)(Allocator::AllocBlocks<Memory::PGB_4K>(STACK_LIN_ADDR + i * STACK_SIZE, STACK_SIZE >> Memory::PGB_4K)));
 	}
 	*((unsigned long*)0xffffff7fbfc00000) = 0;
 	*((unsigned long*)0xffffff7fbfdfe000) = 0;
@@ -220,7 +220,7 @@ Process* X86_64TaskManager::CreateProcess(Elf* elf)
 		{
 			if(Pager::MappedSize(base + (k << Memory::PGB_4K)) == Memory::PGB_INV)
 			{
-				Memory::AllocBlock<Memory::PGB_4K>(base + (k << Memory::PGB_4K), Memory::MemType::USER_RW);
+				Allocator::AllocBlock<Memory::PGB_4K>(base + (k << Memory::PGB_4K), Memory::MemType::USER_RW);
 				p->memory += Memory::PGS_4K;
 			}
 		}

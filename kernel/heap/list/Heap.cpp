@@ -1,9 +1,7 @@
 // Heap.cpp - Kernel heap management
 
 #include <cstddef>
-#include <Memory.h>
-#include <Chunker.h>
-#include <Pager.h>
+#include <Allocator.h>
 #include <Symbol.h>
 #include <SpinLock.h>
 #include <Console.h>
@@ -39,7 +37,7 @@ namespace Kernel
 
 		static MemoryPointer root = MemoryPointer(0, 0, 1, &root, &root);
 		static unsigned long count = 0;
-		static constexpr size_t bs = 1 << Memory::MinPageBits;
+		static constexpr size_t bs = 1 << Allocator::MinPageBits;
 		static constexpr unsigned int cpb = bs / sizeof(MemoryPointer);
 
 		static SpinLock lock;
@@ -80,7 +78,7 @@ namespace Kernel
 				upper = RoundDown(mp->next->mem, bs);
 
 			if(upper > lower)
-				Memory::AllocBlocks<Memory::MinPageBits>(lower, (upper - lower) / bs);
+				Allocator::AllocBlocks<Allocator::MinPageBits>(lower, (upper - lower) / bs);
 		}
 
 		void FreeChunk(MemoryPointer* mp)
@@ -98,7 +96,7 @@ namespace Kernel
 				upper = RoundDown(mp->next->mem, bs);
 
 			if(upper > lower)
-				Memory::FreeBlocks<Memory::MinPageBits>(lower, (upper - lower) / bs);
+				Allocator::FreeBlocks<Allocator::MinPageBits>(lower, (upper - lower) / bs);
 		}
 
 		void Merge(MemoryPointer* mp)
@@ -122,13 +120,13 @@ namespace Kernel
 				mpn->next->prev = mpn;
 			}
 */			if(count % cpb == 0)
-			Memory::FreeBlock<Memory::MinPageBits>(MemAddr(count));
+			Allocator::FreeBlock<Allocator::MinPageBits>(MemAddr(count));
 		}
 
 		void Split(MemoryPointer* mp, size_t n)
 		{
 			if(count % cpb == 0)
-				Memory::AllocBlock<Memory::MinPageBits>(MemAddr(count), Memory::MemType::KERNEL_RW);
+				Allocator::AllocBlock<Allocator::MinPageBits>(MemAddr(count), Memory::MemType::KERNEL_RW);
 			MemoryPointer& last = MemPtr(count);
 			new (&last) MemoryPointer(mp->mem + n, mp->length - n, mp->free, mp, mp->next);
 			mp->length = n;

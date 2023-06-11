@@ -139,18 +139,6 @@ namespace Kernel
 {
 	namespace Memory
 	{
-		template<PageBits bits> void* AllocBlock(uintptr_t virt, MemType type = MemType::KERNEL_RW, Memory::Zone zone = static_cast<Memory::Zone>(0));
-		template<PageBits bits> inline void* AllocBlock(void* virt, MemType type = MemType::KERNEL_RW, Memory::Zone zone = static_cast<Memory::Zone>(0)) { return AllocBlock<bits>((uintptr_t)virt, type, zone); }
-		template<PageBits bits> bool FreeBlock(uintptr_t virt);
-		template<PageBits bits> inline bool FreeBlock(void* virt) { return FreeBlock<bits>((uintptr_t)virt); }
-
-		template<PageBits bits> void* AllocBlocks(uintptr_t virt, unsigned int n, MemType type = MemType::KERNEL_RW, Memory::Zone zone = static_cast<Memory::Zone>(0));
-		template<PageBits bits> inline void* AllocBlocks(void* virt, unsigned int n, MemType type = MemType::KERNEL_RW, Memory::Zone zone = static_cast<Memory::Zone>(0)) { return AllocBlocks<bits>((uintptr_t)virt, n, type, zone); }
-		template<PageBits bits> bool FreeBlocks(uintptr_t virt, unsigned int n);
-		template<PageBits bits> inline bool FreeBlocks(void* virt, unsigned int n) { return FreeBlocks<bits>((uintptr_t)virt, n); }
-
-		constexpr uint64_t MinPageSize = (1ULL << MinPageBits);
-		constexpr uint64_t MinPageMask = MinPageSize - 1;
 	}
 }
 

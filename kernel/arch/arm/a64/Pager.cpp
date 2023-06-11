@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <new>
 #include <Pager.h>
+#include <Allocator.h>
 #include <Symbol.h>
 #include <Console.h>
 #include INC_BITS(PageTable.h)
@@ -101,7 +102,7 @@ namespace Kernel
 			static_assert(level <= 3, "Table level exceeds number of paging levels.");
 
 			uintptr_t virt = PageTableAddr(level, (kernel ? PageRecursiveKernel : PageRecursiveUser)) + i * sizeof(PageTableLevel<level>);
-			Memory::AllocBlock<GranuleSize>(virt, type);
+			Allocator::AllocBlock<GranuleSize>(virt, type);
 			new (reinterpret_cast<PageTableLevel<level>*>(virt)) PageTableLevel<level>;
 
 			return *reinterpret_cast<PageTableLevel<level>*>(virt);
@@ -217,7 +218,7 @@ namespace Kernel
 			InvalidateAddr(true, true, virt);
 
 			if(pt.IsEmpty())
-				Memory::FreeBlock<GranuleSize>(&pt);
+				Allocator::FreeBlock<GranuleSize>(&pt);
 		}
 
 		template void MapPage<GranuleSize>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type);

@@ -5,8 +5,8 @@
 #include INC_SUBARCH(I386TaskManager.h)
 #include <Thread.h>
 #include <Process.h>
-#include <Memory.h>
 #include <Pager.h>
+#include <Allocator.h>
 #include INC_ARCH(Processor.h)
 #include INC_ARCH(ControlRegisters.h)
 #include INC_ARCH(Apic.h)
@@ -46,7 +46,7 @@ SECTION(".init.text") I386TaskManager::I386TaskManager(unsigned int nc)
 
 	for(i = 0; i < numcpus; i++)
 	{
-		tss = (TSS*)Memory::AllocBlock<Memory::PGB_4K>(TSS_LIN_ADDR + i * TSS_LENGTH, Memory::MemType::KERNEL_RW);
+		tss = (TSS*)Allocator::AllocBlock<Memory::PGB_4K>(TSS_LIN_ADDR + i * TSS_LENGTH, Memory::MemType::KERNEL_RW);
 		tss->iobase = 0x1000;
 		tabGDT.CreateTSS(FIRST_TSS + i, tss, 0x1000);
 	}
@@ -109,7 +109,7 @@ void SECTION(".init.text") I386TaskManager::InitAcpi(void)
 			asm volatile("addl %0, %%esp" : : "r"(STACK_LIN_ADDR + STACK_SIZE - (uintptr_t)&bspStack));
 		}
 		else if(ala->Flags & ACPI::CPU_ENABLED)
-			pr->Startup(STACK_SIZE + (uintptr_t)(Memory::AllocBlocks<Memory::PGB_4K>(STACK_LIN_ADDR + i * STACK_SIZE, STACK_SIZE >> Memory::PGB_4K)));
+			pr->Startup(STACK_SIZE + (uintptr_t)(Allocator::AllocBlocks<Memory::PGB_4K>(STACK_LIN_ADDR + i * STACK_SIZE, STACK_SIZE >> Memory::PGB_4K)));
 	}
 
 	Apic::SetTimerVector(0x40);
@@ -141,7 +141,7 @@ void SECTION(".init.text") I386TaskManager::InitSmp(void)
 			asm volatile("addl %0, %%esp" : : "r"(STACK_LIN_ADDR + (i + 1) * STACK_SIZE - (uintptr_t)&bspStack));
 		}
 		else if(sc->Flags & SMP::CPU_ENABLED)
-			pr->Startup(STACK_SIZE + (uintptr_t)(Memory::AllocBlocks<Memory::PGB_4K>(STACK_LIN_ADDR + i * STACK_SIZE, STACK_SIZE >> Memory::PGB_4K)));
+			pr->Startup(STACK_SIZE + (uintptr_t)(Allocator::AllocBlocks<Memory::PGB_4K>(STACK_LIN_ADDR + i * STACK_SIZE, STACK_SIZE >> Memory::PGB_4K)));
 	}
 
 	Apic::SetTimerVector(0x40);
@@ -222,7 +222,7 @@ Process* I386TaskManager::CreateProcess(Elf* elf)
 		{
 			if(Pager::MappedSize(base + (k << Memory::PGB_4K)) == Memory::PGB_INV)
 			{
-				Memory::AllocBlock<Memory::PGB_4K>(base + (k << Memory::PGB_4K), Memory::MemType::USER_RW);
+				Allocator::AllocBlock<Memory::PGB_4K>(base + (k << Memory::PGB_4K), Memory::MemType::USER_RW);
 				p->memory += Memory::PGS_4K;
 			}
 		}

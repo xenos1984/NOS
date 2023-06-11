@@ -1,8 +1,8 @@
 // Apic.cpp - Advanced Programmable Interrupt Controller.
 
 #include INC_ARCH(Apic.h)
-#include <Memory.h>
 #include <Pager.h>
+#include <Allocator.h>
 #include <Console.h>
 
 namespace Kernel
@@ -11,7 +11,7 @@ namespace Kernel
 	{
 		SECTION(".init.text") void Init(unsigned long phys)
 		{
-			Memory::FreeBlock<Memory::PGB_4K>((uintptr_t)apic_base);
+			Allocator::FreeBlock<Memory::PGB_4K>((uintptr_t)apic_base);
 			Pager::MapPage<Memory::PGB_4K>(phys, (uintptr_t)apic_base, Memory::MemType::KERNEL_RW);
 			apic_base[REG_SIVR] |= (1 << 8); // enable
 			apic_base[REG_LDR] = 0xff000000;

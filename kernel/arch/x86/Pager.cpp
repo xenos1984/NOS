@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <new>
 #include <Pager.h>
+#include <Allocator.h>
 #include <Symbol.h>
 #include INC_ARCH(PageTable.h)
 #include INC_ARCH(ControlRegisters.h)
@@ -48,7 +49,7 @@ namespace Kernel
 			static_assert(level < PAGE_LEVELS, "Table level exceeds number of paging levels.");
 
 			uintptr_t virt = PAGE_TABLE_ADDR[level + 1] + i * sizeof(PageTableLevel<level>);
-			Memory::AllocBlock<Memory::PGB_4K>(virt, type);
+			Allocator::AllocBlock<Memory::PGB_4K>(virt, type);
 			new (reinterpret_cast<PageTableLevel<level>*>(virt)) PageTableLevel<level>;
 
 			return *reinterpret_cast<PageTableLevel<level>*>(virt);
@@ -140,7 +141,7 @@ namespace Kernel
 			Invalidate(virt);
 
 			if(pt.IsEmpty())
-				Memory::FreeBlock<Memory::PGB_4K>(&pt);
+				Allocator::FreeBlock<Memory::PGB_4K>(&pt);
 		}
 
 #if (defined ARCH_X86_IA32) && (!defined CONFIG_PAE)

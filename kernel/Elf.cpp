@@ -2,7 +2,7 @@
 
 #include <Elf.h>
 #include <Console.h>
-#include <Memory.h>
+#include <Allocator.h>
 
 namespace Kernel
 {
@@ -50,25 +50,25 @@ namespace Kernel
 		{
 			if(ph[i].Type == PT_LOAD)
 			{
-				if(ph[i].Align < Memory::MinPageSize)
+				if(ph[i].Align < Allocator::MinPageSize)
 				{
-					Console::WriteMessage(Console::Style::WARNING, "ELF check:", "Segment %d alignment 0x%x is smaller than page size 0x%x.", i, ph[i].Align, Memory::MinPageSize);
+					Console::WriteMessage(Console::Style::WARNING, "ELF check:", "Segment %d alignment 0x%x is smaller than page size 0x%x.", i, ph[i].Align, Allocator::MinPageSize);
 					return false;
 				}
 
-				if(ph[i].VirtAddress & Memory::MinPageMask)
+				if(ph[i].VirtAddress & Allocator::MinPageMask)
 				{
 					Console::WriteMessage(Console::Style::WARNING, "ELF check:", "Segment %d virtual address 0x%p is misaligned.", i, ph[i].VirtAddress);
 					return false;
 				}
 /*
-				if(ph[i].PhysAddress & Memory::MinPageMask)
+				if(ph[i].PhysAddress & Allocator::MinPageMask)
 				{
 					Console::WriteMessage(Console::Style::WARNING, "ELF check:", "Segment %d physical address 0x%p is misaligned.", i, ph[i].PhysAddress);
 					return false;
 				}
 */
-				if(ph[i].Offset & Memory::MinPageMask)
+				if(ph[i].Offset & Allocator::MinPageMask)
 				{
 					Console::WriteMessage(Console::Style::WARNING, "ELF check:", "Segment %d offset 0x%p is misaligned.", i, ph[i].Offset);
 					return false;

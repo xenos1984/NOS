@@ -5,6 +5,7 @@
 #include <Core.h>
 #include <Symbol.h>
 #include <Pager.h>
+#include <Allocator.h>
 #include <Console.h>
 #include INC_VENDOR(Multiboot.h)
 #include INC_ARCH(CPU.h)
@@ -110,7 +111,7 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, uint32_t mbiph
 
 	for(unsigned int i = 0; i < ncpu; i++)
 	{
-		TSS* tss = (TSS*)Memory::AllocBlock<Memory::PGB_4K>(TSS_LIN_ADDR + i * TSS_LENGTH, Memory::MemType::KERNEL_RW);
+		TSS* tss = (TSS*)Allocator::AllocBlock<Memory::PGB_4K>(TSS_LIN_ADDR + i * TSS_LENGTH, Memory::MemType::KERNEL_RW);
 		tss->iobase = 0x1000;
 		tabGDT.CreateTSS(FIRST_TSS + i, tss, 0x1000);
 	}

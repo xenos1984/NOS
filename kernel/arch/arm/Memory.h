@@ -9,8 +9,7 @@ namespace Kernel
 {
 	namespace Memory
 	{
-		static const PageBits MinPageBits = PGB_4K; /**< Smallest page has 4kB. */
-		static const unsigned long MaxInitPages = 1UL << (PGB_1G - MinPageBits); /**< Initially at most 1GB are used. */
+		static const unsigned long MaxInitPages = 1UL << (PGB_1G - PGB_4K); /**< Initially at most 1GB are used. */
 
 		enum class Zone
 		{
