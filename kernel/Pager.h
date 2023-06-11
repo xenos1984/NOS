@@ -4,6 +4,7 @@
 #define __PAGER_H__
 
 #include <cstddef>
+#include <bit>
 #include <Memory.h>
 
 namespace Kernel
@@ -48,6 +49,15 @@ namespace Kernel
 		{
 			return Memory::IsValidSize(size, ValidSizes);
 		}
+
+		static const Memory::PageBits MinPageBits = static_cast<Memory::PageBits>(std::countr_zero(ValidSizes));
+		static const Memory::PageBits MaxPageBits = static_cast<Memory::PageBits>(std::bit_width(ValidSizes) - 1);
+
+		static const Memory::PageSize MinPageSize = static_cast<Memory::PageSize>(1ULL << MinPageBits);
+		static const Memory::PageSize MaxPageSize = static_cast<Memory::PageSize>(1ULL << MaxPageBits);
+
+		static const Memory::PageMask MinPageMask = static_cast<Memory::PageMask>(MinPageSize - 1);
+		static const Memory::PageMask MaxPageMask = static_cast<Memory::PageMask>(MaxPageSize - 1);
 	}
 }
 

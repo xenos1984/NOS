@@ -27,10 +27,10 @@ namespace Kernel
 				return TryMapPage<(Memory::PageBits)(size - 1)>(phys, virt, length, type);
 		}
 
-		template<> uintptr_t TryMapPage<Memory::MinPageBits>(Memory::PhysAddr phys, uintptr_t virt, [[maybe_unused]] uintptr_t length, Memory::MemType type)
+		template<> uintptr_t TryMapPage<Pager::MinPageBits>(Memory::PhysAddr phys, uintptr_t virt, [[maybe_unused]] uintptr_t length, Memory::MemType type)
 		{
-			MapPage<Memory::MinPageBits>(phys, virt, type);
-			return Memory::MinPageSize;
+			MapPage<Pager::MinPageBits>(phys, virt, type);
+			return Pager::MinPageSize;
 		}
 
 		bool Map(Memory::PhysAddr phys, uintptr_t virt, size_t length, Memory::MemType type)
@@ -40,13 +40,13 @@ namespace Kernel
 //			Console::WriteFormat("Map 0x%8x bytes from 0x%8x to 0x%8x.\n", length, phys, virt);
 
 			// Check alignment of supplied memory locations.
-			if(phys & Memory::MinPageMask)
+			if(phys & Pager::MinPageMask)
 				return false;
 
-			if(virt & Memory::MinPageMask)
+			if(virt & Pager::MinPageMask)
 				return false;
 
-			if(length & Memory::MinPageMask)
+			if(length & Pager::MinPageMask)
 				return false;
 
 			// Check whether there is anything already mapped in that area.
@@ -55,7 +55,7 @@ namespace Kernel
 */
 			// Now that everything is checked, we can actually start mapping.
 			for(diff = 0; diff < length; )
-				diff += TryMapPage<Memory::PGB_1G>(phys + diff, virt + diff, length - diff, type);
+				diff += TryMapPage<Pager::MaxPageBits>(phys + diff, virt + diff, length - diff, type);
 
 			return true;
 		}
@@ -76,9 +76,9 @@ namespace Kernel
 				TryUnmapPage<(Memory::PageBits)(size - 1)>(addr, mapped);
 		}
 
-		template<> void TryUnmapPage<Memory::MinPageBits>(uintptr_t addr, [[maybe_unused]] Memory::PageBits mapped)
+		template<> void TryUnmapPage<Pager::MinPageBits>(uintptr_t addr, [[maybe_unused]] Memory::PageBits mapped)
 		{
-			UnmapPage<Memory::MinPageBits>(addr);
+			UnmapPage<Pager::MinPageBits>(addr);
 		}
 
 		bool Unmap(uintptr_t virt, size_t length)
@@ -93,7 +93,7 @@ namespace Kernel
 			for(addr = virt; addr < end; )
 			{
 				Memory::PageBits mapped = MappedSize(addr);
-				TryUnmapPage<Memory::PGB_1G>(addr, mapped);
+				TryUnmapPage<Pager::MaxPageBits>(addr, mapped);
 				addr += (1 << mapped);
 			}
 
