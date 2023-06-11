@@ -21,7 +21,12 @@ namespace Kernel
 		template<Memory::PageBits bits> inline void* AllocBlocks(void* virt, unsigned int n, Memory::MemType type = Memory::MemType::KERNEL_RW, Memory::Zone zone = static_cast<Memory::Zone>(0)) { return AllocBlocks<bits>((uintptr_t)virt, n, type, zone); }
 		template<Memory::PageBits bits> bool FreeBlocks(uintptr_t virt, unsigned int n);
 		template<Memory::PageBits bits> inline bool FreeBlocks(void* virt, unsigned int n) { return FreeBlocks<bits>((uintptr_t)virt, n); }
-
+/*
+		void* Alloc(uintptr_t virt, uintptr_t length, Memory::MemType type = Memory::MemType::KERNEL_RW, Memory::Zone zone = static_cast<Memory::Zone>(0));
+		inline void* Alloc(void* virt, uintptr_t length, Memory::MemType type = Memory::MemType::KERNEL_RW, Memory::Zone zone = static_cast<Memory::Zone>(0)) { return Alloc((uintptr_t)virt, length, type, zone); }
+		bool Free(uintptr_t virt, uintptr_t length);
+		inline bool Free(void* virt, uintptr_t length) { return Free((uintptr_t)virt, length); }
+*/
 		static const Memory::PageBits MinPageBits = (Chunker::MinPageBits < Pager::MinPageBits ? Chunker::MinPageBits : Pager::MinPageBits);
 		static const Memory::PageBits MaxPageBits = (Chunker::MaxPageBits > Pager::MaxPageBits ? Chunker::MaxPageBits : Pager::MaxPageBits);
 
