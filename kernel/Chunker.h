@@ -3,6 +3,7 @@
 #ifndef __CHUNKER_H__
 #define __CHUNKER_H__
 
+#include <bit>
 #include <Memory.h>
 
 namespace Kernel

@@ -20,16 +20,16 @@ namespace Kernel
 		/** Check the size of a page mapped to a given address. */
 		Memory::PageBits MappedSize(uintptr_t virt);
 
-		/** Check whether a particular physical memory range is completely mapped. */
+		/** Check whether a particular virtual address range is completely mapped. */
 		bool IsMapped(uintptr_t virt, size_t length);
 
-		/** Check whether a particular physical memory range is completely unmapped. */
+		/** Check whether a particular virtual address range is completely unmapped. */
 		bool IsUnmapped(uintptr_t virt, size_t length);
 
-		/** Map a range of physical to virtual memory and and assign page table flags suitable for a given memory type. */
+		/** Map a range of physical to virtual addresses and and assign page table flags suitable for a given memory type. */
 		bool Map(Memory::PhysAddr phys, uintptr_t virt, size_t length, Memory::MemType type);
 
-		/** Unmap a range of virtual memory. */
+		/** Unmap a range of virtual address. */
 		bool Unmap(uintptr_t virt, size_t length);
 
 		/** Get physical address to which a virtual address is mapped. */
