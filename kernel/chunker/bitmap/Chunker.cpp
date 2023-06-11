@@ -19,17 +19,17 @@ namespace Kernel
 			Region* prev;
 			Region* next;
 			const Memory::PhysAddr start;
-			const Memory::PhysAddr end;
+			const Memory::PhysAddr length;
 			std::atomic_ulong* const bitmap;
 			const Memory::Zone zone;
 			const unsigned long total;
 			std::atomic_ulong free;
 
-			constexpr Region(Memory::PhysAddr s, Memory::PhysAddr l, std::atomic_ulong* b, Memory::Zone z, Region* p = nullptr, Region* n = nullptr) : prev(p), next(n), start(s), end(s + l), bitmap(b), zone(z), total(l >> Memory::MinPageBits), free(l >> Memory::MinPageBits) {};
+			constexpr Region(Memory::PhysAddr s, Memory::PhysAddr l, std::atomic_ulong* b, Memory::Zone z, Region* p = nullptr, Region* n = nullptr) : prev(p), next(n), start(s), length(l), bitmap(b), zone(z), total(l >> Memory::MinPageBits), free(l >> Memory::MinPageBits) {};
 
 			bool Contains(Memory::PhysAddr addr) const
 			{
-				return(addr >= start && addr - start < end);
+				return(addr >= start && addr - start < length);
 			}
 
 			void Free(Memory::PhysAddr addr)
