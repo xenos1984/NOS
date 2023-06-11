@@ -25,7 +25,7 @@ namespace Kernel
 			const unsigned long total;
 			std::atomic_ulong free;
 
-			constexpr Region(Memory::PhysAddr s, Memory::PhysAddr l, std::atomic_ulong* b, Memory::Zone z, Region* p = nullptr, Region* n = nullptr) : prev(p), next(n), start(s), length(l), bitmap(b), zone(z), total(l >> Memory::MinPageBits), free(l >> Memory::MinPageBits) {};
+			constexpr Region(Memory::PhysAddr s, Memory::PhysAddr l, std::atomic_ulong* b, Memory::Zone z, Region* p = nullptr, Region* n = nullptr) : prev(p), next(n), start(s), length(l), bitmap(b), zone(z), total(l >> MinPageBits), free(l >> MinPageBits) {};
 
 			bool Contains(Memory::PhysAddr addr) const
 			{
@@ -34,16 +34,16 @@ namespace Kernel
 
 			bool IsAlloc(Memory::PhysAddr addr)
 			{
-				unsigned long n = ((addr - start) >> Memory::MinPageBits) / bitwidth;
-				unsigned long b = ((addr - start) >> Memory::MinPageBits) % bitwidth;
+				unsigned long n = ((addr - start) >> MinPageBits) / bitwidth;
+				unsigned long b = ((addr - start) >> MinPageBits) % bitwidth;
 
 				return bitmap[n] & (1UL << b);
 			}
 
 			void Free(Memory::PhysAddr addr)
 			{
-				unsigned long n = ((addr - start) >> Memory::MinPageBits) / bitwidth;
-				unsigned long b = ((addr - start) >> Memory::MinPageBits) % bitwidth;
+				unsigned long n = ((addr - start) >> MinPageBits) / bitwidth;
+				unsigned long b = ((addr - start) >> MinPageBits) % bitwidth;
 
 				if(bitmap[n].fetch_and(~(1UL << b)) & (1UL << b))
 					free++;
@@ -51,14 +51,14 @@ namespace Kernel
 
 			void Free(Memory::PhysAddr first, Memory::PhysAddr last)
 			{
-				for(Memory::PhysAddr addr = first; addr < last; addr += (1UL << Memory::MinPageBits))
+				for(Memory::PhysAddr addr = first; addr < last; addr += (1UL << MinPageBits))
 					Free(addr);
 			}
 
 			void Reserve(Memory::PhysAddr addr)
 			{
-				unsigned long n = ((addr - start) >> Memory::MinPageBits) / bitwidth;
-				unsigned long b = ((addr - start) >> Memory::MinPageBits) % bitwidth;
+				unsigned long n = ((addr - start) >> MinPageBits) / bitwidth;
+				unsigned long b = ((addr - start) >> MinPageBits) % bitwidth;
 
 				if(!(bitmap[n].fetch_or(1UL << b) & (1UL << b)))
 					free--;
@@ -66,7 +66,7 @@ namespace Kernel
 
 			void Reserve(Memory::PhysAddr first, Memory::PhysAddr last)
 			{
-				for(Memory::PhysAddr addr = first; addr < last; addr += (1UL << Memory::MinPageBits))
+				for(Memory::PhysAddr addr = first; addr < last; addr += (1UL << MinPageBits))
 					Reserve(addr);
 			}
 
@@ -97,7 +97,7 @@ namespace Kernel
 								bitmap[n] = x;
 								free--;
 								// Console::WriteFormat("Alloc memory: base = 0x%p, n = 0x%x, b = 0x%x, free = %d\n", start, n, b, free.load());
-								return start + ((n * bitwidth + b) << Memory::MinPageBits);
+								return start + ((n * bitwidth + b) << MinPageBits);
 							}
 						}
 					}
@@ -136,7 +136,7 @@ namespace Kernel
 
 		void AddRegion(Memory::PhysAddr start, Memory::PhysAddr length, Memory::Zone zone)
 		{
-			Region* r = new Region(start, length, new std::atomic_ulong[(length >> Memory::MinPageBits) / bitwidth], zone);
+			Region* r = new Region(start, length, new std::atomic_ulong[(length >> MinPageBits) / bitwidth], zone);
 			Region** rz = &regions[static_cast<int>(zone)];
 
 			if(*rz == nullptr)
@@ -170,7 +170,7 @@ namespace Kernel
 			return false;
 		}
 
-		template<> Memory::PhysAddr Alloc<Memory::MinPageBits>(Memory::Zone zone)
+		template<> Memory::PhysAddr Alloc<MinPageBits>(Memory::Zone zone)
 		{
 			unsigned int i = static_cast<int>(zone);
 			Region* r;
@@ -230,7 +230,7 @@ namespace Kernel
 			return r->IsAlloc(addr) ? State::Alloc : State::Free;
 		}
 
-		template<> bool Free<Memory::MinPageBits>(Memory::PhysAddr addr)
+		template<> bool Free<MinPageBits>(Memory::PhysAddr addr)
 		{
 			Region* r = FindRegion(addr);
 
@@ -254,7 +254,7 @@ namespace Kernel
 			return true;
 		}
 
-		template<> bool Reserve<Memory::MinPageBits>(Memory::PhysAddr addr)
+		template<> bool Reserve<MinPageBits>(Memory::PhysAddr addr)
 		{
 			Region* r = FindRegion(addr);
 
