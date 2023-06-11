@@ -94,7 +94,7 @@ namespace Kernel
 			{
 				Memory::PageBits mapped = MappedSize(addr);
 				TryUnmapPage<MaxPageBits>(addr, mapped);
-				addr += (1 << mapped);
+				addr += (1ULL << mapped);
 			}
 
 			return true;
