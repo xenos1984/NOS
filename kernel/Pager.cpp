@@ -8,15 +8,15 @@ namespace Kernel
 {
 	namespace Pager
 	{
-		template<Memory::PageBits size> uintptr_t TryMapPage(Memory::PhysAddr phys, uintptr_t virt, uintptr_t length, typename std::enable_if<!IsValidSize(size), Memory::MemType>::type type);
-		template<Memory::PageBits size> uintptr_t TryMapPage(Memory::PhysAddr phys, uintptr_t virt, uintptr_t length, typename std::enable_if<IsValidSize(size), Memory::MemType>::type type);
+		template<Memory::PageBits size> typename std::enable_if<!IsValidSize(size), uintptr_t>::type TryMapPage(Memory::PhysAddr phys, uintptr_t virt, uintptr_t length, Memory::MemType type);
+		template<Memory::PageBits size> typename std::enable_if<IsValidSize(size), uintptr_t>::type TryMapPage(Memory::PhysAddr phys, uintptr_t virt, uintptr_t length, Memory::MemType type);
 
-		template<Memory::PageBits size> uintptr_t TryMapPage(Memory::PhysAddr phys, uintptr_t virt, uintptr_t length, typename std::enable_if<!IsValidSize(size), Memory::MemType>::type type)
+		template<Memory::PageBits size> typename std::enable_if<!IsValidSize(size), uintptr_t>::type TryMapPage(Memory::PhysAddr phys, uintptr_t virt, uintptr_t length, Memory::MemType type)
 		{
 			return TryMapPage<(Memory::PageBits)(size - 1)>(phys, virt, length, type);
 		}
 
-		template<Memory::PageBits size> uintptr_t TryMapPage(Memory::PhysAddr phys, uintptr_t virt, uintptr_t length, typename std::enable_if<IsValidSize(size), Memory::MemType>::type type)
+		template<Memory::PageBits size> typename std::enable_if<IsValidSize(size), uintptr_t>::type TryMapPage(Memory::PhysAddr phys, uintptr_t virt, uintptr_t length, Memory::MemType type)
 		{
 			if((((virt | phys) & ((1 << size) - 1)) == 0) && (length >= (1 << size)))
 			{
@@ -60,15 +60,15 @@ namespace Kernel
 			return true;
 		}
 
-		template<Memory::PageBits size> void TryUnmapPage(uintptr_t addr, typename std::enable_if<!IsValidSize(size), Memory::PageBits>::type mapped);
-		template<Memory::PageBits size> void TryUnmapPage(uintptr_t addr, typename std::enable_if<IsValidSize(size), Memory::PageBits>::type mapped);
+		template<Memory::PageBits size> typename std::enable_if<!IsValidSize(size), void>::type TryUnmapPage(uintptr_t addr, Memory::PageBits mapped);
+		template<Memory::PageBits size> typename std::enable_if<IsValidSize(size), void>::type TryUnmapPage(uintptr_t addr, Memory::PageBits mapped);
 
-		template<Memory::PageBits size> void TryUnmapPage(uintptr_t addr, typename std::enable_if<!IsValidSize(size), Memory::PageBits>::type mapped)
+		template<Memory::PageBits size> typename std::enable_if<!IsValidSize(size), void>::type TryUnmapPage(uintptr_t addr, Memory::PageBits mapped)
 		{
 			TryUnmapPage<(Memory::PageBits)(size - 1)>(addr, mapped);
 		}
 
-		template<Memory::PageBits size> void TryUnmapPage(uintptr_t addr, typename std::enable_if<IsValidSize(size), Memory::PageBits>::type mapped)
+		template<Memory::PageBits size> typename std::enable_if<IsValidSize(size), void>::type TryUnmapPage(uintptr_t addr, Memory::PageBits mapped)
 		{
 			if(size == mapped)
 				UnmapPage<size>(addr);
