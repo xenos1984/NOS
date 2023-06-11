@@ -16,8 +16,8 @@ jobs:
                     - source
             - run:
                 name: IRC notify
-                command: ~/nos/source/.circleci/irc.sh
-                when: always
+                command: ~/nos/source/.circleci/irc.sh FAILED
+                when: on_fail
 
     build_i686:
         docker:
@@ -38,8 +38,8 @@ jobs:
                     - i686-pc-elf
             - run:
                 name: IRC notify
-                command: ~/nos/source/.circleci/irc.sh
-                when: always
+                command: ~/nos/source/.circleci/irc.sh FAILED
+                when: on_fail
 
     build_x86_64:
         docker:
@@ -60,8 +60,8 @@ jobs:
                     - x86_64-pc-elf
             - run:
                 name: IRC notify
-                command: ~/nos/source/.circleci/irc.sh
-                when: always
+                command: ~/nos/source/.circleci/irc.sh FAILED
+                when: on_fail
 
     build_raspi1:
         docker:
@@ -78,8 +78,8 @@ jobs:
                     - arm-raspi1-eabi
             - run:
                 name: IRC notify
-                command: ~/nos/source/.circleci/irc.sh
-                when: always
+                command: ~/nos/source/.circleci/irc.sh FAILED
+                when: on_fail
 
     build_raspi2:
         docker:
@@ -97,8 +97,8 @@ jobs:
                     - arm-raspi2-eabihf
             - run:
                 name: IRC notify
-                command: ~/nos/source/.circleci/irc.sh
-                when: always
+                command: ~/nos/source/.circleci/irc.sh FAILED
+                when: on_fail
 
     build_raspi3:
         docker:
@@ -116,8 +116,8 @@ jobs:
                     - aarch64-raspi3-elf
             - run:
                 name: IRC notify
-                command: ~/nos/source/.circleci/irc.sh
-                when: always
+                command: ~/nos/source/.circleci/irc.sh FAILED
+                when: on_fail
 
     qemu_i686:
         docker:
@@ -216,8 +216,8 @@ jobs:
                     - i686-pc-elf/sp-noacpi/qemu*
             - run:
                 name: IRC notify
-                command: ~/nos/source/.circleci/irc.sh
-                when: always
+                command: ~/nos/source/.circleci/irc.sh FAILED
+                when: on_fail
 
     qemu_x86_64:
         docker:
@@ -316,8 +316,8 @@ jobs:
                     - x86_64-pc-elf/sp-noacpi/qemu*
             - run:
                 name: IRC notify
-                command: ~/nos/source/.circleci/irc.sh
-                when: always
+                command: ~/nos/source/.circleci/irc.sh FAILED
+                when: on_fail
 
     qemu_raspi1:
         docker:
@@ -341,8 +341,8 @@ jobs:
                     - arm-raspi1-eabi/sp/qemu*
             - run:
                 name: IRC notify
-                command: ~/nos/source/.circleci/irc.sh
-                when: always
+                command: ~/nos/source/.circleci/irc.sh FAILED
+                when: on_fail
 
     qemu_raspi2:
         docker:
@@ -367,8 +367,8 @@ jobs:
                     - arm-raspi2-eabihf/sp/qemu*
             - run:
                 name: IRC notify
-                command: ~/nos/source/.circleci/irc.sh
-                when: always
+                command: ~/nos/source/.circleci/irc.sh FAILED
+                when: on_fail
 
     qemu_raspi3:
         docker:
@@ -401,8 +401,8 @@ jobs:
                     - aarch64-raspi3-elf/sp/qemu*
             - run:
                 name: IRC notify
-                command: ~/nos/source/.circleci/irc.sh
-                when: always
+                command: ~/nos/source/.circleci/irc.sh FAILED
+                when: on_fail
 
     images:
         machine:
@@ -426,8 +426,8 @@ jobs:
                     - x86_64-pc-elf/NOS-ext2.img.bz2
             - run:
                 name: IRC notify
-                command: ~/nos/source/.circleci/irc.sh
-                when: always
+                command: ~/nos/source/.circleci/irc.sh FAILED
+                when: on_fail
 
     collect:
         docker:
@@ -461,8 +461,12 @@ jobs:
                 destination: build.html
             - run:
                 name: IRC notify
-                command: ~/nos/source/.circleci/irc.sh
-                when: always
+                command: ~/nos/source/.circleci/irc.sh SUCCEEDED
+                when: on_success
+            - run:
+                name: IRC notify
+                command: ~/nos/source/.circleci/irc.sh FAILED
+                when: on_fail
 
 workflows:
     version: 2

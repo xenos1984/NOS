@@ -19,7 +19,7 @@ base64=`printf "$nick\0$nick\0$IRCPASS" | base64`
 	sleep 5
 	printf "JOIN :$channel\r\n"
 	sleep 5
-	printf "PRIVMSG $channel :NOS build #$CIRCLE_BUILD_NUM - $CIRCLE_JOB finished - see $CIRCLE_BUILD_URL for results.\r\n"
+	printf "PRIVMSG $channel :NOS build #$CIRCLE_BUILD_NUM - $CIRCLE_JOB $1 - see $CIRCLE_BUILD_URL for results.\r\n"
 	sleep 5
 	printf "QUIT :Bye!\r\n"
 ) | nc -q 15 $server $port
