@@ -171,19 +171,57 @@ namespace Kernel
 			// If end is not at page boundary, round down.
 			length = length & ~MinPageMask;
 
-			Region* r = new Region(start, length);
-			Region** rz = &regions[static_cast<int>(zone)];
+			Region* rz = regions[static_cast<int>(zone)];
 
-			if(*rz == nullptr)
+			// Check regions for overlap and add only new parts.
+			if(rz != nullptr)
 			{
-				*rz = r->prev = r->next = r;
+				do
+				{
+					if(start >= rz->start + rz->length)
+						continue;
+
+					if(rz->start >= start + length)
+						continue;
+
+					if(start < rz->start)
+					{
+						if(start + length > rz->start + rz->length) // Old region is contained in new region: need to add two separate regions.
+						{
+							AddRegion(start, rz->start - length, zone);
+							AddRegion(rz->start + rz->length, start + length - rz->length, zone);
+						}
+						else // Old region covers upper part of new region.
+							length = rz->start - start;
+					}
+					else
+					{
+						if(start + length > rz->start + rz->length) // Old region covers lower part of new region.
+						{
+							length -= rz->start + rz->length - start;
+							start = rz->start + rz->length;
+						}
+						else // New region is contained in old region.
+							return;
+					}
+
+					rz = rz->next;
+				}
+				while(rz != regions[static_cast<int>(zone)]);
+			}
+
+			Region* r = new Region(start, length);
+
+			if(rz == nullptr)
+			{
+				regions[static_cast<int>(zone)] = r->prev = r->next = r;
 			}
 			else
 			{
-				r->next = *rz;
-				r->prev = (*rz)->prev;
-				(*rz)->prev->next = r;
-				(*rz)->prev = r;
+				r->next = rz;
+				r->prev = rz->prev;
+				rz->prev->next = r;
+				rz->prev = r;
 			}
 
 			Console::WriteMessage(Console::Style::INFO, "Chunker:", "Added memory from %p to %p in zone %u.", start, start + length - 1, zone);
@@ -307,7 +345,7 @@ namespace Kernel
 		{
 			Region* r = FindRegion(first);
 
-			Console::WriteMessage(Console::Style::INFO, "Chunker:", "Reserving memory from %p to %p.", first, last - 1);
+			//Console::WriteMessage(Console::Style::INFO, "Chunker:", "Reserving memory from %p to %p.", first, last - 1);
 
 			if(r == nullptr)
 				return false;
