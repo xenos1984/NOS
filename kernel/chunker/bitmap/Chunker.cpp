@@ -12,7 +12,7 @@ namespace Kernel
 {
 	namespace Chunker
 	{
-		static const int bitwidth = 8 * sizeof(unsigned long); //std::numeric_limits<unsigned long>::digits;
+		static const unsigned long bitwidth = 8 * sizeof(unsigned long); //std::numeric_limits<unsigned long>::digits;
 
 		struct Region
 		{
@@ -20,12 +20,32 @@ namespace Kernel
 			Region* next;
 			const Memory::PhysAddr start;
 			const Memory::PhysAddr length;
-			std::atomic_ulong* const bitmap;
-			const Memory::Zone zone;
-			const unsigned long total;
 			std::atomic_ulong free;
+			const unsigned long total;
+			std::atomic_ulong* const bitmap;
 
-			constexpr Region(Memory::PhysAddr s, Memory::PhysAddr l, std::atomic_ulong* b, Memory::Zone z, Region* p = nullptr, Region* n = nullptr) : prev(p), next(n), start(s), length(l), bitmap(b), zone(z), total(l >> MinPageBits), free(l >> MinPageBits) {};
+			constexpr Region(void)
+				: prev(nullptr)
+				, next(nullptr)
+				, start(0)
+				, length(0)
+				, free(0)
+				, total(0)
+				, bitmap(nullptr)
+			{};
+
+			Region(Memory::PhysAddr s, Memory::PhysAddr l, std::atomic_ulong* b = nullptr)
+				: prev(nullptr)
+				, next(nullptr)
+				, start(s)
+				, length(l)
+				, free(length >> MinPageBits)
+				, total(((free - 1) & (-bitwidth)) + bitwidth)
+				, bitmap(b == nullptr ? new std::atomic_ulong[total / bitwidth] : b)
+			{
+				if(free < total)
+					bitmap[total / bitwidth - 1] = ~((1UL << (free % bitwidth)) - 1);
+			}
 
 			bool Contains(Memory::PhysAddr addr) const
 			{
@@ -110,7 +130,7 @@ namespace Kernel
 		static const unsigned int fbmlen = Memory::MaxInitPages / bitwidth;
 		static std::atomic_ulong firstbitmap[fbmlen];
 
-		static Region firstregion {0, 0, firstbitmap, static_cast<Memory::Zone>(0), &firstregion, &firstregion};
+		static Region firstregion;
 		static Region* regions[static_cast<int>(Memory::Zone::MAX) + 1];
 
 		void Init(Memory::PhysAddr start, Memory::PhysAddr length, Memory::Zone zone)
@@ -132,7 +152,8 @@ namespace Kernel
 			length = length & ~MinPageMask;
 
 			// Enter first zone properties.
-			new (&firstregion) Region(start, length, firstbitmap, zone, &firstregion, &firstregion);
+			new (&firstregion) Region(start, length, firstbitmap);
+			firstregion.prev = firstregion.next = &firstregion;
 
 			// Mark all memory as free and let kernel mark used memory before the first allocation.
 			for(i = 0; i < fbmlen; i++)
@@ -150,7 +171,7 @@ namespace Kernel
 			// If end is not at page boundary, round down.
 			length = length & ~MinPageMask;
 
-			Region* r = new Region(start, length, new std::atomic_ulong[(length >> MinPageBits) / bitwidth], zone);
+			Region* r = new Region(start, length);
 			Region** rz = &regions[static_cast<int>(zone)];
 
 			if(*rz == nullptr)
