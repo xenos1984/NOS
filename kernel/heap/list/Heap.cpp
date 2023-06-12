@@ -59,7 +59,7 @@ namespace Kernel
 		void Init(void)
 		{
 			new (&root) MemoryPointer(Symbol::heapStart.Addr(), Symbol::heapTab.Addr() - Symbol::heapStart.Addr(), 1, &root, &root);
-			Console::WriteMessage(Console::Style::INFO, "Heap:", "Started with %d kB starting at %p.", root.length >> 10, root.mem);
+			Console::WriteMessage(Console::Style::OK, "Heap:", "Started with %d kB starting at %p.", root.length >> 10, root.mem);
 		}
 
 		void AllocChunk(MemoryPointer* mp)
