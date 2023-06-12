@@ -291,7 +291,7 @@ ap_in_long_mode:
 	movq %rsp, 4(%rax)
 
 2:
-//	sti
+	sti
 	hlt
 	jmp 2b
 .size ap_in_long_mode, . - ap_in_long_mode

@@ -227,7 +227,7 @@ ap_in_pmode:
 	movl $KERNEL_STACK, 8(%eax)
 	movl %esp, 4(%eax)
 2:
-//	sti
+	sti
 	hlt
 	jmp 2b
 .size ap_in_pmode, . - ap_in_pmode
