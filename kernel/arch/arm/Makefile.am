@@ -17,5 +17,6 @@ libarm_a_SOURCES = \
 	Memory.h \
 	Pager.h \
 	Process.h \
+	Processor.h \
 	Symbol.h \
 	Thread.h
