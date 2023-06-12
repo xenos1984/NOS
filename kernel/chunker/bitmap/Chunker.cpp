@@ -124,6 +124,13 @@ namespace Kernel
 			// Initial memory belongs to this zone.
 			regions[static_cast<int>(zone)] = &firstregion;
 
+			// If start is not at page boundary, round up.
+			length -= MinPageMask - ((start - 1) & MinPageMask);
+			start = MinPageSize + ((start - 1) & ~MinPageMask);
+
+			// If end is not at page boundary, round down.
+			length = length & ~MinPageMask;
+
 			// Enter first zone properties.
 			new (&firstregion) Region(start, length, firstbitmap, zone, &firstregion, &firstregion);
 
@@ -131,11 +138,18 @@ namespace Kernel
 			for(i = 0; i < fbmlen; i++)
 				firstbitmap[i] = 0UL;
 
-			Console::WriteMessage(Console::Style::OK, "Chunker:", "Started with %u kB from %p to %p in zone %u.", length >> 10, start, start + length - 1, zone);
+			Console::WriteMessage(Console::Style::OK, "Chunker:", "%u kB from %p to %p in zone %u.", length >> 10, start, start + length - 1, zone);
 		}
 
 		void AddRegion(Memory::PhysAddr start, Memory::PhysAddr length, Memory::Zone zone)
 		{
+			// If start is not at page boundary, round up.
+			length -= MinPageMask - ((start - 1) & MinPageMask);
+			start = MinPageSize + ((start - 1) & ~MinPageMask);
+
+			// If end is not at page boundary, round down.
+			length = length & ~MinPageMask;
+
 			Region* r = new Region(start, length, new std::atomic_ulong[(length >> MinPageBits) / bitwidth], zone);
 			Region** rz = &regions[static_cast<int>(zone)];
 
