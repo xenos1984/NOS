@@ -151,6 +151,8 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, uint32_t mbiph
 		PICManager::Init();
 	}
 
+	Console::WriteMessage(Console::Style::OK, "Processors:", "%u found.", ncpu);
+
 	// Create task state segments.
 	for(unsigned int i = 0; i < ncpu; i++)
 	{
