@@ -5,6 +5,7 @@
 #include <Thread.h>
 #include <Process.h>
 #include <Elf.h>
+#include <Processor.h>
 
 namespace Kernel
 {
@@ -12,6 +13,11 @@ namespace Kernel
 	namespace Tasker
 	{
 		unsigned int numcpus;
+		Processor* cpus;
+
+		void Init(unsigned int nc)
+		{
+		}
 
 		Process* CreateProcess(Elf* elf, const char* cmd)
 		{

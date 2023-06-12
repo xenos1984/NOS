@@ -18,8 +18,8 @@ namespace Kernel
 	{
 	private:
 		unsigned char numcpus, numbuses, numioapics, numints, numlints;
-		Processor* cpu; /**< Points to a table with all CPUs. */
-		Processor* bsp; /**< Bootstrap Processor. */
+//		Processor* cpu; /**< Points to a table with all CPUs. */
+//		Processor* bsp; /**< Bootstrap Processor. */
 		IOApic* ioapic;
 
 		X86_64TaskManager(unsigned int nc);
@@ -33,7 +33,7 @@ namespace Kernel
 		static void InitSmp(void); /**< Create task manager for SMP mode. */
 #endif
 
-		Processor* GetProcessor(unsigned char n); /**< Get Processor object by index. */
+//		Processor* GetProcessor(unsigned char n); /**< Get Processor object by index. */
 		void SetTSS(void);
 		int GetCurrentCPU(void);
 		Process* CreateProcess(Elf* elf);

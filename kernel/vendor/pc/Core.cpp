@@ -4,11 +4,15 @@
 #include <new>
 #include <Core.h>
 #include <Symbol.h>
+#include <Chunker.h>
 #include <Pager.h>
+#include <Heap.h>
 #include <Allocator.h>
+#include <Processor.h>
 #include <Console.h>
 #include INC_VENDOR(Multiboot.h)
 #include INC_ARCH(CPU.h)
+#include INC_ARCH(Apic.h)
 #include INC_ARCH(DescriptorTable.h)
 #include INC_ARCH(ControlRegisters.h)
 #include INC_SUBARCH(Entry.h)
@@ -23,10 +27,12 @@
 using namespace Kernel;
 
 extern "C" unsigned long bspStack;
+extern "C" unsigned long apcount;
+extern "C" unsigned char apentry[];
 
 extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, uint32_t mbiphys)
 {
-	unsigned int ncpu = 1, bspid = 0;
+	unsigned int ncpu = 1;
 
 	// Init console and show message.
 	Core::Welcome();
@@ -68,8 +74,8 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, uint32_t mbiph
 	}
 	CR4::Write(cr4);
 
-	// Figure out where to look for SMP / ACPI information.
 #if defined CONFIG_SMP || defined CONFIG_ACPI
+	// Figure out where to look for SMP / ACPI information.
 	uint16_t segaddr = *(uint16_t*)(0x0000040e + Symbol::kernelOffset.Addr()); // EBDA
 	if(!segaddr)
 		segaddr = ((*(uint16_t*)(0x00000413 + Symbol::kernelOffset.Addr())) - 1) << 6; // last k of lower memory
@@ -83,6 +89,20 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, uint32_t mbiph
 
 		ncpu = ACPI::GetProcessorCount();
 		IOApicManager::InitAcpi();
+
+		ACPI::LApic* ac = ACPI::GetProcessor(0);
+		Processor::bsp = new Processor{Processor::State::Online, ProcessorData{ac->ApicID}};
+		Processor::bsp->prev = Processor::bsp->next = Processor::bsp;
+
+		for(unsigned int i = 1; i < ncpu; i++)
+		{
+			ac = ACPI::GetProcessor(i);
+			Processor* p = new Processor{Processor::State::Offline, ProcessorData{ac->ApicID}};
+			p->prev = Processor::bsp->prev;
+			p->next = Processor::bsp;
+			Processor::bsp->prev->next = p;
+			Processor::bsp->prev = p;
+		}
 	}
 	else
 #endif
@@ -94,11 +114,33 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, uint32_t mbiph
 		ncpu = SMP::GetProcessorCount();
 		IOApicManager::InitSmp();
 
+		Processor* pold = nullptr;
+		Processor* pnew = nullptr;
+
 		for(unsigned int i = 0; i < ncpu; i++)
 		{
 			SMP::Cpu* sc = SMP::GetProcessor(i);
 			if(sc->Flags & SMP::CPU_BSP)
-				bspid = i;
+			{
+				pnew = new Processor{Processor::State::Offline, ProcessorData{sc->LocalApicID}};
+				Processor::bsp = pnew;
+			}
+			else
+			{
+				pnew = new Processor{Processor::State::Online, ProcessorData{sc->LocalApicID}};
+			}
+
+			if(pold == nullptr)
+			{
+				pold = pnew->prev = pnew->next = pnew;
+			}
+			else
+			{
+				pnew->prev = pold->prev;
+				pnew->next = pold;
+				pold->prev->next = pnew;
+				pold->prev = pnew;
+			}
 		}
 	}
 	else
@@ -109,6 +151,7 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, uint32_t mbiph
 		PICManager::Init();
 	}
 
+	// Create task state segments.
 	for(unsigned int i = 0; i < ncpu; i++)
 	{
 		TSS* tss = (TSS*)Allocator::AllocBlock<Memory::PGB_4K>(TSS_LIN_ADDR + i * TSS_LENGTH, Memory::MemType::KERNEL_RW);
@@ -116,13 +159,86 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, uint32_t mbiph
 		tabGDT.CreateTSS(FIRST_TSS + i, tss, 0x1000);
 	}
 
-	Pager::Map((uintptr_t)&bspStack - Symbol::kernelOffset.Addr() - STACK_SIZE, STACK_LIN_ADDR + bspid * STACK_SIZE, STACK_SIZE, Memory::MemType::KERNEL_RW);
+	// Move virtual address of BSP stack.
+	Pager::Map((uintptr_t)&bspStack - Symbol::kernelOffset.Addr() - STACK_SIZE, STACK_LIN_ADDR, STACK_SIZE, Memory::MemType::KERNEL_RW);
 #ifdef ELF32
-	asm volatile("addl %0, %%esp" : : "r"(STACK_LIN_ADDR + (bspid + 1) * STACK_SIZE - (uintptr_t)&bspStack));
-	SetTaskReg((FIRST_TSS + bspid) << 3);
+	asm volatile("addl %0, %%esp" : : "r"(STACK_LIN_ADDR + STACK_SIZE - (uintptr_t)&bspStack));
+	SetTaskReg(FIRST_TSS << 3);
 #else
-	asm volatile("addq %0, %%rsp" : : "r"(STACK_LIN_ADDR + (bspid + 1) * STACK_SIZE - (uintptr_t)&bspStack));
-	SetTaskReg((FIRST_TSS + bspid) << 4);
+	asm volatile("addq %0, %%rsp" : : "r"(STACK_LIN_ADDR + STACK_SIZE - (uintptr_t)&bspStack));
+	SetTaskReg(FIRST_TSS << 4);
+#endif
+
+#if defined CONFIG_SMP || defined CONFIG_ACPI
+	if(ncpu > 1)
+	{
+		// Copy AP startup code into lower memory.
+		Memory::PhysAddr phys = Chunker::Alloc<Memory::PGB_4K>(Memory::Zone::REAL);
+		unsigned int vector = phys >> Memory::PGB_4K;
+		unsigned char* apcode = (unsigned char*)(phys + Symbol::kernelOffset.Addr());
+		Pager::MapPage<Memory::PGB_4K>(phys, (uintptr_t)apcode, Memory::MemType::KERNEL_RW);
+		Pager::MapPage<Memory::PGB_4K>(phys, phys, Memory::MemType::KERNEL_RW);
+		Pager::MapPage<Memory::PGB_4K>(((uintptr_t)&tabGDT) - Symbol::kernelOffset.Addr(), ((uintptr_t)&tabGDT) - Symbol::kernelOffset.Addr(), Memory::MemType::KERNEL_RW);
+		Pager::MapPage<Memory::PGB_4K>((((uintptr_t)apentry) & ~Memory::PGM_4K) - Symbol::kernelOffset.Addr(), (((uintptr_t)apentry) & ~Memory::PGM_4K) - Symbol::kernelOffset.Addr(), Memory::MemType::KERNEL_RW);
+		Console::WriteMessage(Console::Style::INFO, "Core:", "AP startup code copied to %p.", phys);
+
+		for(int i = 0; i < 0x1000; i++)
+			apcode[i] = apentry[i];
+
+		// Allocate AP stacks.
+		Allocator::Alloc(STACK_LIN_ADDR + STACK_SIZE, (ncpu - 1) * STACK_SIZE, Memory::MemType::KERNEL_RW);
+
+		Processor* p = Processor::bsp->next;
+
+		while(p != Processor::bsp)
+		{
+			p->state = Processor::State::Booting;
+
+			Cmos::SetShutdownStatus(Cmos::SH_JMP467);
+			*(unsigned int *)(0x00000467 + Symbol::kernelOffset.Addr()) = vector;
+			Apic::ClearError();
+			Apic::SendIPI(p->data.physID, 0, Apic::DEST_FIELD | Apic::INT_ASSERT | Apic::DM_INIT); // assert INIT IPI
+			while(Apic::SendPending()) ;
+			Apic::ClearError();
+			Apic::SendIPI(p->data.physID, 0, Apic::DEST_FIELD | Apic::DM_INIT); // deassert INIT IPI
+			while(Apic::SendPending()) ;
+			PIT::SetOneShot(0, 11932); // 10ms
+			while(PIT::GetCurrent(0) <= 11932) ;
+
+			if(Apic::GetVersion() >= 0x10)
+			{
+				Apic::ClearError();
+				Apic::SendIPI(p->data.physID, vector, Apic::DEST_FIELD | Apic::DM_STARTUP);
+				while(Apic::SendPending()) ;
+				PIT::SetOneShot(0, 239); // 200µs
+				while(PIT::GetCurrent(0) <= 239) ;
+				if(p->state != Processor::State::Online)
+				{
+					Apic::ClearError();
+					Apic::SendIPI(p->data.physID, vector, Apic::DEST_FIELD | Apic::DM_STARTUP);
+					while(Apic::SendPending()) ;
+					PIT::SetOneShot(0, 239); // 200µs
+					while(PIT::GetCurrent(0) <= 239) ;
+				}
+			}
+
+			PIT::SetOneShot(0, 11932); // 10ms
+			while((PIT::GetCurrent(0) <= 11932) && (p->state != Processor::State::Online)) ;
+			Cmos::SetShutdownStatus(Cmos::SH_NORMAL);
+
+			if(p->state == Processor::State::Online)
+			{
+				Console::WriteMessage(Console::Style::OK, "AP no. 0x%2x: ", "booted", p->data.physID);
+			}
+			else
+			{
+				Console::WriteMessage(Console::Style::WARNING, "AP no. 0x%2x: ", "no response, disabled", p->data.physID);
+				p->state = Processor::State::Offline;
+			}
+
+			p = p->next;
+		}
+	}
 #endif
 
 	// Start multiboot modules.
@@ -142,5 +258,18 @@ extern "C" void SECTION(".init.text") ApplicationEntry()
 	// TODO: Register CPU as available for execution in tasker.
 
 	// TODO: Set flag to indicate CPU is booted.
+
+	Processor* p = Processor::bsp->next;
+
+	while(p != Processor::bsp)
+	{
+		if(p->data.physID == Apic::GetPhysID())
+		{
+			p->state = Processor::State::Online;
+			break;
+		}
+
+		p = p->next;
+	}
 }
 #endif

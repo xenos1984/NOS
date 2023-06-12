@@ -196,7 +196,26 @@ ap_in_pmode:
 
 1:
 	movl $0, (0xfffff000) // clear identity mapping
-	movl apstack, %esp
+
+	// Read and increment AP count.
+	movl $1, %eax
+	movl $(apcount), %edx
+	lock xaddl %eax, (%edx)
+	incl %eax
+	movl %eax, %ebx
+	incl %eax
+
+	// Set stack address.
+	movl $STACK_LIN_ADDR, %esp
+	movl $STACK_SIZE, %edx
+	mull %edx
+	addl %eax, %esp
+
+	// Set TSS.
+	addl $FIRST_TSS, %ebx
+	shll $3, %ebx
+	ltr %bx
+
 	call ApplicationEntry // run the boot module by calling its C++ entry point
 	pushl $0
 	str %eax
@@ -208,9 +227,10 @@ ap_in_pmode:
 	movl $KERNEL_STACK, 8(%eax)
 	movl %esp, 4(%eax)
 2:
-	sti
+//	sti
 	hlt
 	jmp 2b
+.size ap_in_pmode, . - ap_in_pmode
 
 .section .init.text
 .code16 // APs start here in real mode (this (self-relocating) code is moved below 1MB) with IP = 0x0000
@@ -318,5 +338,5 @@ myGDT:
 
 .global apstack
 .type apstack, @object
-apstack: .long 0
-.size apstack, . - apstack
+apcount: .long 0
+.size apcount, . - apcount

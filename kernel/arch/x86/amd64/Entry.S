@@ -253,18 +253,34 @@ set_cpu_regs:
 #if defined CONFIG_SMP || defined CONFIG_ACPI
 .type ap_in_long_mode, @function
 ap_in_long_mode:
-	movabsq $1f, %rdx
-	jmpq *%rdx
+	// Read and increment AP count.
+	movabsq $1, %rax
+	movabsq $(apcount), %rdx
+	lock xaddq %rax, (%rdx)
+	incq %rax
+	movq %rax, %rbx
+	incq %rax
 
-1:
-	movabsq $(apstack), %rax
-	movq (%rax), %rsp
+	// Set stack address.
+	movabsq $STACK_LIN_ADDR, %rsp
+	movabsq $STACK_SIZE, %rdx
+	mulq %rdx
+	addq %rax, %rsp
+
+	// Load descriptor tables and set segment registers.
 	movabsq $(set_cpu_regs), %rax
 	callq *%rax
+
+	// Set TSS.
+	addq $FIRST_TSS, %rbx
+	shlq $4, %rbx
+	ltr %bx
 
 	// time for some C!
 	movabsq $(ApplicationEntry), %rax
 	callq *%rax
+
+	// Store stack pointer in TSS.
 	str %rax
 	shrq $4, %rax
 	subq $FIRST_TSS, %rax
@@ -275,7 +291,7 @@ ap_in_long_mode:
 	movq %rsp, 4(%rax)
 
 2:
-	sti
+//	sti
 	hlt
 	jmp 2b
 .size ap_in_long_mode, . - ap_in_long_mode
@@ -310,7 +326,12 @@ apentry:
 
 	lgdt (pGDT32 - apentry)
 
-	ljmpl $0x20, $(ap_in_long_mode - KERNEL_OFFSET)
+	ljmpl $0x20, $(1f - KERNEL_OFFSET)
+
+.code64
+1:
+	movabsq $(ap_in_long_mode), %rdx
+	jmpq *%rdx
 .size apentry, . - apentry
 
 #endif
@@ -385,10 +406,10 @@ myGDT:
 	.long 0x002ffa00
 .size myGDT, . - myGDT
 
-.global apstack
-.type apstack, @object
-apstack: .quad 0
-.size apstack, . - apstack
+.global apcount
+.type apcount, @object
+apcount: .quad 0
+.size apcount, . - apcount
 
 .type cpu_error, @object
 cpu_error:

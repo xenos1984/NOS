@@ -114,6 +114,10 @@ namespace Kernel
 				Chunker::Reserve(CommandLine, CommandLine + Chunker::MinPageSize);
 			if(HasModules() && (ModuleCount > 0))
 				Chunker::Reserve(ModuleAddress, ModuleAddress + ModuleCount * sizeof(Module));
+
+			// BIOS and ROM occupied areas.
+			Chunker::Reserve(0x00000, 0x01000);
+			Chunker::Reserve(0x9f000, 0xa0000);
 		}
 
 		SECTION(".init.text") void Info::InitModules(void)

@@ -29,7 +29,7 @@ using namespace Kernel;
 
 char taskman_space[sizeof(X86_64TaskManager)];
 extern "C" unsigned long bspStack;
-
+/*
 SECTION(".init.text") X86_64TaskManager::X86_64TaskManager(unsigned int nc)
 {
 	unsigned long i;
@@ -176,7 +176,7 @@ void SECTION(".init.text") X86_64TaskManager::SetTSS(void)
 		}
 	}
 }
-
+*/
 int strcmp(const char* s1, const char* s2)
 {
 	while (*s1 != 0 && *s1 == *s2)

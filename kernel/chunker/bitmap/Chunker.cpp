@@ -96,7 +96,7 @@ namespace Kernel
 								x |= 1UL << b;
 								bitmap[n] = x;
 								free--;
-								// Console::WriteFormat("Alloc memory: base = 0x%p, n = 0x%x, b = 0x%x, free = %d\n", start, n, b, free.load());
+								//Console::WriteFormat("Alloc memory: base = 0x%p, total = 0x%x, n = 0x%x, b = 0x%x, free = %d\n", start, total, n, b, free.load());
 								return start + ((n * bitwidth + b) << MinPageBits);
 							}
 						}
@@ -131,7 +131,7 @@ namespace Kernel
 			for(i = 0; i < fbmlen; i++)
 				firstbitmap[i] = 0UL;
 
-			Console::WriteMessage(Console::Style::INFO, "Chunker:", "Started with %d kB (%d kB free) starting at %p in zone %d.", length >> 10, length >> 10, start, zone);
+			Console::WriteMessage(Console::Style::OK, "Chunker:", "Started with %u kB from %p to %p in zone %u.", length >> 10, start, start + length - 1, zone);
 		}
 
 		void AddRegion(Memory::PhysAddr start, Memory::PhysAddr length, Memory::Zone zone)
@@ -150,6 +150,8 @@ namespace Kernel
 				(*rz)->prev->next = r;
 				(*rz)->prev = r;
 			}
+
+			Console::WriteMessage(Console::Style::INFO, "Chunker:", "Added memory from %p to %p in zone %u.", start, start + length - 1, zone);
 		}
 
 		template<Memory::PageBits bits> Memory::PhysAddr Alloc(Memory::Zone zone __attribute__((unused)))
@@ -211,6 +213,7 @@ namespace Kernel
 				r = regions[i];
 				do
 				{
+					r = r->prev;
 					if(r->Contains(addr))
 						return r;
 				}
@@ -268,6 +271,8 @@ namespace Kernel
 		bool Reserve(Memory::PhysAddr first, Memory::PhysAddr last)
 		{
 			Region* r = FindRegion(first);
+
+			Console::WriteMessage(Console::Style::INFO, "Chunker:", "Reserving memory from %p to %p.", first, last - 1);
 
 			if(r == nullptr)
 				return false;
