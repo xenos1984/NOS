@@ -15,4 +15,3 @@ NOS.iso$(EXEEXT): grub.cfg eltorito.img \
 		nos/Kernel.elf=${top_builddir}/kernel/vendor/pc/Kernel.elf
 #		nos/Floppy.elf=${top_builddir}/drivers/pc/floppy/Floppy.elf
 #	${top_builddir}/drivers/pc/floppy/Floppy.elf
-
