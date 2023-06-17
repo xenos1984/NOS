@@ -3,7 +3,7 @@ OUTPUT_ARCH(aarch64)
 ENTRY(Entry)
 
 kernelOffset = 0xffffffffc0000000;
-kernelStart = kernelOffset + 0x8000;
+kernelStart = kernelOffset + 0x80000;
 initStart = kernelStart;
 
 GROUP(../../arch/arm/a64/liba64.a ../../arch/arm/libarm.a ../../libkernel.a libraspi.a)
@@ -11,8 +11,8 @@ INPUT(libgcc.a)
 
 PHDRS
 {
-	kernel PT_LOAD FILEHDR PHDRS;
 	init PT_LOAD;
+	kernel PT_LOAD;
 }
 
 SECTIONS
@@ -34,7 +34,7 @@ SECTIONS
 	}
 	initEnd = .;
 
-	. += SIZEOF_HEADERS;
+	/*. += SIZEOF_HEADERS;*/
 
 	.text : AT(ADDR(.text) - kernelOffset)
 	{
@@ -90,5 +90,6 @@ SECTIONS
 		*(.comment)
 		*(.rel.*)
 		*(.rela.*)
+		*(.ARM.*)
 	}
 }
