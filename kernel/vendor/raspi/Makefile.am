@@ -19,7 +19,7 @@ libraspi_a_SOURCES = \
 	Mailbox.cpp \
 	UART.cpp
 
-noinst_PROGRAMS = Kernel.elf
+noinst_PROGRAMS = Kernel.elf kernel.img
 
 Kernel_elf_SOURCES =
 
@@ -36,3 +36,8 @@ Kernel_elf_LDFLAGS = \
 	-T kernel.${bits_subdir}.lds \
 	-Wl,-Map,Kernel.map \
 	-Wl,-u,Entry
+
+kernel_img_SOURCES =
+
+kernel.img$(EXEEXT): Kernel.elf
+	${NOS_OBJCOPY} -O binary Kernel.elf kernel.img
