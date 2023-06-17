@@ -11,13 +11,13 @@ INPUT(libgcc.a)
 
 PHDRS
 {
+	kernel PT_LOAD FILEHDR PHDRS;
 	init PT_LOAD;
-	kernel PT_LOAD;
 }
 
 SECTIONS
 {
-	.init.text (initStart + SIZEOF_HEADERS) : AT(ADDR(.init.text) - kernelOffset)
+	.init.text (initStart) : AT(ADDR(.init.text) - kernelOffset)
 	{
 		initTextStart = .;
 		*(.init.text)
@@ -33,6 +33,8 @@ SECTIONS
 		initDataEnd = .;
 	}
 	initEnd = .;
+
+	. += SIZEOF_HEADERS;
 
 	.text : AT(ADDR(.text) - kernelOffset)
 	{
