@@ -11,7 +11,7 @@
 Entry:
 #ifdef ARM_EXT_SECURITY
 // Check whether we are in secure state (QEMU) and drop.
-	mrc p15, 0, r4, c1, c1, 0
+/*	mrc p15, 0, r4, c1, c1, 0
 	ands r4, r4, #1
 	bne EntryNS
 	mrc p15, 0, r4, c1, c1, 2
@@ -23,7 +23,7 @@ Entry:
 	orr r4, #0x31
 	mcr p15, 0, r4, c1, c1, 0
 	smc #0
-
+*/
 EntryNS:
 #endif
 
@@ -148,14 +148,14 @@ higherhalf:
 	b 1b
 
 #ifdef ARM_EXT_SECURITY
-.align 5
+/*.align 5
 MonitorExceptionVectorBase:
-b . // Unused
-b . // Unused
-movs pc, lr // Secure Monitor Call
-b . // Prefetch abort
-b . // Data abort
-b . // Unused
-b . // IRQ
-b . // FIQ
+	b . // Unused
+	b . // Unused
+	movs pc, lr // Secure Monitor Call
+	b . // Prefetch abort
+	b . // Data abort
+	b . // Unused
+	b . // IRQ
+	b .*/ // FIQ
 #endif
