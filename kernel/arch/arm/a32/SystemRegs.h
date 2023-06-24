@@ -167,6 +167,61 @@ namespace Kernel
 #endif
 
 #ifdef ARM_EXT_SECURITY
+		/** Monitor Vector Base Address Register */
+		namespace MVBAR
+		{
+
+			READ_WRITE_REG("p15", "c12", "c0", "0", "1")
+		}
+
+		/** Non-Secure Access Control Register */
+		namespace NSACR
+		{
+			enum Flags : uint32_t
+			{
+				FLAG_CP0      = 0x00000001,
+				FLAG_CP1      = 0x00000002,
+				FLAG_CP2      = 0x00000004,
+				FLAG_CP3      = 0x00000008,
+				FLAG_CP4      = 0x00000010,
+				FLAG_CP5      = 0x00000020,
+				FLAG_CP6      = 0x00000040,
+				FLAG_CP7      = 0x00000080,
+				FLAG_CP8      = 0x00000100,
+				FLAG_CP9      = 0x00000200,
+				FLAG_CP10     = 0x00000400,
+				FLAG_CP11     = 0x00000800,
+				FLAG_CP12     = 0x00001000,
+				FLAG_CP13     = 0x00002000,
+				FLAG_NSD32DIS = 0x00004000,
+				FLAG_NSASEDIS = 0x00008000,
+				FLAG_RFR      = 0x00080000,
+				FLAG_NSTRCDIS = 0x00100000
+			};
+
+			READ_WRITE_REG("p15", "c1", "c1", "0", "2")
+		}
+
+		/** Non-Secure Access Control Register */
+		namespace SCR
+		{
+			enum Flags : uint32_t
+			{
+				FLAG_NS  = 0x00000001,
+				FLAG_IRQ = 0x00000002,
+				FLAG_FIQ = 0x00000004,
+				FLAG_EA  = 0x00000008,
+				FLAG_FW  = 0x00000010,
+				FLAG_AW  = 0x00000020,
+				FLAG_NET = 0x00000040,
+				FLAG_SCD = 0x00000080,
+				FLAG_HCE = 0x00000100,
+				FLAG_SIF = 0x00000200
+			};
+
+			READ_WRITE_REG("p15", "c1", "c1", "0", "0")
+		}
+
 		/** Vector Base Address Register */
 		namespace VBAR
 		{
