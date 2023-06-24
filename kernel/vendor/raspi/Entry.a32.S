@@ -1,6 +1,7 @@
 // Entry.S - Kernel entry point
 
 #include <vendor/raspi/Entry.h>
+#include <arch/arm/Extensions.h>
 
 .section .init.text
 
@@ -8,6 +9,24 @@
 .extern KernelEntry
 
 Entry:
+#ifdef ARM_EXT_SECURITY
+// Check whether we are in secure state (QEMU) and drop.
+	mrc p15, 0, r4, c1, c1, 0
+	ands r4, r4, #1
+	bne EntryNS
+	mrc p15, 0, r4, c1, c1, 2
+	orr r0, #0xc00
+	mcr p15, 0, r4, c1, c1, 2
+	ldr r4, =MonitorExceptionVectorBase - KERNEL_OFFSET
+	mcr p15, 0, r4, c12, c0, 1
+	mrc p15, 0, r4, c1, c1, 0
+	orr r4, #0x31
+	mcr p15, 0, r4, c1, c1, 0
+	smc #0
+
+EntryNS:
+#endif
+
 #ifdef ARCH_ARM_V7
 // Check for CPU ID - let CPU 0 set up the basic structures, before others join.
 	mrc p15, 0, r4, c0, c0, 5
@@ -127,3 +146,16 @@ higherhalf:
 1:
 	wfe
 	b 1b
+
+#ifdef ARM_EXT_SECURITY
+.align 5
+MonitorExceptionVectorBase:
+b . // Unused
+b . // Unused
+movs pc, lr // Secure Monitor Call
+b . // Prefetch abort
+b . // Data abort
+b . // Unused
+b . // IRQ
+b . // FIQ
+#endif
