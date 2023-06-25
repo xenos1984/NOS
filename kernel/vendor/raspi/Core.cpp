@@ -37,21 +37,21 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t r0, uint32_t r1, uint
 		Console::WriteMessage(Console::Style::WARNING, "Secure state:", "Enabled");
 #endif
 */
-	Console::WriteFormat("Register arguments: r0 = 0x%8x, r1 = 0x%8x, r2 = 0x%8x\n", r0, r1, r2);
+	Console::WriteMessage(Console::Style::INFO, "Register arguments:", "r0 = 0x%8x, r1 = 0x%8x, r2 = 0x%8x", r0, r1, r2);
 /*	Console::WriteFormat("SCTLR = 0x%8x\n", Sysreg::SCTLR::Read());
 	Console::WriteFormat("MIDR = 0x%8x\n", Sysreg::MIDR::Read());
 	Console::WriteFormat("VBAR = 0x%8x\n", Sysreg::VBAR::Read());
 	Console::WriteFormat("CNTFRQ = %d\n", Sysreg::CNTFRQ::Read());
 */
-	Console::WriteFormat("Firmware revision: 0x%8x\n", Mailbox::GetFirmwareRev());
-	Console::WriteFormat("Board model: 0x%8x\n", Mailbox::GetBoardModel());
-	Console::WriteFormat("Board revision: 0x%8x\n", Mailbox::GetBoardRev());
+	Console::WriteMessage(Console::Style::INFO, "Firmware revision:", "0x%8x", Mailbox::GetFirmwareRev());
+	Console::WriteMessage(Console::Style::INFO, "Board model:", "0x%8x", Mailbox::GetBoardModel());
+	Console::WriteMessage(Console::Style::INFO, "Board revision:", "0x%8x", Mailbox::GetBoardRev());
 
 	armmem = Mailbox::GetArmMemory();
 	vidmem = Mailbox::GetVideoMemory();
 
-	Console::WriteFormat("ARM memory: start = 0x%8x, length = 0x%8x\n", armmem.start, armmem.length);
-	Console::WriteFormat("Video memory: start = 0x%8x, length = 0x%8x\n", vidmem.start, vidmem.length);
+	Console::WriteMessage(Console::Style::INFO, "ARM memory:", "start = 0x%8x, length = 0x%8x", armmem.start, armmem.length);
+	Console::WriteMessage(Console::Style::INFO, "Video memory:", "start = 0x%8x, length = 0x%8x", vidmem.start, vidmem.length);
 
 	Chunker::Init(armmem.start, armmem.length, Memory::Zone::NONE);
 	Chunker::Reserve(Symbol::kernelStart.Addr() - Symbol::kernelOffset.Addr(), Symbol::kernelEnd.Addr() - Symbol::kernelOffset.Addr());
@@ -65,7 +65,7 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t r0, uint32_t r1, uint
 	Heap::ShowMap();
 
 	Console::WriteFormat("a = %p, b = %p\n", a, b);
-/*
+
 	uintptr_t virt = Symbol::kernelStart.Addr();
 	do
 	{
@@ -74,7 +74,7 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t r0, uint32_t r1, uint
 			Console::WriteFormat("0x%p => 0x%8x\n", virt, phys);
 		virt += 0x1000;
 	} while(virt);
-*/
+
 	delete a;
 	Heap::ShowMap();
 	delete b;
