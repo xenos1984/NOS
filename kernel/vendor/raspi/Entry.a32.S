@@ -9,6 +9,9 @@
 .extern KernelEntry
 
 Entry:
+// Get load address.
+	add lr, pc, #-0x8
+
 #ifdef ARM_EXT_SECURITY
 // Check whether we are in secure state (QEMU) and drop.
 /*	mrc p15, 0, r4, c1, c1, 0
@@ -45,7 +48,9 @@ EntryBSP:
 
 // Clear BSS and page tables
 	ldr r4, =bssStart - KERNEL_OFFSET
+	add r4, r4, lr
 	ldr r9, =kernelEnd - KERNEL_OFFSET
+	add r9, r9, lr
 	mov r5, #0
 	mov r6, #0
 	mov r7, #0
@@ -59,17 +64,17 @@ EntryBSP:
 	cmp r4, r9
 	blo 1b
 
-// Link page table to identity mapping and higher half
+// Link page table to higher half
 	ldr r5, =tabPGTAB - KERNEL_OFFSET
+	add r5, r5, lr
 	orr r5, r5, #1
-	ldr r4, =tabPGDIR - KERNEL_OFFSET
-	add r6, r4, #(KERNEL_OFFSET >> 18)
+	ldr r4, =tabPGDIR - KERNEL_OFFSET + (KERNEL_OFFSET >> 18)
+	add r4, r4, lr
 	add r9, r4, #16
 	b 4f
 
 3:
 	str r5, [r4], #4
-	str r5, [r6], #4
 	add r5, #0x400
 
 4:
@@ -78,10 +83,13 @@ EntryBSP:
 
 // Fill page table to map kernel
 	ldr r9, =kernelEnd - KERNEL_OFFSET
+	add r9, r9, lr
 	ldr r5, =kernelStart - KERNEL_OFFSET
 	ldr r4, =tabPGTAB - KERNEL_OFFSET
+	add r4, r4, lr
 	mov r6, r5, LSR#10
 	add r4, r4, r6
+	add r5, r5, lr
 	ldr r7, =#0x452
 	orr r5, r5, r7
 	b 6f
@@ -96,19 +104,26 @@ EntryBSP:
 
 // Map page table into paging structures
 	ldr r4, =tabPGTAB - KERNEL_OFFSET + (KERNEL_OFFSET >> 20)
+	add r4, r4, lr
 	ldr r5, =tabPGTAB - KERNEL_OFFSET
+	add r5, r5, lr
 	ldr r7, =#0x452
 	orr r5, r5, r7
 	str r5, [r4]
 
-// Map peripherals into virtual memory
+// Map peripherals and identity mapped kernel into virtual memory
 	ldr r4, =tabPGDIR - KERNEL_OFFSET + (PERI_OFFSET >> 18)
+	add r4, r4, lr
+	ldr r6, =tabPGDIR - KERNEL_OFFSET
+	add r6, r6, lr
 	add r9, r4, #64
 	ldr r5, =#0x50412 + PERI_PHYS
+	ldr r7, =#0x50402
 	b 8f
 
 7:
 	str r5, [r4], #4
+	str r7, [r6], #4
 
 8:
 	cmp r4, r9
@@ -116,6 +131,7 @@ EntryBSP:
 
 // Set TTBR0 and TTBR1
 	ldr r4, =tabPGDIR - KERNEL_OFFSET
+	add r4, r4, lr
 	mcr p15, 0, r4, c2, c0, 0
 	mcr p15, 0, r4, c2, c0, 1
 // Configure how many bits to share

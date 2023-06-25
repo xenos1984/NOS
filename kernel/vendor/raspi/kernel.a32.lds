@@ -2,8 +2,9 @@ OUTPUT_FORMAT(elf32-littlearm)
 OUTPUT_ARCH(arm)
 ENTRY(Entry)
 
+loadAddress = 0x8000;
 kernelOffset = 0xc0000000;
-kernelStart = kernelOffset + 0x8000;
+kernelStart = kernelOffset;
 initStart = kernelStart;
 
 GROUP(../../arch/arm/a32/liba32.a ../../arch/arm/libarm.a ../../libkernel.a libraspi.a)
@@ -17,7 +18,7 @@ PHDRS
 
 SECTIONS
 {
-	.init.text (initStart) : AT(ADDR(.init.text) - kernelOffset)
+	.init.text (initStart) : AT(ADDR(.init.text) + loadAddress - kernelOffset)
 	{
 		initTextStart = .;
 		*(.init.text)
@@ -25,7 +26,7 @@ SECTIONS
 		initTextEnd = .;
 	} :init
 
-	.init.data : AT(ADDR(.init.data) - kernelOffset)
+	.init.data : AT(ADDR(.init.data) + loadAddress - kernelOffset)
 	{
 		initDataStart = .;
 		*(.init.data)
@@ -36,7 +37,7 @@ SECTIONS
 
 	/*. += SIZEOF_HEADERS;*/
 
-	.text : AT(ADDR(.text) - kernelOffset)
+	.text : AT(ADDR(.text) + loadAddress - kernelOffset)
 	{
 		*(.text)
 		*(.text.*)
@@ -49,7 +50,7 @@ SECTIONS
 	textEnd = .;
 
 	dataStart = .;
-	.data : AT(ADDR(.data) - kernelOffset)
+	.data : AT(ADDR(.data) + loadAddress - kernelOffset)
 	{
 		*(.data*)
 		*(.gnu.linkonce.d.*)
@@ -58,7 +59,7 @@ SECTIONS
 	dataEnd = .;
 	bssStart = .;
 
-	.bss : AT(ADDR(.bss) - kernelOffset)
+	.bss : AT(ADDR(.bss) + loadAddress - kernelOffset)
 	{
 		*(.common)
 		*(.bss*)
@@ -70,7 +71,7 @@ SECTIONS
 	bssEnd = .;
 
 	. = ALIGN(16K);
-	.tables : AT(ADDR(.tables) - kernelOffset)
+	.tables : AT(ADDR(.tables) + loadAddress - kernelOffset)
 	{
 		tabPGDIR = .;
 		. += 16K;
