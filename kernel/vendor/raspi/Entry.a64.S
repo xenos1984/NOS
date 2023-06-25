@@ -8,6 +8,12 @@
 .extern KernelEntry
 
 Entry:
+// Get load address.
+	bl 1f
+
+1:
+	sub x30, x30, #4
+
 // Check for CPU ID - let CPU 0 set up the basic structures, before others join.
 	mrs x4, mpidr_el1
 	and x4, x4, #3
@@ -69,7 +75,9 @@ EL1:
 
 // Clear BSS and page tables
 	ldr x4, =bssStart - KERNEL_OFFSET
+	add x4, x4, x30
 	ldr x9, =kernelEnd - KERNEL_OFFSET
+	add x9, x9, x30
 	b 2f
 
 1:
@@ -80,29 +88,37 @@ EL1:
 	blo 1b
 
 // Link page table to recursive mapping, identity mapping and higher half
-	mov x7, #0x703
-	ldr x5, =tabPGL2 - KERNEL_OFFSET
-	orr x5, x5, x7
 	ldr x4, =tabPGL1 - KERNEL_OFFSET
+	add x4, x4, x30
+	mov x7, #0x701
+	str x7, [x4]
+	mov x7, #0x703
 	orr x6, x4, x7
-	str x5, [x4]
 	add x4, x4, #0xff0
 	str x6, [x4]
+	ldr x5, =tabPGL2 - KERNEL_OFFSET
+	add x5, x5, x30
+	orr x5, x5, x7
 	add x4, x4, #0x8
 	str x5, [x4]
 
 	ldr x5, =tabPGL3 - KERNEL_OFFSET
+	add x5, x5, x30
 	orr x5, x5, x7
 	ldr x4, =tabPGL2 - KERNEL_OFFSET
+	add x4, x4, x30
 	str x5, [x4]
 
 // Fill page table to map kernel
 	ldr x9, =kernelEnd - KERNEL_OFFSET
 	ldr x5, =kernelStart - KERNEL_OFFSET
 	ldr x4, =tabPGL3 - KERNEL_OFFSET
+	add x4, x4, x30
 	mov x6, x5, LSR#9
 	add x4, x4, x6
 	orr x5, x5, x7
+	add x5, x5, x30
+	add x9, x9, x30
 	b 4f
 
 3:
@@ -115,6 +131,7 @@ EL1:
 
 // Map peripherals into virtual memory
 	ldr x4, =tabPGL2 + 0x3c0 - KERNEL_OFFSET
+	add x4, x4, x30
 	add x9, x4, #64
 	ldr x5, =0x605 + PERI_PHYS
 	b 6f
@@ -140,6 +157,7 @@ EL1:
 	isb
 // Set TTBR0 and TTBR1
 	ldr x4, =tabPGL1 - KERNEL_OFFSET + 1
+	add x4, x4, x30
 	msr ttbr0_el1, x4
 	msr ttbr1_el1, x4
 // Enable paging
