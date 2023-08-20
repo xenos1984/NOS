@@ -52,28 +52,28 @@
 		uint32_t y; \
 		\
 		asm volatile ("mrrc " cp ", " op ", %0, %1, " crm : "=r"(x), "=r"(y)); \
-		return(x + ((uint64_t)y) << 32); \
+		return(x + (((uint64_t)y) << 32)); \
 	}
 
-#define WRITE_ONLY_REG_64(cp, crn, crm, op1, op2) \
+#define WRITE_ONLY_REG_64(cp, crm, op) \
 	inline void Write(uint64_t x) \
 	{ \
-		asm volatile ("mrrc " cp ", " op ", %0, %1, " crm : "=r"(x & 0xffffffff), "=r"(x >> 32)); \
+		asm volatile ("mrrc " cp ", " op ", %0, %1, " crm : : "r"(x & 0xffffffff), "r"(x >> 32)); \
 	}
 
-#define READ_WRITE_REG_64(cp, crn, crm, op1, op2) \
+#define READ_WRITE_REG_64(cp, crm, op) \
 	inline uint64_t Read(void) \
 	{ \
 		uint32_t x; \
 		uint32_t y; \
 		\
 		asm volatile ("mrrc " cp ", " op ", %0, %1, " crm : "=r"(x), "=r"(y)); \
-		return(x + ((uint64_t)y) << 32); \
+		return(x + (((uint64_t)y) << 32)); \
 	} \
 	\
 	inline void Write(uint64_t x) \
 	{ \
-		asm volatile ("mrrc " cp ", " op ", %0, %1, " crm : "=r"(x & 0xffffffff), "=r"(x >> 32)); \
+		asm volatile ("mrrc " cp ", " op ", %0, %1, " crm : : "r"(x & 0xffffffff), "r"(x >> 32)); \
 	} \
 	\
 	inline void Set(uint64_t x) \
@@ -90,10 +90,94 @@ namespace Kernel
 {
 	namespace Sysreg
 	{
-		/** Clock Frequency Register */
+		/** Counter Frequency Register */
 		namespace CNTFRQ
 		{
 			READ_WRITE_REG_32("p15", "c14", "c0", "0", "0")
+		}
+
+		/** Physical Count Register */
+		namespace CNTPCT
+		{
+			READ_ONLY_REG_64("p15", "c14", "0")
+		}
+
+		/** Virtual Count Register */
+		namespace CNTVCT
+		{
+			READ_ONLY_REG_64("p15", "c14", "1")
+		}
+
+		/** PL1 Physical Timer Compare Value Register */
+		namespace CNTP_CVAL
+		{
+			READ_WRITE_REG_64("p15", "c14", "2")
+		}
+
+		/** Virtual Timer Compare Value Register */
+		namespace CNTV_CVAL
+		{
+			READ_WRITE_REG_64("p15", "c14", "3")
+		}
+
+		/** Virtual Offset Register */
+		namespace CNTVOFF
+		{
+			READ_WRITE_REG_64("p15", "c14", "4")
+		}
+
+		/** PL2 Physical Timer Compare Value Register */
+		namespace CNTHP_CVAL
+		{
+			READ_WRITE_REG_64("p15", "c14", "6")
+		}
+
+		/** Timer PL1 Control Register */
+		namespace CNTKCTL
+		{
+			READ_WRITE_REG_32("p15", "c14", "c1", "0", "0")
+		}
+
+		/** PL1 Physical Timer Value Register */
+		namespace CNTP_TVAL
+		{
+			READ_WRITE_REG_32("p15", "c14", "c2", "0", "0")
+		}
+
+		/** PL1 Physical Timer Control Register */
+		namespace CNTP_CTL
+		{
+			READ_WRITE_REG_32("p15", "c14", "c2", "0", "1")
+		}
+
+		/** Virtual Timer Value Register */
+		namespace CNTV_TVAL
+		{
+			READ_WRITE_REG_32("p15", "c14", "c3", "0", "0")
+		}
+
+		/** Virtual Timer Control Register */
+		namespace CNTV_CTL
+		{
+			READ_WRITE_REG_32("p15", "c14", "c3", "0", "1")
+		}
+
+		/** Timer PL2 Control Register */
+		namespace CNTHCTL
+		{
+			READ_WRITE_REG_32("p15", "c14", "c1", "4", "0")
+		}
+
+		/** PL2 Physical Timer Value Register */
+		namespace CNTHP_TVAL
+		{
+			READ_WRITE_REG_32("p15", "c14", "c2", "4", "0")
+		}
+
+		/** PL2 Physical Timer Control Register */
+		namespace CNTHP_CTL
+		{
+			READ_WRITE_REG_32("p15", "c14", "c2", "4", "1")
 		}
 
 		/** Data Fault Address Register */
