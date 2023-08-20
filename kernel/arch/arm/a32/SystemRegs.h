@@ -6,7 +6,7 @@
 #include <cstdint>
 #include INC_ARCH(Extensions.h)
 
-#define READ_ONLY_REG(cp, crn, crm, op1, op2) \
+#define READ_ONLY_REG_32(cp, crn, crm, op1, op2) \
 	inline uint32_t Read(void) \
 	{ \
 		uint32_t x; \
@@ -15,13 +15,13 @@
 		return(x); \
 	}
 
-#define WRITE_ONLY_REG(cp, crn, crm, op1, op2) \
+#define WRITE_ONLY_REG_32(cp, crn, crm, op1, op2) \
 	inline void Write(uint32_t x) \
 	{ \
 		asm volatile ("mcr " cp ", " op1 ", %0, " crn ", " crm ", " op2 : : "r"(x)); \
 	}
 
-#define READ_WRITE_REG(cp, crn, crm, op1, op2) \
+#define READ_WRITE_REG_32(cp, crn, crm, op1, op2) \
 	inline uint32_t Read(void) \
 	{ \
 		uint32_t x; \
@@ -45,6 +45,47 @@
 		Write(Read() & ~x); \
 	}
 
+#define READ_ONLY_REG_64(cp, crm, op) \
+	inline uint64_t Read(void) \
+	{ \
+		uint32_t x; \
+		uint32_t y; \
+		\
+		asm volatile ("mrrc " cp ", " op ", %0, %1, " crm : "=r"(x), "=r"(y)); \
+		return(x + ((uint64_t)y) << 32); \
+	}
+
+#define WRITE_ONLY_REG_64(cp, crn, crm, op1, op2) \
+	inline void Write(uint64_t x) \
+	{ \
+		asm volatile ("mrrc " cp ", " op ", %0, %1, " crm : "=r"(x & 0xffffffff), "=r"(x >> 32)); \
+	}
+
+#define READ_WRITE_REG_64(cp, crn, crm, op1, op2) \
+	inline uint64_t Read(void) \
+	{ \
+		uint32_t x; \
+		uint32_t y; \
+		\
+		asm volatile ("mrrc " cp ", " op ", %0, %1, " crm : "=r"(x), "=r"(y)); \
+		return(x + ((uint64_t)y) << 32); \
+	} \
+	\
+	inline void Write(uint64_t x) \
+	{ \
+		asm volatile ("mrrc " cp ", " op ", %0, %1, " crm : "=r"(x & 0xffffffff), "=r"(x >> 32)); \
+	} \
+	\
+	inline void Set(uint64_t x) \
+	{ \
+		Write(Read() | x); \
+	} \
+	\
+	inline void Unset(uint64_t x) \
+	{ \
+		Write(Read() & ~x); \
+	}
+
 namespace Kernel
 {
 	namespace Sysreg
@@ -52,37 +93,37 @@ namespace Kernel
 		/** Clock Frequency Register */
 		namespace CNTFRQ
 		{
-			READ_WRITE_REG("p15", "c14", "c0", "0", "0")
+			READ_WRITE_REG_32("p15", "c14", "c0", "0", "0")
 		}
 
 		/** Data Fault Address Register */
 		namespace DFAR
 		{
-			READ_WRITE_REG("p15", "c6", "c0", "0", "0")
+			READ_WRITE_REG_32("p15", "c6", "c0", "0", "0")
 		}
 
 		/** Data Fault Status Register */
 		namespace DFSR
 		{
-			READ_WRITE_REG("p15", "c5", "c0", "0", "0")
+			READ_WRITE_REG_32("p15", "c5", "c0", "0", "0")
 		}
 
 		/** Instruction Fault Address Register */
 		namespace IFAR
 		{
-			READ_WRITE_REG("p15", "c6", "c0", "0", "2")
+			READ_WRITE_REG_32("p15", "c6", "c0", "0", "2")
 		}
 
 		/** Instruction Fault Status Register */
 		namespace IFSR
 		{
-			READ_WRITE_REG("p15", "c5", "c0", "0", "1")
+			READ_WRITE_REG_32("p15", "c5", "c0", "0", "1")
 		}
 
 		/** Main ID Register */
 		namespace MIDR
 		{
-			READ_ONLY_REG("p15", "c0", "c0", "0", "0")
+			READ_ONLY_REG_32("p15", "c0", "c0", "0", "0")
 		}
 
 		/** System Control Register */
@@ -113,56 +154,56 @@ namespace Kernel
 				FLAG_EXC_THUMB  = 0x40000000
 			};
 
-			READ_WRITE_REG("p15", "c1", "c0", "0", "0")
+			READ_WRITE_REG_32("p15", "c1", "c0", "0", "0")
 		}
 
 		/** Invalidate entire unified TLB. */
 		namespace TLBIALL
 		{
-			WRITE_ONLY_REG("p15", "c8", "c7", "0", "0")
+			WRITE_ONLY_REG_32("p15", "c8", "c7", "0", "0")
 		}
 
 		/** Invalidate unified TLB by ASID. */
 		namespace TLBIASID
 		{
-			WRITE_ONLY_REG("p15", "c8", "c7", "0", "2")
+			WRITE_ONLY_REG_32("p15", "c8", "c7", "0", "2")
 		}
 
 		/** Invalidate unified TLB by MVA. */
 		namespace TLBIMVA
 		{
-			WRITE_ONLY_REG("p15", "c8", "c7", "0", "1")
+			WRITE_ONLY_REG_32("p15", "c8", "c7", "0", "1")
 		}
 
 		/** Invalidate unified TLB by MVA, all ASID. */
 		namespace TLBIMVAA
 		{
-			WRITE_ONLY_REG("p15", "c8", "c7", "0", "3")
+			WRITE_ONLY_REG_32("p15", "c8", "c7", "0", "3")
 		}
 
 #ifdef ARM_EXT_SMP
 		/** Invalidate entire unified TLB. */
 		namespace TLBIALLIS
 		{
-			WRITE_ONLY_REG("p15", "c8", "c3", "0", "0")
+			WRITE_ONLY_REG_32("p15", "c8", "c3", "0", "0")
 		}
 
 		/** Invalidate unified TLB by ASID. */
 		namespace TLBIASIDIS
 		{
-			WRITE_ONLY_REG("p15", "c8", "c3", "0", "2")
+			WRITE_ONLY_REG_32("p15", "c8", "c3", "0", "2")
 		}
 
 		/** Invalidate unified TLB by MVA. */
 		namespace TLBIMVAIS
 		{
-			WRITE_ONLY_REG("p15", "c8", "c3", "0", "1")
+			WRITE_ONLY_REG_32("p15", "c8", "c3", "0", "1")
 		}
 
 		/** Invalidate unified TLB by MVA, all ASID. */
 		namespace TLBIMVAAIS
 		{
-			WRITE_ONLY_REG("p15", "c8", "c3", "0", "3")
+			WRITE_ONLY_REG_32("p15", "c8", "c3", "0", "3")
 		}
 #endif
 
@@ -171,7 +212,7 @@ namespace Kernel
 		namespace MVBAR
 		{
 
-			READ_WRITE_REG("p15", "c12", "c0", "0", "1")
+			READ_WRITE_REG_32("p15", "c12", "c0", "0", "1")
 		}
 
 		/** Non-Secure Access Control Register */
@@ -199,7 +240,7 @@ namespace Kernel
 				FLAG_NSTRCDIS = 0x00100000
 			};
 
-			READ_WRITE_REG("p15", "c1", "c1", "0", "2")
+			READ_WRITE_REG_32("p15", "c1", "c1", "0", "2")
 		}
 
 		/** Non-Secure Access Control Register */
@@ -219,20 +260,20 @@ namespace Kernel
 				FLAG_SIF = 0x00000200
 			};
 
-			READ_WRITE_REG("p15", "c1", "c1", "0", "0")
+			READ_WRITE_REG_32("p15", "c1", "c1", "0", "0")
 		}
 
 		/** Vector Base Address Register */
 		namespace VBAR
 		{
-			READ_WRITE_REG("p15", "c12", "c0", "0", "0")
+			READ_WRITE_REG_32("p15", "c12", "c0", "0", "0")
 		}
 #endif
 	}
 }
 
-#undef READ_ONLY_REG
-#undef WRITE_ONLY_REG
-#undef READ_WRITE_REG
+#undef READ_ONLY_REG_32
+#undef WRITE_ONLY_REG_32
+#undef READ_WRITE_REG_32
 
 #endif
