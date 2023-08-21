@@ -6,7 +6,9 @@
 .section .init.text
 
 .globl Entry
+.globl apflag
 .extern KernelEntry
+.extern ApplicationEntry
 
 Entry:
 // Get load address.
@@ -32,20 +34,30 @@ EntryNS:
 
 #ifdef ARCH_ARM_V7
 // Check for CPU ID - let CPU 0 set up the basic structures, before others join.
-	mrc p15, 0, r4, c0, c0, 5
-	ands r4, r4, #3
-	beq EntryBSP
+	mrc p15, 0, r4, c0, c0, 5 // Read MPIDR.
+	ands r4, r4, #3 // Get ID only and set flags.
+	mov r6, r4, LSL#12 // Offset for stack pointer.
+	ldr sp, =bspStack // Set stack pointer to kernel stack.
+	sub sp, sp, r6 // Add offset.
+	beq EntryBSP // BSP jumps.
 
-// This is an application processor (CPU > 0), put into idle loop for now.
+	ldr r6, =apflag - KERNEL_OFFSET
+	add r6, r6, lr
+
+// This is an application processor (CPU > 0), put into idle loop until BSP has done setup.
 EntryAP:
 	wfe
-	b EntryAP
+	ldr r4, [r6]
+	cmp r4, #0
+	beq EntryAP
+
+// AP will enter at ApplicationEntry
+	ldr r3, =ApplicationEntry
+
+	b setupmmu
 
 EntryBSP:
 #endif
-// Set stack pointer to kernel stack.
-	ldr sp, =bspStack
-
 // Clear BSS and page tables
 	ldr r4, =bssStart - KERNEL_OFFSET
 	add r4, r4, lr
@@ -129,6 +141,10 @@ EntryBSP:
 	cmp r4, r9
 	blo 7b
 
+// BSP will enter at KernelEntry
+	ldr r3, =KernelEntry
+
+setupmmu:
 // Set TTBR0 and TTBR1
 	ldr r4, =tabPGDIR - KERNEL_OFFSET
 	add r4, r4, lr
@@ -152,16 +168,28 @@ EntryBSP:
 // Jump to higher half
 	ldr pc, =higherhalf
 
+.section .text
 higherhalf:
 
 // Call kernel entry point.
-	ldr r3, =KernelEntry
 	blx r3
 
 // Infinite loop.
 1:
 	wfe
 	b 1b
+
+.section .data
+apflag:
+.long 0
+
+.section .stack, "w", %nobits
+stack:
+#ifdef ARCH_ARM_V7
+.space 0x4000
+#else
+.space 0x1000
+#endif
 
 #ifdef ARM_EXT_SECURITY
 /*.align 5

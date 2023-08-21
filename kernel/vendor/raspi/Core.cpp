@@ -13,6 +13,8 @@
 
 using namespace Kernel;
 
+extern unsigned int apflag;
+
 extern "C" void SECTION(".init.text") KernelEntry(uint32_t r0, uint32_t r1, uint32_t r2)
 {
 	Mailbox::MemInfo armmem, vidmem;
@@ -80,4 +82,11 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t r0, uint32_t r1, uint
 	Heap::ShowMap();
 	delete b;
 	Heap::ShowMap();
+
+	apflag = 1;
+	asm volatile ("dsb; sev");
+}
+
+extern "C" void SECTION(".init.text") ApplicationEntry(void)
+{
 }

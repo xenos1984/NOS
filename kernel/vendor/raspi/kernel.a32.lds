@@ -64,10 +64,10 @@ SECTIONS
 		*(.common)
 		*(.bss*)
 		*(.gnu.linkonce.b.*)
+		. = ALIGN(4K);
+		*(.stack)
+		bspStack = .;
 	}
-	. = ALIGN(4K);
-	. += 4K;
-	bspStack = .;
 	bssEnd = .;
 
 	. = ALIGN(16K);
