@@ -8,6 +8,7 @@
 #endif
 
 #ifdef ARCH_ARM_CORTEX_A7
+#define ARM_EXT_GENTIMER
 #define ARM_EXT_LPA
 #define ARM_EXT_SECURITY
 #define ARM_EXT_SMP

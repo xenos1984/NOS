@@ -38,16 +38,12 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t r0, uint32_t r1, uint
 #endif
 */
 
-	Console::WriteFormat("CNTPCT = %lx\n", Sysreg::CNTPCT::Read());
-
 	Console::WriteMessage(Console::Style::INFO, "Register arguments:", "r0 = 0x%8x, r1 = 0x%8x, r2 = 0x%8x", r0, r1, r2);
 /*	Console::WriteFormat("SCTLR = 0x%8x\n", Sysreg::SCTLR::Read());
 	Console::WriteFormat("MIDR = 0x%8x\n", Sysreg::MIDR::Read());
 	Console::WriteFormat("VBAR = 0x%8x\n", Sysreg::VBAR::Read());
-*/	Console::WriteFormat("CNTFRQ = %d\n", Sysreg::CNTFRQ::Read());
-
-	Console::WriteFormat("CNTPCT = %lx\n", Sysreg::CNTPCT::Read());
-
+	Console::WriteFormat("CNTFRQ = %d\n", Sysreg::CNTFRQ::Read());
+*/
 	Console::WriteMessage(Console::Style::INFO, "Firmware revision:", "0x%8x", Mailbox::GetFirmwareRev());
 	Console::WriteMessage(Console::Style::INFO, "Board model:", "0x%8x", Mailbox::GetBoardModel());
 	Console::WriteMessage(Console::Style::INFO, "Board revision:", "0x%8x", Mailbox::GetBoardRev());

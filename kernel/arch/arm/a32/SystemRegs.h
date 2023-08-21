@@ -90,6 +90,7 @@ namespace Kernel
 {
 	namespace Sysreg
 	{
+#ifdef ARM_EXT_GENTIMER
 		/** Counter Frequency Register */
 		namespace CNTFRQ
 		{
@@ -179,6 +180,7 @@ namespace Kernel
 		{
 			READ_WRITE_REG_32("p15", "c14", "c2", "4", "1")
 		}
+#endif
 
 		/** Data Fault Address Register */
 		namespace DFAR
