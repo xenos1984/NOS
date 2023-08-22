@@ -32,12 +32,14 @@ Entry:
 EntryNS:
 #endif
 
+// Set stack pointer to kernel stack.
+	ldr sp, =bspStack
+
 #ifdef ARCH_ARM_V7
 // Check for CPU ID - let CPU 0 set up the basic structures, before others join.
 	mrc p15, 0, r4, c0, c0, 5 // Read MPIDR.
 	ands r4, r4, #3 // Get ID only and set flags.
 	mov r6, r4, LSL#12 // Offset for stack pointer.
-	ldr sp, =bspStack // Set stack pointer to kernel stack.
 	sub sp, sp, r6 // Add offset.
 	beq EntryBSP // BSP jumps.
 

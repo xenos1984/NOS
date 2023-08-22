@@ -66,7 +66,7 @@ SECTIONS
 		*(.gnu.linkonce.b.*)
 	}
 	. = ALIGN(4K);
-	. += 4K;
+	. += 32K;
 	bspStack = .;
 	bssEnd = .;
 
