@@ -5,7 +5,9 @@
 .section .init.text
 
 .globl Entry
+.globl apflag
 .extern KernelEntry
+.extern ApplicationEntry
 
 Entry:
 // Get load address.
@@ -14,17 +16,6 @@ Entry:
 1:
 	sub x30, x30, #4
 
-// Check for CPU ID - let CPU 0 set up the basic structures, before others join.
-	mrs x4, mpidr_el1
-	and x4, x4, #3
-	cbz x4, EntryBSP
-
-// This is an application processor (CPU > 0), put into idle loop for now.
-EntryAP:
-	wfe
-	b EntryAP
-
-EntryBSP:
 // Check EL
 	mrs x0, CurrentEL
 	and x0, x0, #12
@@ -73,6 +64,29 @@ EL1:
 	ldr x4, =bspStack
 	mov sp, x4
 
+// Check for CPU ID - let CPU 0 set up the basic structures, before others join.
+	mrs x4, mpidr_el1
+	and x4, x4, #3
+	cbz x4, EntryBSP
+
+	mov x6, x4, LSL#13 // Offset for stack pointer.
+	sub sp, sp, x6 // Add offset.
+
+	ldr x6, =apflag - KERNEL_OFFSET
+	add x6, x6, x30
+
+// This is an application processor (CPU > 0), put into idle loop for now.
+EntryAP:
+	wfe
+	ldr w4, [x6]
+	cbz w4, EntryAP
+
+// AP will enter at ApplicationEntry
+	ldr x3, =ApplicationEntry
+
+	b setupmmu
+
+EntryBSP:
 // Clear BSS and page tables
 	ldr x4, =bssStart - KERNEL_OFFSET
 	add x4, x4, x30
@@ -144,6 +158,10 @@ EL1:
 	cmp x4, x9
 	blo 5b
 
+// BSP will enter at KernelEntry
+	ldr x3, =KernelEntry
+
+setupmmu:
 // Set memory attributes array
 	ldr x4, =0x4404ff
 	msr mair_el1, x4
@@ -175,11 +193,11 @@ EL1:
 	nop
 
 // Jump to higher half
-	ldr x3, =higherhalf
-	br x3
+	ldr x4, =higherhalf
+	br x4
 
 higherhalf:
-
+/*
 // Disable lower half / identity mapping, force use of higher half
 	ldr x4, =tabPGL1 - KERNEL_OFFSET
 	str xzr, [x4]
@@ -187,11 +205,15 @@ higherhalf:
 	and x4, x4, #0xffffffffffffff7f
 	msr tcr_el1, x4
 	msr ttbr0_el1, xzr
-
+*/
 // Call kernel entry point.
-	bl KernelEntry
+	blr x3
 
 // Infinite loop.
 1:
 	wfe
 	b 1b
+
+.section .data
+apflag:
+.long 0

@@ -84,7 +84,12 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t r0, uint32_t r1, uint
 	Heap::ShowMap();
 
 	apflag = 1;
+
+#ifdef ELF64
+	asm volatile ("dsb ish; sev");
+#elif defined ARCH_ARM_V7
 	asm volatile ("dsb; sev");
+#endif
 }
 
 extern "C" void SECTION(".init.text") ApplicationEntry(void)

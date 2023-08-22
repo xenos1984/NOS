@@ -39,9 +39,10 @@ EntryNS:
 // Check for CPU ID - let CPU 0 set up the basic structures, before others join.
 	mrc p15, 0, r4, c0, c0, 5 // Read MPIDR.
 	ands r4, r4, #3 // Get ID only and set flags.
+	beq EntryBSP // BSP jumps.
+
 	mov r6, r4, LSL#12 // Offset for stack pointer.
 	sub sp, sp, r6 // Add offset.
-	beq EntryBSP // BSP jumps.
 
 	ldr r6, =apflag - KERNEL_OFFSET
 	add r6, r6, lr
