@@ -18,6 +18,7 @@ AC_DEFUN([NOS_SET_HOST], [
 		case "${host_vendor}" in
 		pc)
 			vendor_subdir=pc
+			AC_DEFINE([CPU_COUNT], [0])
 			;;
 		*)
 			AC_MSG_ERROR([unsupported host vendor])
@@ -39,6 +40,7 @@ AC_DEFUN([NOS_SET_HOST], [
 		case "${host_vendor}" in
 		pc)
 			vendor_subdir=pc
+			AC_DEFINE([CPU_COUNT], [0])
 			;;
 		*)
 			AC_MSG_ERROR([unsupported host vendor])
@@ -62,6 +64,7 @@ AC_DEFUN([NOS_SET_HOST], [
 			ac_tool_prefix="arm-eabi-"
 			AC_DEFINE([ARCH_ARM_V6], [1], [Define to 1 for ARMv6 targets.])
 			AC_DEFINE([ARCH_ARM_1176JZFS], [1], [Define to 1 for ARM 1176JZF-S targets.])
+			AC_DEFINE([CPU_COUNT], [1])
 			;;
 		raspi2b|raspi2)
 			CFLAGS="${CFLAGS} -mcpu=cortex-a7"
@@ -70,6 +73,7 @@ AC_DEFUN([NOS_SET_HOST], [
 			ac_tool_prefix="arm-eabihf-"
 			AC_DEFINE([ARCH_ARM_V7], [1], [Define to 1 for ARMv7 targets.])
 			AC_DEFINE([ARCH_ARM_CORTEX_A7], [1], [Define to 1 for ARM Cortex-A7 targets.])
+			AC_DEFINE([CPU_COUNT], [4])
 			;;
 		*)
 			AC_MSG_ERROR([unsupported host vendor])
@@ -95,6 +99,7 @@ AC_DEFUN([NOS_SET_HOST], [
 			vendor_subdir=raspi
 			AC_DEFINE([ARCH_ARM_V8], [1], [Define to 1 for ARMv8 targets.])
 			AC_DEFINE([ARCH_ARM_CORTEX_A53], [1], [Define to 1 for ARM Cortex-A53 targets.])
+			AC_DEFINE([CPU_COUNT], [4])
 			;;
 		raspi4b|raspi4)
 			CFLAGS="${CFLAGS} -mcpu=cortex-a72 -mgeneral-regs-only"
@@ -102,6 +107,7 @@ AC_DEFUN([NOS_SET_HOST], [
 			vendor_subdir=raspi
 			AC_DEFINE([ARCH_ARM_V8], [1], [Define to 1 for ARMv8 targets.])
 			AC_DEFINE([ARCH_ARM_CORTEX_A72], [1], [Define to 1 for ARM Cortex-A72 targets.])
+			AC_DEFINE([CPU_COUNT], [4])
 			;;
 		*)
 			AC_MSG_ERROR([unsupported host vendor])
@@ -123,11 +129,13 @@ AC_DEFUN([NOS_SET_HOST], [
 			subarch_subdir=atari
 			CFLAGS="${CFLAGS} -mcpu=68000 -lgcc"
 			AC_DEFINE([ARCH_M68K_ATARI], [1], [Define to 1 for Atari targets.])
+			AC_DEFINE([CPU_COUNT], [1])
 			;;
 		amiga)
 			subarch_subdir=amiga
 			CFLAGS="${CFLAGS} -mcpu=68000 -lgcc"
 			AC_DEFINE([ARCH_M68K_AMIGA], [1], [Define to 1 for Amiga targets.])
+			AC_DEFINE([CPU_COUNT], [1])
 			;;
 		*)
 			AC_MSG_ERROR([unsupported host vendor])
