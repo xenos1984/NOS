@@ -3,6 +3,7 @@ AC_DEFUN([NOS_SET_HOST], [
 	AH_TEMPLATE([ELF64], [Define to 1 for 64 bit ELF targets.])
 	AH_TEMPLATE([uintX_t], [Unsigned data type.])
 	AH_TEMPLATE([intX_t], [Signed data type.])
+	AH_TEMPLATE([CPU_COUNT], [CPU count: 0 = variable, > 0 for fixed number.])
 	case "${host_cpu}" in
 	i*86)
 		arch_subdir=x86
