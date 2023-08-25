@@ -58,7 +58,7 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t r0, uint32_t r1, uint
 	Console::WriteMessage(Console::Style::INFO, "Video memory:", "start = 0x%8x, length = 0x%8x", vidmem.start, vidmem.length);
 
 	Chunker::Init(armmem.start, armmem.length, Memory::Zone::NONE);
-	Chunker::Reserve(Symbol::kernelStart.Addr() - Symbol::kernelOffset.Addr(), Symbol::kernelEnd.Addr() - Symbol::kernelOffset.Addr());
+	Chunker::Reserve(Pager::VirtToPhys(Symbol::kernelStart.Addr()), Pager::VirtToPhys(Symbol::kernelStart.Addr()) + Symbol::kernelEnd.Addr() - Symbol::kernelStart.Addr());
 
 //	*((int*)0x12345678) = 0x87654321;
 
