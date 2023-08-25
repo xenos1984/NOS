@@ -32,6 +32,41 @@ namespace Kernel
 		{
 			return ((volatile uint32_t*)base_addr)[reg];
 		}
+
+		inline uint32_t CounterLow(void)
+		{
+			return Read(REG_CLO);
+		}
+
+		inline uint32_t CounterHigh(void)
+		{
+			return Read(REG_CHI);
+		}
+
+		inline uint64_t Counter(void)
+		{
+			return CounterLow() + (((uint64_t)CounterHigh()) << 32);
+		}
+
+		inline bool IsMatch(int n)
+		{
+			return Read(REG_CS) & (1 << n);
+		}
+
+		inline void ClearMatch(int n)
+		{
+			Write(REG_CS, 1 << n);
+		}
+
+		inline uint32_t GetCompare(int n)
+		{
+			return Read(REG_C0 + n);
+		}
+
+		inline void SetCompare(int n, uint32_t value)
+		{
+			Write(REG_C0 + n, value);
+		}
 	}
 }
 

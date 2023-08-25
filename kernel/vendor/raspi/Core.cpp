@@ -8,6 +8,7 @@
 #include <Chunker.h>
 #include <Heap.h>
 #include INC_VENDOR(UART.h)
+#include INC_VENDOR(Timer.h)
 #include INC_VENDOR(Mailbox.h)
 #include INC_BITS(SystemRegs.h)
 
@@ -61,6 +62,8 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t r0, uint32_t r1, uint
 
 //	*((int*)0x12345678) = 0x87654321;
 
+	Console::WriteFormat("Counter value: %lx\n", Timer::Counter());
+
 	Heap::Init();
 	int* a = new int;
 	Heap::ShowMap();
@@ -68,7 +71,7 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t r0, uint32_t r1, uint
 	Heap::ShowMap();
 
 	Console::WriteFormat("a = %p, b = %p\n", a, b);
-
+/*
 	uintptr_t virt = Symbol::kernelStart.Addr();
 	do
 	{
@@ -77,11 +80,13 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t r0, uint32_t r1, uint
 			Console::WriteFormat("0x%p => 0x%8x\n", virt, phys);
 		virt += 0x1000;
 	} while(virt);
-
+*/
 	delete a;
 	Heap::ShowMap();
 	delete b;
 	Heap::ShowMap();
+
+	Console::WriteFormat("Counter value: %lx\n", Timer::Counter());
 
 	apflag = 1;
 
