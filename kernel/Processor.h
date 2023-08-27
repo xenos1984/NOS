@@ -19,16 +19,21 @@ namespace Kernel
 			Online
 		};
 
-		Processor* prev;
-		Processor* next;
 		State state;
 		Thread* current;
 		ProcessorData data;
 
+		constexpr Processor(void) : state{State::Offline} {};
 		constexpr Processor(State s, ProcessorData d) : state{s}, data{d} {};
-		bool Startup(void);
 
-		static Processor* bsp;
+#if CPU_COUNT == 0
+		static unsigned int nproc;
+		static Processor* proc;
+#elif CPU_COUNT == 1
+		static Processor proc;
+#else
+		static Processor proc[CPU_COUNT];
+#endif
 	};
 }
 

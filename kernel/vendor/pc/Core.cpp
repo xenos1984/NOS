@@ -32,7 +32,7 @@ extern "C" unsigned char apentry[];
 
 extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, uint32_t mbiphys)
 {
-	unsigned int ncpu = 1;
+	Processor::nproc = 1;
 
 	// Init console and show message.
 	Core::Welcome();
@@ -87,21 +87,19 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, uint32_t mbiph
 	{
 		// TODO: Perform IRQ, tasker, clock initialization from ACPI.
 
-		ncpu = ACPI::GetProcessorCount();
+		Processor::nproc = ACPI::GetProcessorCount();
+		Processor::proc = new Processor[Processor::nproc];
 		IOApicManager::InitAcpi();
 
 		ACPI::LApic* ac = ACPI::GetProcessor(0);
-		Processor::bsp = new Processor{Processor::State::Online, ProcessorData{ac->ApicID}};
-		Processor::bsp->prev = Processor::bsp->next = Processor::bsp;
+		Processor::proc[0].state = Processor::State::Online;
+		Processor::proc[0].data.physID = ac->ApicID;
 
-		for(unsigned int i = 1; i < ncpu; i++)
+		for(unsigned int i = 1; i < Processor::nproc; i++)
 		{
 			ac = ACPI::GetProcessor(i);
-			Processor* p = new Processor{Processor::State::Offline, ProcessorData{ac->ApicID}};
-			p->prev = Processor::bsp->prev;
-			p->next = Processor::bsp;
-			Processor::bsp->prev->next = p;
-			Processor::bsp->prev = p;
+			Processor::proc[i].state = Processor::State::Offline;
+			Processor::proc[i].data.physID = ac->ApicID;
 		}
 	}
 	else
@@ -111,36 +109,15 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, uint32_t mbiph
 	{
 		// TODO: Perform IRQ, tasker, clock initialization from MP tables.
 
-		ncpu = SMP::GetProcessorCount();
+		Processor::nproc = SMP::GetProcessorCount();
+		Processor::proc = new Processor[Processor::nproc];
 		IOApicManager::InitSmp();
 
-		Processor* pold = nullptr;
-		Processor* pnew = nullptr;
-
-		for(unsigned int i = 0; i < ncpu; i++)
+		for(unsigned int i = 0; i < Processor::nproc; i++)
 		{
 			SMP::Cpu* sc = SMP::GetProcessor(i);
-			if(sc->Flags & SMP::CPU_BSP)
-			{
-				pnew = new Processor{Processor::State::Offline, ProcessorData{sc->LocalApicID}};
-				Processor::bsp = pnew;
-			}
-			else
-			{
-				pnew = new Processor{Processor::State::Online, ProcessorData{sc->LocalApicID}};
-			}
-
-			if(pold == nullptr)
-			{
-				pold = pnew->prev = pnew->next = pnew;
-			}
-			else
-			{
-				pnew->prev = pold->prev;
-				pnew->next = pold;
-				pold->prev->next = pnew;
-				pold->prev = pnew;
-			}
+			Processor::proc[i].data.physID = sc->LocalApicID;
+			Processor::proc[i].state = (sc->Flags & SMP::CPU_BSP ? Processor::State::Online : Processor::State::Offline);
 		}
 	}
 	else
@@ -151,10 +128,10 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, uint32_t mbiph
 		PICManager::Init();
 	}
 
-	Console::WriteMessage(Console::Style::OK, "Processors:", "%u found.", ncpu);
+	Console::WriteMessage(Console::Style::OK, "Processors:", "%u found.", Processor::nproc);
 
 	// Create task state segments.
-	for(unsigned int i = 0; i < ncpu; i++)
+	for(unsigned int i = 0; i < Processor::nproc; i++)
 	{
 		TSS* tss = (TSS*)Allocator::AllocBlock<Memory::PGB_4K>(TSS_LIN_ADDR + i * TSS_LENGTH, Memory::MemType::KERNEL_RW);
 		tss->iobase = 0x1000;
@@ -172,7 +149,7 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, uint32_t mbiph
 #endif
 
 #if defined CONFIG_SMP || defined CONFIG_ACPI
-	if(ncpu > 1)
+	if(Processor::nproc > 1)
 	{
 		// Copy AP startup code into lower memory.
 		Memory::PhysAddr phys = Chunker::Alloc<Memory::PGB_4K>(Memory::Zone::REAL);
@@ -188,21 +165,22 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, uint32_t mbiph
 			apcode[i] = apentry[i];
 
 		// Allocate AP stacks.
-		Allocator::Alloc(STACK_LIN_ADDR + STACK_SIZE, (ncpu - 1) * STACK_SIZE, Memory::MemType::KERNEL_RW);
+		Allocator::Alloc(STACK_LIN_ADDR + STACK_SIZE, (Processor::nproc - 1) * STACK_SIZE, Memory::MemType::KERNEL_RW);
 
-		Processor* p = Processor::bsp->next;
-
-		while(p != Processor::bsp)
+		for(unsigned int i = 0; i < Processor::nproc; i++)
 		{
-			p->state = Processor::State::Booting;
+			if(Processor::proc[i].state == Processor::State::Online)
+				continue;
+
+			Processor::proc[i].state = Processor::State::Booting;
 
 			Cmos::SetShutdownStatus(Cmos::SH_JMP467);
 			*(unsigned int *)(0x00000467 + Symbol::kernelOffset.Addr()) = vector;
 			Apic::ClearError();
-			Apic::SendIPI(p->data.physID, 0, Apic::DEST_FIELD | Apic::INT_ASSERT | Apic::DM_INIT); // assert INIT IPI
+			Apic::SendIPI(Processor::proc[i].data.physID, 0, Apic::DEST_FIELD | Apic::INT_ASSERT | Apic::DM_INIT); // assert INIT IPI
 			while(Apic::SendPending()) ;
 			Apic::ClearError();
-			Apic::SendIPI(p->data.physID, 0, Apic::DEST_FIELD | Apic::DM_INIT); // deassert INIT IPI
+			Apic::SendIPI(Processor::proc[i].data.physID, 0, Apic::DEST_FIELD | Apic::DM_INIT); // deassert INIT IPI
 			while(Apic::SendPending()) ;
 			PIT::SetOneShot(0, 11932); // 10ms
 			while(PIT::GetCurrent(0) <= 11932) ;
@@ -210,14 +188,14 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, uint32_t mbiph
 			if(Apic::GetVersion() >= 0x10)
 			{
 				Apic::ClearError();
-				Apic::SendIPI(p->data.physID, vector, Apic::DEST_FIELD | Apic::DM_STARTUP);
+				Apic::SendIPI(Processor::proc[i].data.physID, vector, Apic::DEST_FIELD | Apic::DM_STARTUP);
 				while(Apic::SendPending()) ;
 				PIT::SetOneShot(0, 239); // 200µs
 				while(PIT::GetCurrent(0) <= 239) ;
-				if(p->state != Processor::State::Online)
+				if(Processor::proc[i].state != Processor::State::Online)
 				{
 					Apic::ClearError();
-					Apic::SendIPI(p->data.physID, vector, Apic::DEST_FIELD | Apic::DM_STARTUP);
+					Apic::SendIPI(Processor::proc[i].data.physID, vector, Apic::DEST_FIELD | Apic::DM_STARTUP);
 					while(Apic::SendPending()) ;
 					PIT::SetOneShot(0, 239); // 200µs
 					while(PIT::GetCurrent(0) <= 239) ;
@@ -225,20 +203,18 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, uint32_t mbiph
 			}
 
 			PIT::SetOneShot(0, 11932); // 10ms
-			while((PIT::GetCurrent(0) <= 11932) && (p->state != Processor::State::Online)) ;
+			while((PIT::GetCurrent(0) <= 11932) && (Processor::proc[i].state != Processor::State::Online)) ;
 			Cmos::SetShutdownStatus(Cmos::SH_NORMAL);
 
-			if(p->state == Processor::State::Online)
+			if(Processor::proc[i].state == Processor::State::Online)
 			{
-				Console::WriteMessage(Console::Style::OK, "AP no. 0x%2x: ", "booted", p->data.physID);
+				Console::WriteMessage(Console::Style::OK, "AP no. 0x%2x: ", "booted", Processor::proc[i].data.physID);
 			}
 			else
 			{
-				Console::WriteMessage(Console::Style::WARNING, "AP no. 0x%2x: ", "no response, disabled", p->data.physID);
-				p->state = Processor::State::Offline;
+				Console::WriteMessage(Console::Style::WARNING, "AP no. 0x%2x: ", "no response, disabled", Processor::proc[i].data.physID);
+				Processor::proc[i].state = Processor::State::Offline;
 			}
-
-			p = p->next;
 		}
 	}
 #endif
@@ -261,17 +237,13 @@ extern "C" void SECTION(".init.text") ApplicationEntry()
 
 	// TODO: Set flag to indicate CPU is booted.
 
-	Processor* p = Processor::bsp->next;
-
-	while(p != Processor::bsp)
+	for(unsigned int i = 0; i < Processor::nproc; i++)
 	{
-		if(p->data.physID == Apic::GetPhysID())
+		if(Processor::proc[i].data.physID == Apic::GetPhysID())
 		{
-			p->state = Processor::State::Online;
+			Processor::proc[i].state = Processor::State::Online;
 			break;
 		}
-
-		p = p->next;
 	}
 }
 #endif
