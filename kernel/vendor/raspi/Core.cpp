@@ -6,6 +6,7 @@
 #include <Symbol.h>
 #include <Pager.h>
 #include <Chunker.h>
+#include <Processor.h>
 #include <Heap.h>
 #include INC_VENDOR(UART.h)
 #include INC_VENDOR(Timer.h)
@@ -62,8 +63,6 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t r0, uint32_t r1, uint
 
 //	*((int*)0x12345678) = 0x87654321;
 
-	Console::WriteFormat("Counter value: %lx\n", Timer::Counter());
-
 	Heap::Init();
 	int* a = new int;
 	Heap::ShowMap();
@@ -86,7 +85,11 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t r0, uint32_t r1, uint
 	delete b;
 	Heap::ShowMap();
 
-	Console::WriteFormat("Counter value: %lx\n", Timer::Counter());
+#if CPU_COUNT > 1
+	Processor::proc[0].state = Processor::State::Online;
+	Processor::proc[1].state = Processor::State::Booting;
+	Processor::proc[2].state = Processor::State::Booting;
+	Processor::proc[3].state = Processor::State::Booting;
 
 	apflag = 1;
 
@@ -95,8 +98,36 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t r0, uint32_t r1, uint
 #elif defined ARCH_ARM_V7
 	asm volatile ("dsb; sev");
 #endif
+
+	unsigned int time = Timer::CounterLow();
+
+	while((Timer::CounterLow() - time < 0x100000) && (Processor::proc[1].state == Processor::State::Booting || Processor::proc[2].state == Processor::State::Booting || Processor::proc[3].state == Processor::State::Booting))
+		;
+
+	for(int i = 0; i < 4; i++)
+	{
+		if(Processor::proc[i].state == Processor::State::Online)
+		{
+			Console::WriteMessage(Console::Style::OK, "Core %d: ", "booted", i);
+		}
+		else
+		{
+			Console::WriteMessage(Console::Style::WARNING, "Core %d: ", "no response, disabled", i);
+			Processor::proc[i].state = Processor::State::Offline;
+		}
+	}
+#endif
 }
 
+#if CPU_COUNT > 1
 extern "C" void SECTION(".init.text") ApplicationEntry(void)
 {
+#ifdef ELF64
+	unsigned int n = Sysreg::MPIDR_EL1::Read() & 0x3;
+#else
+	unsigned int n = Sysreg::MPIDR::Read() & 0x3;
+#endif
+
+	Processor::proc[n].state = Processor::State::Online;
 }
+#endif

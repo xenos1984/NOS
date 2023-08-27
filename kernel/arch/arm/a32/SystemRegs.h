@@ -268,6 +268,12 @@ namespace Kernel
 		}
 
 #ifdef ARM_EXT_SMP
+		/** Multiprocessor Affinity Register */
+		namespace MPIDR
+		{
+			READ_ONLY_REG_32("p15", "c0", "c0", "0", "5")
+		}
+
 		/** Invalidate entire unified TLB. */
 		namespace TLBIALLIS
 		{

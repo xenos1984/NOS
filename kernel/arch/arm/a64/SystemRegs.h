@@ -79,6 +79,12 @@ namespace Kernel
 			READ_ONLY_REG("MIDR_EL1")
 		}
 
+		/** Multiprocessor Affinity Register */
+		namespace MPIDR_EL1
+		{
+			READ_ONLY_REG("MPIDR_EL1")
+		}
+
 		/** System Control Register */
 		namespace SCTLR_EL1
 		{
