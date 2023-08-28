@@ -23,8 +23,8 @@ namespace Kernel
 		Thread* current;
 		ProcessorData data;
 
-		constexpr Processor(void) : state{State::Offline} {};
-		constexpr Processor(State s, ProcessorData d) : state{s}, data{d} {};
+		constexpr Processor(void) : state{State::Offline}, current{nullptr}, data{} {};
+		constexpr Processor(State s, ProcessorData d) : state{s}, current{nullptr}, data{d} {};
 
 #if CPU_COUNT == 0
 		static unsigned int nproc;

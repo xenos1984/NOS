@@ -8,8 +8,8 @@ namespace Kernel
 	unsigned int Processor::nproc;
 	Processor* Processor::proc;
 #elif CPU_COUNT == 1
-	Processor Processor::proc;
+	constinit Processor Processor::proc;
 #else
-	Processor Processor::proc[CPU_COUNT];
+	constinit Processor Processor::proc[CPU_COUNT];
 #endif
 }
