@@ -37,6 +37,7 @@ SECTIONS
 
 	/*. += SIZEOF_HEADERS;*/
 
+	textStart = .;
 	.text : AT(ADDR(.text) + loadAddress - kernelOffset)
 	{
 		*(.text)

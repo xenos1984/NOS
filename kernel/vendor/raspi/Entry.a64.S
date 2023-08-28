@@ -9,6 +9,28 @@
 .extern KernelEntry
 .extern ApplicationEntry
 
+.macro mappages from to flags
+	mov x7, #\flags
+	ldr x9, =\to
+	ldr x5, =\from
+	ldr x4, =tabPGL3 - KERNEL_OFFSET
+	add x4, x4, x30
+	mov x6, x5, LSR#9
+	add x4, x4, x6
+	orr x5, x5, x7
+	add x5, x5, x30
+	add x9, x9, x30
+	b 4f
+
+3:
+	str x5, [x4], #8
+	add x5, x5, #0x1, LSL #12
+
+4:
+	cmp x5, x9
+	blo 3b
+.endm
+
 Entry:
 // Get load address.
 	bl 1f
@@ -124,7 +146,7 @@ EntryBSP:
 	str x5, [x4]
 
 // Fill page table to map kernel
-	ldr x9, =kernelEnd - KERNEL_OFFSET
+/*	ldr x9, =kernelEnd - KERNEL_OFFSET
 	ldr x5, =kernelStart - KERNEL_OFFSET
 	ldr x4, =tabPGL3 - KERNEL_OFFSET
 	add x4, x4, x30
@@ -142,6 +164,18 @@ EntryBSP:
 4:
 	cmp x5, x9
 	blo 3b
+*/
+	// Map text part of startup section.
+	mappages (initStart - KERNEL_OFFSET), (initTextEnd - KERNEL_OFFSET), 0x783
+
+	// Map data part of startup section.
+	mappages (initDataStart - KERNEL_OFFSET), (initDataEnd - KERNEL_OFFSET), 0x703
+
+	// Map text part of kernel.
+	mappages (textStart - KERNEL_OFFSET), (textEnd - KERNEL_OFFSET), 0x783
+
+	// Map data part of kernel.
+	mappages (dataStart - KERNEL_OFFSET), (kernelEnd - KERNEL_OFFSET), 0x703
 
 // Map peripherals into virtual memory
 	ldr x4, =tabPGL2 + 0x3c0 - KERNEL_OFFSET
@@ -214,6 +248,6 @@ higherhalf:
 	wfe
 	b 1b
 
-.section .data
+.section .init.data, "w", %progbits
 apflag:
 .long 0
