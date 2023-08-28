@@ -56,7 +56,7 @@ namespace Kernel
 			return (Symbol::heapEnd.Addr() - Symbol::heapTab.Addr()) / sizeof(MemoryPointer) - 1;
 		}
 
-		void Init(void)
+		void SECTION(".init.text") Init(void)
 		{
 			new (&root) MemoryPointer(Symbol::heapStart.Addr(), Symbol::heapTab.Addr() - Symbol::heapStart.Addr(), 1, &root, &root);
 			Console::WriteMessage(Console::Style::OK, "Heap:", "Started with %d kB starting at %p.", root.length >> 10, root.mem);

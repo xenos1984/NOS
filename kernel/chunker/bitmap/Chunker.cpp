@@ -133,7 +133,7 @@ namespace Kernel
 		static Region firstregion;
 		static Region* regions[static_cast<int>(Memory::Zone::MAX) + 1];
 
-		void Init(Memory::PhysAddr start, Memory::PhysAddr length, Memory::Zone zone)
+		void SECTION(".init.text") Init(Memory::PhysAddr start, Memory::PhysAddr length, Memory::Zone zone)
 		{
 			unsigned int i;
 
