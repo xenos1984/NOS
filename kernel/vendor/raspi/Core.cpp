@@ -61,29 +61,7 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t r0, uint32_t r1, uint
 	Chunker::Init(armmem.start, armmem.length, Memory::Zone::NONE);
 	Chunker::Reserve(Pager::VirtToPhys(Symbol::kernelStart.Addr()), Pager::VirtToPhys(Symbol::kernelStart.Addr()) + Symbol::kernelEnd.Addr() - Symbol::kernelStart.Addr());
 
-//	*((int*)0x12345678) = 0x87654321;
-
 	Heap::Init();
-	int* a = new int;
-	Heap::ShowMap();
-	int* b = new int;
-	Heap::ShowMap();
-
-	Console::WriteFormat("a = %p, b = %p\n", a, b);
-/*
-	uintptr_t virt = Symbol::kernelStart.Addr();
-	do
-	{
-		Memory::PhysAddr phys = Pager::VirtToPhys(virt);
-		if(phys != ~0UL)
-			Console::WriteFormat("0x%p => 0x%8x\n", virt, phys);
-		virt += 0x1000;
-	} while(virt);
-*/
-	delete a;
-	Heap::ShowMap();
-	delete b;
-	Heap::ShowMap();
 
 #if CPU_COUNT > 1
 	Processor::proc[0].state = Processor::State::Online;
