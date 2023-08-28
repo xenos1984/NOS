@@ -21,7 +21,7 @@ namespace Kernel
 
 		unsigned char GetPhysID(void)
 		{
-			return((apic_base[REG_ID] >> 24) & 0x0f);
+			return(apic_base[REG_ID] >> 24);
 		}
 
 		void SetPhysID(unsigned char id)
