@@ -10,6 +10,28 @@
 .extern KernelEntry
 .extern ApplicationEntry
 
+.macro mappages from to flags
+	ldr r9, =\to
+	add r9, r9, lr
+	ldr r5, =\from
+	ldr r4, =tabPGTAB - KERNEL_OFFSET
+	add r4, r4, lr
+	mov r6, r5, LSR#10
+	add r4, r4, r6
+	add r5, r5, lr
+	ldr r7, =#\flags
+	orr r5, r5, r7
+	b 6f
+
+5:
+	str r5, [r4], #4
+	add r5, #0x1000
+
+6:
+	cmp r5, r9
+	blo 5b
+.endm
+
 Entry:
 // Get load address.
 	add lr, pc, #-0x8
@@ -97,25 +119,17 @@ EntryBSP:
 	blo 3b
 
 // Fill page table to map kernel
-	ldr r9, =kernelEnd - KERNEL_OFFSET
-	add r9, r9, lr
-	ldr r5, =kernelStart - KERNEL_OFFSET
-	ldr r4, =tabPGTAB - KERNEL_OFFSET
-	add r4, r4, lr
-	mov r6, r5, LSR#10
-	add r4, r4, r6
-	add r5, r5, lr
-	ldr r7, =#0x452
-	orr r5, r5, r7
-	b 6f
+	// Map text part of startup section.
+	mappages (initStart - KERNEL_OFFSET), (initTextEnd - KERNEL_OFFSET), 0x652
 
-5:
-	str r5, [r4], #4
-	add r5, #0x1000
+	// Map data part of startup section.
+	mappages (initDataStart - KERNEL_OFFSET), (initDataEnd - KERNEL_OFFSET), 0x453
 
-6:
-	cmp r5, r9
-	blo 5b
+	// Map text part of kernel.
+	mappages (textStart - KERNEL_OFFSET), (textEnd - KERNEL_OFFSET), 0x652
+
+	// Map data part of kernel.
+	mappages (dataStart - KERNEL_OFFSET), (kernelEnd - KERNEL_OFFSET), 0x453
 
 // Map page table into paging structures
 	ldr r4, =tabPGTAB - KERNEL_OFFSET + (KERNEL_OFFSET >> 20)
@@ -182,7 +196,7 @@ higherhalf:
 	wfe
 	b 1b
 
-.section .data
+.section .init.data, "w", %progbits
 apflag:
 .long 0
 
