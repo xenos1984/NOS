@@ -1,7 +1,7 @@
 // Thread.h - Threads for i386 architecture.
 
-#ifndef __ARCH_X86_IA32_THREAD_H__
-#define __ARCH_X86_IA32_THREAD_H__
+#ifndef __ARCH_X86_X32_THREAD_H__
+#define __ARCH_X86_X32_THREAD_H__
 
 #include <cstdint>
 #include INC_ARCH(FPU.h)

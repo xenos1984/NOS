@@ -4,9 +4,9 @@ AUTOMAKE_OPTIONS = nostdinc
 
 AM_CPPFLAGS = -imacros $(top_srcdir)/config.h -I$(top_srcdir)/kernel -I$(top_srcdir)/include
 
-noinst_LIBRARIES = libamd64.a
+noinst_LIBRARIES = libx64.a
 
-libamd64_a_SOURCES = \
+libx64_a_SOURCES = \
 	Entry.h \
 	Memory.h \
 	Pager.h \

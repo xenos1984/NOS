@@ -92,7 +92,7 @@ namespace Kernel
 		}
 	} PACKED;
 
-#ifdef ARCH_X86_IA32
+#ifdef ARCH_X86_X32
 	struct SSEState
 	{
 		FPUControl ControlWord;
@@ -128,7 +128,7 @@ namespace Kernel
 	} PACKED;
 #endif
 
-#ifdef ARCH_X86_AMD64
+#ifdef ARCH_X86_X64
 	struct SSEState32
 	{
 		FPUControl ControlWord;

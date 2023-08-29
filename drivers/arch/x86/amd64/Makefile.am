@@ -4,9 +4,9 @@ AUTOMAKE_OPTIONS = subdir-objects
 
 AM_CPPFLAGS = -imacros config.h -I$(top_srcdir)/drivers -I$(top_srcdir)/include
 
-noinst_LIBRARIES = libamd64.a
+noinst_LIBRARIES = libx64.a
 
-libamd64_a_SOURCES = \
+libx64_a_SOURCES = \
 	Stub.S \
 	../../../Driver.cpp
 

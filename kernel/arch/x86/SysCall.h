@@ -3,6 +3,6 @@
 #ifndef __ARCH_X86_SYSCALL_H__
 #define __ARCH_X86_SYSCALL_H__
 
-#include INC_SUBARCH(SysCall.h)
+#include INC_BITS(SysCall.h)
 
 #endif

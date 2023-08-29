@@ -1,7 +1,7 @@
-// Process.h - Processes for amd64 architecture.
+// Process.h - Processes for x64 architecture.
 
-#ifndef __ARCH_X86_AMD64_PROCESS_H__
-#define __ARCH_X86_AMD64_PROCESS_H__
+#ifndef __ARCH_X86_X64_PROCESS_H__
+#define __ARCH_X86_X64_PROCESS_H__
 
 #include INC_ARCH(Pager.h)
 

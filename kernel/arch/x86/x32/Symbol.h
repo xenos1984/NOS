@@ -1,7 +1,7 @@
 // Symbol.h - Memory locations used by the kernel.
 
-#ifndef __ARCH_X86_IA32_SYMBOL_H__
-#define __ARCH_X86_IA32_SYMBOL_H__
+#ifndef __ARCH_X86_X32_SYMBOL_H__
+#define __ARCH_X86_X32_SYMBOL_H__
 
 namespace Kernel
 {

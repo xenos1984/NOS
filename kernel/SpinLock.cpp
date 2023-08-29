@@ -6,7 +6,7 @@ using namespace Kernel;
 
 inline void SpinLock::DefaultIdle(void)
 {
-#if defined(__i386__) || defined(__amd64__)
+#if defined(__i386__) || defined(__x64__)
 	asm volatile ("pause");
 #endif
 }

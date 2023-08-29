@@ -1,7 +1,7 @@
-// Thread.h - Threads for amd64 architecture.
+// Thread.h - Threads for x64 architecture.
 
-#ifndef __ARCH_X86_AMD64_THREAD_H__
-#define __ARCH_X86_AMD64_THREAD_H__
+#ifndef __ARCH_X86_X64_THREAD_H__
+#define __ARCH_X86_X64_THREAD_H__
 
 #include <cstdint>
 #include INC_ARCH(FPU.h)

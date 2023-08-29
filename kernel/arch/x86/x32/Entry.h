@@ -1,7 +1,7 @@
 // Entry.h - Some definitions used in the boot process.
 
-#ifndef __ARCH_X86_IA32_ENTRY_H__
-#define __ARCH_X86_IA32_ENTRY_H__
+#ifndef __ARCH_X86_X32_ENTRY_H__
+#define __ARCH_X86_X32_ENTRY_H__
 
 #define USER_OFFSET 0x80000000
 #define KERNEL_OFFSET 0xC0000000

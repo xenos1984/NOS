@@ -27,6 +27,6 @@ namespace Kernel
 	}
 }
 
-#include INC_SUBARCH(Pager.h)
+#include INC_BITS(Pager.h)
 
 #endif

@@ -2,7 +2,7 @@
 
 #include <cstddef>
 #include INC_ARCH(Interrupt.h)
-#include INC_SUBARCH(PMode.h)
+#include INC_BITS(PMode.h)
 #include INC_ARCH(ControlRegisters.h)
 #include INC_ARCH(Apic.h)
 #include INC_ARCH(CPU.h)

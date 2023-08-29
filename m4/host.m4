@@ -7,7 +7,7 @@ AC_DEFUN([NOS_SET_HOST], [
 	case "${host_cpu}" in
 	i*86)
 		arch_subdir=x86
-		subarch_subdir=ia32
+		bits_subdir=x32
 		host_bfd=elf32-i386
 		copy_flags="-I ${host_bfd} -O ${host_bfd}"
 		ac_tool_prefix="${host_cpu}-elf-"
@@ -15,7 +15,8 @@ AC_DEFUN([NOS_SET_HOST], [
 		AC_DEFINE([ELF32])
 		AC_DEFINE([uintX_t], [uint32_t])
 		AC_DEFINE([intX_t], [int32_t])
-		AC_DEFINE([ARCH_X86_IA32], [1], [Define to 1 for IA32 targets.])
+		AC_DEFINE([ARCH_X86], [1], [Define to 1 for X86 targets.])
+		AC_DEFINE([ARCH_X86_X32], [1], [Define to 1 for IA32 targets.])
 		case "${host_vendor}" in
 		pc)
 			vendor_subdir=pc
@@ -28,7 +29,7 @@ AC_DEFUN([NOS_SET_HOST], [
 		;;
 	x86_64)
 		arch_subdir=x86
-		subarch_subdir=amd64
+		bits_subdir=x64
 		host_bfd=elf64-x86-64
 		copy_flags="-I ${host_bfd} -O ${host_bfd}"
 		ac_tool_prefix="x86_64-elf-"
@@ -37,7 +38,8 @@ AC_DEFUN([NOS_SET_HOST], [
 		AC_DEFINE([ELF64])
 		AC_DEFINE([uintX_t], [uint64_t])
 		AC_DEFINE([intX_t], [int64_t])
-		AC_DEFINE([ARCH_X86_AMD64], [1], [Define to 1 for AMD64 targets.])
+		AC_DEFINE([ARCH_X86], [1], [Define to 1 for X86 targets.])
+		AC_DEFINE([ARCH_X86_X64], [1], [Define to 1 for AMD64 targets.])
 		case "${host_vendor}" in
 		pc)
 			vendor_subdir=pc
@@ -80,8 +82,9 @@ AC_DEFUN([NOS_SET_HOST], [
 			AC_MSG_ERROR([unsupported host vendor])
 			;;
 		esac
-		AC_DEFINE_UNQUOTED([INC_BITS(x)], [<arch/${arch_subdir}/${bits_subdir}/x>], [NOS target bit subtype.])
-		AC_SUBST(bits_subdir)
+		AC_DEFINE_UNQUOTED([SUBARCH], [${subarch_subdir}], [NOS target subarchitecture.])
+		AC_DEFINE_UNQUOTED([INC_SUBARCH(x)], [<arch/${arch_subdir}/${subarch_subdir}/x>], [NOS target subarchitecture.])
+		AC_SUBST(subarch_subdir)
 		;;
 	aarch64)
 		arch_subdir=arm
@@ -114,8 +117,9 @@ AC_DEFUN([NOS_SET_HOST], [
 			AC_MSG_ERROR([unsupported host vendor])
 			;;
 		esac
-		AC_DEFINE_UNQUOTED([INC_BITS(x)], [<arch/${arch_subdir}/${bits_subdir}/x>], [NOS target bit subtype.])
-		AC_SUBST(bits_subdir)
+		AC_DEFINE_UNQUOTED([SUBARCH], [${subarch_subdir}], [NOS target subarchitecture.])
+		AC_DEFINE_UNQUOTED([INC_SUBARCH(x)], [<arch/${arch_subdir}/${subarch_subdir}/x>], [NOS target subarchitecture.])
+		AC_SUBST(subarch_subdir)
 		;;
 	m68k)
 		arch_subdir=m68k
@@ -149,12 +153,12 @@ AC_DEFUN([NOS_SET_HOST], [
 	esac
 	AC_DEFINE_UNQUOTED([ARCH], [${arch_subdir}], [NOS target architecture.])
 	AC_DEFINE_UNQUOTED([INC_ARCH(x)], [<arch/${arch_subdir}/x>], [NOS target architecture.])
-	AC_DEFINE_UNQUOTED([SUBARCH], [${subarch_subdir}], [NOS target subarchitecture.])
-	AC_DEFINE_UNQUOTED([INC_SUBARCH(x)], [<arch/${arch_subdir}/${subarch_subdir}/x>], [NOS target subarchitecture.])
+	AC_DEFINE_UNQUOTED([BITS], [${bits_subdir}], [NOS target bit subtype.])
+	AC_DEFINE_UNQUOTED([INC_BITS(x)], [<arch/${arch_subdir}/${bits_subdir}/x>], [NOS target bit subtype.])
 	AC_DEFINE_UNQUOTED([VENDOR], [${vendor_subdir}], [NOS target vendor.])
 	AC_DEFINE_UNQUOTED([INC_VENDOR(x)], [<vendor/${vendor_subdir}/x>], [NOS target vendor.])
 	AC_SUBST(arch_subdir)
-	AC_SUBST(subarch_subdir)
+	AC_SUBST(bits_subdir)
 	AC_SUBST(vendor_subdir)
 	AC_SUBST(host_bfd)
 	AC_SUBST(copy_flags)

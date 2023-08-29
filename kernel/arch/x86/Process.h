@@ -3,6 +3,6 @@
 #ifndef __ARCH_X86_PROCESS_H__
 #define __ARCH_X86_PROCESS_H__
 
-#include INC_SUBARCH(Process.h)
+#include INC_BITS(Process.h)
 
 #endif

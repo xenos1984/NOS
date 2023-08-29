@@ -144,7 +144,7 @@ namespace Kernel
 				Allocator::FreeBlock<Memory::PGB_4K>(&pt);
 		}
 
-#if (defined ARCH_X86_IA32) && (!defined CONFIG_PAE)
+#if (defined ARCH_X86_X32) && (!defined CONFIG_PAE)
 		template<> void MapPage<Memory::PGB_4M>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type)
 		{
 			unsigned long entry = virt >> Memory::PGB_4M;
@@ -166,14 +166,14 @@ namespace Kernel
 
 		template void MapPage<Memory::PGB_4K>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type);
 		template void UnmapPage<Memory::PGB_4K>(uintptr_t virt);
-#if (defined CONFIG_PAE) || (defined ARCH_X86_AMD64)
+#if (defined CONFIG_PAE) || (defined ARCH_X86_X64)
 		template void MapPage<Memory::PGB_2M>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type);
 		template void UnmapPage<Memory::PGB_2M>(uintptr_t virt);
 //#else
 //		template void MapPage<Memory::PGB_4M>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type);
 //		template void UnmapPage<Memory::PGB_4M>(uintptr_t virt);
 #endif
-#ifdef ARCH_X86_AMD64
+#ifdef ARCH_X86_X64
 		template void MapPage<Memory::PGB_1G>(Memory::PhysAddr phys, uintptr_t virt, Memory::MemType type);
 		template void UnmapPage<Memory::PGB_1G>(uintptr_t virt);
 #endif

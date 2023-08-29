@@ -1,7 +1,7 @@
 // DescriptorTable.cpp - Handling descriptor tables
 
 #include INC_ARCH(DescriptorTable.h)
-#include INC_SUBARCH(Entry.h)
+#include INC_BITS(Entry.h)
 #include INC_ARCH(Interrupt.h)
 #include <Console.h>
 

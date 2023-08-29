@@ -1,9 +1,9 @@
 OUTPUT_FORMAT(elf64-x86-64)
 OUTPUT_ARCH(i386:x86-64)
 
-INPUT(../../arch/x86/amd64/libamd64.a)
+INPUT(../../arch/x86/x64/libx64.a)
 INPUT(../../../kernel/arch/x86/Kernel.elf)
-STARTUP(../../arch/x86/amd64/Stub.o)
+STARTUP(../../arch/x86/x64/Stub.o)
 
 ENTRY(_start)
 

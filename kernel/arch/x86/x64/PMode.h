@@ -1,7 +1,7 @@
 // PMode.h - Some routines for protected / long mode management.
 
-#ifndef __ARCH_X86_AMD64_PMODE_H__
-#define __ARCH_X86_AMD64_PMODE_H__
+#ifndef __ARCH_X86_X64_PMODE_H__
+#define __ARCH_X86_X64_PMODE_H__
 
 #include <cstdint>
 

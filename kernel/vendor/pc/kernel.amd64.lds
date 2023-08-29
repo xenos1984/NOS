@@ -13,7 +13,7 @@ mb_magic     = 0x1badb002;
 mb_flags     = 0x00010003;
 mb_checksum  = -(mb_magic + mb_flags);
 
-GROUP(../../arch/x86/amd64/libamd64.a ../../arch/x86/libx86.a ../../libkernel.a libpc.a)
+GROUP(../../arch/x86/x64/libx64.a ../../arch/x86/libx86.a ../../libkernel.a libpc.a)
 INPUT(libgcc.a)
 
 PHDRS

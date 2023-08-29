@@ -1,6 +1,6 @@
 // InterruptStub.S - Assembler part of interrupt routines
 
-#include <arch/x86/amd64/Entry.h>
+#include <arch/x86/x64/Entry.h>
 
 #define PUSHALL \
 	pushq %rax; \

@@ -1,7 +1,7 @@
 // Kernel.h - Kernel calls.
 
-#ifndef __ARCH_X86_IA32_KERNEL_H__
-#define __ARCH_X86_IA32_KERNEL_H__
+#ifndef __ARCH_X86_X32_KERNEL_H__
+#define __ARCH_X86_X32_KERNEL_H__
 
 extern "C"
 {

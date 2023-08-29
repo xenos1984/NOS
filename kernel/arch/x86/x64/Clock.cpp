@@ -4,7 +4,7 @@
 #include <Console.h>
 #include INC_VENDOR(Cmos.h)
 #include INC_ARCH(Apic.h)
-#include INC_SUBARCH(PMode.h)
+#include INC_BITS(PMode.h)
 
 using namespace Kernel;
 

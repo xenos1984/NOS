@@ -4,9 +4,9 @@ AUTOMAKE_OPTIONS = nostdinc
 
 AM_CPPFLAGS = -imacros $(top_srcdir)/config.h -I$(top_srcdir)/kernel -I$(top_srcdir)/include
 
-noinst_LIBRARIES = libia32.a
+noinst_LIBRARIES = libx32.a
 
-libia32_a_SOURCES = \
+libx32_a_SOURCES = \
 	Entry.h \
 	I386TaskManager.h \
 	Memory.h \

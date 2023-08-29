@@ -14,13 +14,13 @@ namespace Kernel
 		class PageTableEntry
 		{
 		private:
-#if defined ARCH_X86_AMD64 || defined CONFIG_PAE
+#if defined ARCH_X86_X64 || defined CONFIG_PAE
 			uint64_t raw = 0;
 #else
 			uint32_t raw = 0;
 #endif
 
-#if defined ARCH_X86_AMD64 || defined CONFIG_PAE
+#if defined ARCH_X86_X64 || defined CONFIG_PAE
 			enum Flags : uint64_t
 #else
 			enum Flags : uint32_t
@@ -77,7 +77,7 @@ namespace Kernel
 				return *this;
 			}
 
-#if defined ARCH_X86_AMD64 || defined CONFIG_PAE
+#if defined ARCH_X86_X64 || defined CONFIG_PAE
 			uint64_t Raw(void) const
 #else
 			uint32_t Raw(void) const

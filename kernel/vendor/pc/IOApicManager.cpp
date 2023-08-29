@@ -6,7 +6,7 @@
 #include INC_VENDOR(ACPI.h)
 #include INC_ARCH(Port.h)
 #include INC_ARCH(Apic.h)
-#include INC_SUBARCH(PMode.h)
+#include INC_BITS(PMode.h)
 #include <Console.h>
 
 using namespace Kernel;

@@ -14,7 +14,7 @@ FPUState::FPUState(void)
 	TagWord = 0xffff;
 }
 
-#ifdef ARCH_X86_IA32
+#ifdef ARCH_X86_X32
 SSEState::SSEState(void)
 {
 	ControlWord.raw = 0x037f;
@@ -22,7 +22,7 @@ SSEState::SSEState(void)
 	TagWord = 0xff;
 }
 #endif
-#ifdef ARCH_X86_AMD64
+#ifdef ARCH_X86_X64
 SSEState32::SSEState32(void)
 {
 	ControlWord.raw = 0x037f;

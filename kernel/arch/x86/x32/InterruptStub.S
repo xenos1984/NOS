@@ -1,6 +1,6 @@
 // InterruptStub.S - Assembler part of interrupt routines
 
-#include <arch/x86/ia32/Entry.h>
+#include <arch/x86/x32/Entry.h>
 
 #define INTERRUPT(name) \
 .global name##Wrapper; \

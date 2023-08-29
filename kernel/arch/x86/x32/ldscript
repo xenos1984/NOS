@@ -16,7 +16,7 @@ mb_magic     = 0x1badb002;
 mb_flags     = 0x00010003;
 mb_checksum  = -(mb_magic + mb_flags);
 
-GROUP(ia32/libia32.a libx86.a ../../libkernel.a)
+GROUP(x32/libx32.a libx86.a ../../libkernel.a)
 INPUT(libgcc.a)
 
 PHDRS

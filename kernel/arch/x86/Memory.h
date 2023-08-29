@@ -20,6 +20,6 @@ namespace Kernel
 	}
 }
 
-#include INC_SUBARCH(Memory.h)
+#include INC_BITS(Memory.h)
 
 #endif

@@ -14,7 +14,7 @@ namespace Kernel
 {
 	namespace Pager
 	{
-#ifdef ARCH_X86_IA32
+#ifdef ARCH_X86_X32
 #ifdef CONFIG_PAE
 		static constexpr unsigned int PAGE_RECURSIVE = 511;
 		static constexpr unsigned int PAGE_LEVELS = 3;
@@ -27,7 +27,7 @@ namespace Kernel
 		static constexpr uintptr_t PAGE_TABLE_ADDR[] = {0xfffffffc, 0xfffff000, 0xffc00000};
 #endif
 #endif
-#ifdef ARCH_X86_AMD64
+#ifdef ARCH_X86_X64
 		static constexpr unsigned int PAGE_RECURSIVE = 510;
 		static constexpr unsigned int PAGE_LEVELS = 4;
 		static constexpr unsigned int PAGE_BITS[] = {9, 9, 9, 9};
@@ -36,7 +36,7 @@ namespace Kernel
 
 		template<Memory::PageBits bits> constexpr unsigned int PageSizeLevel = ~0;
 
-#ifdef ARCH_X86_IA32
+#ifdef ARCH_X86_X32
 #ifdef CONFIG_PAE
 		template<> constexpr unsigned int PageSizeLevel<Memory::PGB_4K> = 2;
 		template<> constexpr unsigned int PageSizeLevel<Memory::PGB_2M> = 1;
@@ -45,7 +45,7 @@ namespace Kernel
 		template<> constexpr unsigned int PageSizeLevel<Memory::PGB_4M> = 0;
 #endif
 #endif
-#ifdef ARCH_X86_AMD64
+#ifdef ARCH_X86_X64
 		template<> constexpr unsigned int PageSizeLevel<Memory::PGB_4K> = 3;
 		template<> constexpr unsigned int PageSizeLevel<Memory::PGB_2M> = 2;
 		template<> constexpr unsigned int PageSizeLevel<Memory::PGB_1G> = 1;
@@ -53,7 +53,7 @@ namespace Kernel
 
 		template<unsigned int> constexpr Memory::PageBits PageLevelSize = Memory::PGB_INV;
 
-#ifdef ARCH_X86_IA32
+#ifdef ARCH_X86_X32
 #ifdef CONFIG_PAE
 		template<> constexpr Memory::PageBits PageLevelSize<2> = Memory::PGB_4K;
 		template<> constexpr Memory::PageBits PageLevelSize<1> = Memory::PGB_2M;
@@ -62,7 +62,7 @@ namespace Kernel
 		template<> constexpr Memory::PageBits PageLevelSize<0> = Memory::PGB_4M;
 #endif
 #endif
-#ifdef ARCH_X86_AMD64
+#ifdef ARCH_X86_X64
 		template<> constexpr Memory::PageBits PageLevelSize<3> = Memory::PGB_4K;
 		template<> constexpr Memory::PageBits PageLevelSize<2> = Memory::PGB_2M;
 		template<> constexpr Memory::PageBits PageLevelSize<1> = Memory::PGB_1G;
@@ -169,7 +169,7 @@ namespace Kernel
 			return PageTableLevel<0>::Table(0);
 		}
 
-#ifdef ARCH_X86_IA32
+#ifdef ARCH_X86_X32
 #ifdef CONFIG_PAE
 		typedef PageTableLevel<0> PageDirPtr;
 		typedef PageTableLevel<1> PageDir;
@@ -179,7 +179,7 @@ namespace Kernel
 		typedef PageTableLevel<1> PageTab;
 #endif
 #endif
-#ifdef ARCH_X86_AMD64
+#ifdef ARCH_X86_X64
 		typedef PageTableLevel<0> PagePml4;
 		typedef PageTableLevel<1> PageDirPtr;
 		typedef PageTableLevel<2> PageDir;

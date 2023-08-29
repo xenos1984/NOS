@@ -1,7 +1,7 @@
 // Pager.h - Working with page tables.
 
-#ifndef __ARCH_X86_AMD64_PAGER_H__
-#define __ARCH_X86_AMD64_PAGER_H__
+#ifndef __ARCH_X86_X64_PAGER_H__
+#define __ARCH_X86_X64_PAGER_H__
 
 #include <Memory.h>
 

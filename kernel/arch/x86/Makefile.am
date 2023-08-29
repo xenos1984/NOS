@@ -1,8 +1,8 @@
 # Process this file with automake to produce a Makefile.in
 
-SUBDIRS = ${subarch_subdir} .
+SUBDIRS = ${bits_subdir} .
 
-DIST_SUBDIRS = ia32 amd64
+DIST_SUBDIRS = x32 x64
 
 AUTOMAKE_OPTIONS = nostdinc
 

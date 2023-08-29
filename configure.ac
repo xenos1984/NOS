@@ -96,22 +96,22 @@ AC_CONFIG_FILES([
 	kernel/arch/arm/v7/Makefile
 	kernel/arch/arm/v8/Makefile
 	kernel/arch/x86/Makefile
-	kernel/arch/x86/ia32/Makefile
-	kernel/arch/x86/amd64/Makefile
+	kernel/arch/x86/x32/Makefile
+	kernel/arch/x86/x64/Makefile
 	kernel/vendor/Makefile
 	kernel/vendor/pc/Makefile
 	kernel/vendor/raspi/Makefile
 	include/Makefile
 	include/arch/Makefile
 	include/arch/x86/Makefile
-	include/arch/x86/ia32/Makefile
-	include/arch/x86/amd64/Makefile
+	include/arch/x86/x32/Makefile
+	include/arch/x86/x64/Makefile
 	include/arch/m68k/Makefile
 	drivers/Makefile
 	drivers/arch/Makefile
 	drivers/arch/x86/Makefile
-	drivers/arch/x86/ia32/Makefile
-	drivers/arch/x86/amd64/Makefile
+	drivers/arch/x86/x32/Makefile
+	drivers/arch/x86/x64/Makefile
 	drivers/arch/arm/Makefile
 	drivers/arch/m68k/Makefile
 	drivers/pc/Makefile

@@ -2,7 +2,7 @@
 
 #include <new>
 #include <cstddef>
-#include INC_SUBARCH(X86_64TaskManager.h)
+#include INC_BITS(X86_64TaskManager.h)
 #include <Thread.h>
 #include <Process.h>
 #include <Pager.h>
@@ -13,8 +13,8 @@
 #include INC_ARCH(Apic.h)
 #include INC_ARCH(CPU.h)
 #include INC_ARCH(FPU.h)
-#include INC_SUBARCH(PMode.h)
-#include INC_SUBARCH(Entry.h)
+#include INC_BITS(PMode.h)
+#include INC_BITS(Entry.h)
 #include INC_ARCH(Interrupt.h)
 //#include INC_ARCH(X86Pager.h)
 #include INC_VENDOR(IOApic.h)

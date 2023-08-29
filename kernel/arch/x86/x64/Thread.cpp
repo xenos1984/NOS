@@ -1,6 +1,6 @@
-// Thread.cpp - Threads for amd64 architecture.
+// Thread.cpp - Threads for x64 architecture.
 
-#include INC_SUBARCH(Thread.h)
+#include INC_BITS(Thread.h)
 #include INC_ARCH(ControlRegisters.h)
 #include <Console.h>
 

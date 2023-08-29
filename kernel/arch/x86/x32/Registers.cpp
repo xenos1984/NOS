@@ -1,6 +1,6 @@
 // Registers.cpp - Register dump pushed on interrupt / exception.
 
-#include INC_SUBARCH(Registers.h)
+#include INC_BITS(Registers.h)
 #include INC_ARCH(ControlRegisters.h)
 #include <Console.h>
 

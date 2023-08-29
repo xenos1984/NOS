@@ -1,7 +1,7 @@
 // I386TaskManager.h - Switching tasks in a multiprocessor environment.
 
-#ifndef __ARCH_X86_AMD64_TASKMANAGER_H__
-#define __ARCH_X86_AMD64_TASKMANAGER_H__
+#ifndef __ARCH_X86_X64_TASKMANAGER_H__
+#define __ARCH_X86_X64_TASKMANAGER_H__
 
 #include <cstdint>
 #include <TaskManager.h>

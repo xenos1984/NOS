@@ -2,7 +2,7 @@
 
 #include <cstdint>
 #include <Memory.h>
-#include INC_SUBARCH(Registers.h)
+#include INC_BITS(Registers.h)
 #include INC_ARCH(ControlRegisters.h)
 #include INC_ARCH(PageTable.h)
 #include <Console.h>

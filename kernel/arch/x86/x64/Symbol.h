@@ -1,7 +1,7 @@
 // Symbol.h - Memory locations used by the kernel.
 
-#ifndef __ARCH_X86_AMD64_SYMBOL_H__
-#define __ARCH_X86_AMD64_SYMBOL_H__
+#ifndef __ARCH_X86_X64_SYMBOL_H__
+#define __ARCH_X86_X64_SYMBOL_H__
 
 #include <cstdint>
 

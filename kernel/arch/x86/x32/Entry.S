@@ -18,7 +18,7 @@
 .extern ApplicationEntry
 #endif
 
-#include <arch/x86/ia32/Entry.h>
+#include <arch/x86/x32/Entry.h>
 
 .macro mappages from to flags
 	movl $((\to - \from) >> 12), %ecx

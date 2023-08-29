@@ -1,6 +1,6 @@
 // Tasker.cpp - Task management.
 
-#include INC_SUBARCH(Tasker.h)
+#include INC_BITS(Tasker.h)
 
 namespace Kernel
 {

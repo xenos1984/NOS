@@ -4,7 +4,7 @@
 #define __ARCH_X86_INTERRUPT_H__
 
 #include <cstdint>
-#include INC_SUBARCH(Registers.h)
+#include INC_BITS(Registers.h)
 
 #define INTERRUPT(name) \
 extern "C" void User##name(void); \

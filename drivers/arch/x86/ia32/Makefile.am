@@ -4,9 +4,9 @@ AUTOMAKE_OPTIONS = subdir-objects
 
 AM_CPPFLAGS = -imacros config.h -I$(top_srcdir)/drivers -I$(top_srcdir)/include
 
-noinst_LIBRARIES = libia32.a
+noinst_LIBRARIES = libx32.a
 
-libia32_a_SOURCES = \
+libx32_a_SOURCES = \
 	Stub.S \
 	../../../Driver.cpp
 

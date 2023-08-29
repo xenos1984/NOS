@@ -9,7 +9,7 @@
 #include <Process.h>
 #include <Console.h>
 #include <Pager.h>
-#include INC_SUBARCH(Entry.h)
+#include INC_BITS(Entry.h)
 #include INC_ARCH(DescriptorTable.h)
 #include INC_VENDOR(Cmos.h)
 #include INC_VENDOR(PIT.h)
@@ -17,8 +17,8 @@
 #include INC_VENDOR(Multiboot.h)
 #include INC_VENDOR(ACPI.h)
 #include INC_VENDOR(SMP.h)
-#include INC_SUBARCH(I386TaskManager.h)
-#include INC_SUBARCH(PMode.h)
+#include INC_BITS(I386TaskManager.h)
+#include INC_BITS(PMode.h)
 #include INC_ARCH(ControlRegisters.h)
 #include INC_ARCH(Apic.h)
 #include INC_ARCH(CPU.h)

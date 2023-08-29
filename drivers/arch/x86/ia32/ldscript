@@ -1,9 +1,9 @@
 OUTPUT_FORMAT(elf32-i386)
 OUTPUT_ARCH(i386)
 
-INPUT(../../arch/x86/ia32/libia32.a)
+INPUT(../../arch/x86/x32/libx32.a)
 INPUT(../../../kernel/arch/x86/Kernel.elf)
-STARTUP(../../arch/x86/ia32/Stub.o)
+STARTUP(../../arch/x86/x32/Stub.o)
 
 ENTRY(_start)
 

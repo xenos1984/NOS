@@ -3,6 +3,6 @@
 #ifndef __ARCH_X86_THREAD_H__
 #define __ARCH_X86_THREAD_H__
 
-#include INC_SUBARCH(Thread.h)
+#include INC_BITS(Thread.h)
 
 #endif

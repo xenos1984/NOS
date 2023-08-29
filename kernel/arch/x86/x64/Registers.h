@@ -1,7 +1,7 @@
 // Registers.h - Register dump pushed on interrupt / exception.
 
-#ifndef __ARCH_X86_AMD64_REGISTERS_H__
-#define __ARCH_X86_AMD64_REGISTERS_H__
+#ifndef __ARCH_X86_X64_REGISTERS_H__
+#define __ARCH_X86_X64_REGISTERS_H__
 
 #include <cstdint>
 

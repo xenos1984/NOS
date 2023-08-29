@@ -1,7 +1,7 @@
 // PMode.h - Some routines for protected mode management.
 
-#ifndef __ARCH_X86_IA32_PMODE_H__
-#define __ARCH_X86_IA32_PMODE_H__
+#ifndef __ARCH_X86_X32_PMODE_H__
+#define __ARCH_X86_X32_PMODE_H__
 
 #include <cstdint>
 
