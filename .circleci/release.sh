@@ -45,6 +45,11 @@ pre {
 <body>
 EOF
 
+for f in `find -name 'bochs*.html' | sort -u`
+do
+	cat $f | sed -z -e 's/^.*<title>\(.*\)<\/title>.*\(<pre>.*<\/pre>\).*$/<h1>\1<\/h1>\n\2/' >> output.html
+done
+
 for f in `find -name 'qemu-*.html' | sort -u`
 do
 	cat $f | sed -z -e 's/^.*<title>\(.*\)<\/title>.*\(<pre>.*<\/pre>\).*$/<h1>\1<\/h1>\n\2/' >> output.html
