@@ -119,6 +119,110 @@ jobs:
                 command: ~/nos/source/.circleci/irc.sh FAILED
                 when: on_fail
 
+    bochs_i686:
+        docker:
+            - image: xenos1984/test-bochs:latest
+        resource_class: small
+        working_directory: ~/nos/i686-pc-elf
+        steps:
+            - attach_workspace:
+                at: ~/nos
+            - run:
+                name: Bochs (32 bit, 1 CPU; MP, ACPI)
+                command: ~/nos/source/.circleci/bochs.sh bochs686 1 mp-acpi
+                no_output_timeout: 60s
+            - run:
+                name: Bochs (32 bit, 1 CPU; MP, no ACPI)
+                command: ~/nos/source/.circleci/bochs.sh bochs686 1 mp-noacpi
+                no_output_timeout: 60s
+            - run:
+                name: Bochs (32 bit, 1 CPU; SP, ACPI)
+                command: ~/nos/source/.circleci/bochs.sh bochs686 1 sp-acpi
+                no_output_timeout: 60s
+            - run:
+                name: Bochs (32 bit, 1 CPU; SP, no ACPI)
+                command: ~/nos/source/.circleci/bochs.sh bochs686 1 sp-noacpi
+                no_output_timeout: 60s
+            - run:
+                name: Bochs (32 bit, 4 CPUs; MP, ACPI)
+                command: ~/nos/source/.circleci/bochs.sh bochs686mp 4 mp-acpi
+                no_output_timeout: 60s
+            - run:
+                name: Bochs (32 bit, 4 CPUs; MP, no ACPI)
+                command: ~/nos/source/.circleci/bochs.sh bochs686mp 4 mp-noacpi
+                no_output_timeout: 60s
+            - run:
+                name: Bochs (32 bit, 4 CPUs; SP, ACPI)
+                command: ~/nos/source/.circleci/bochs.sh bochs686mp 4 sp-acpi
+                no_output_timeout: 60s
+            - run:
+                name: Bochs (32 bit, 4 CPUs; SP, no ACPI)
+                command: ~/nos/source/.circleci/bochs.sh bochs686mp 4 sp-noacpi
+                no_output_timeout: 60s
+            - persist_to_workspace:
+                root: ~/nos
+                paths:
+                    - i686-pc-elf/mp-acpi/bochs*
+                    - i686-pc-elf/mp-noacpi/bochs*
+                    - i686-pc-elf/sp-acpi/bochs*
+                    - i686-pc-elf/sp-noacpi/bochs*
+            - run:
+                name: IRC notify
+                command: ~/nos/source/.circleci/irc.sh FAILED
+                when: on_fail
+
+    bochs_x86_64:
+        docker:
+            - image: xenos1984/test-bochs:latest
+        resource_class: small
+        working_directory: ~/nos/x86_64-pc-elf
+        steps:
+            - attach_workspace:
+                at: ~/nos
+            - run:
+                name: Bochs (64 bit, 1 CPU; MP, ACPI)
+                command: ~/nos/source/.circleci/bochs.sh bochs64 1 mp-acpi
+                no_output_timeout: 60s
+            - run:
+                name: Bochs (64 bit, 1 CPU; MP, no ACPI)
+                command: ~/nos/source/.circleci/bochs.sh bochs64 1 mp-noacpi
+                no_output_timeout: 60s
+            - run:
+                name: Bochs (64 bit, 1 CPU; SP, ACPI)
+                command: ~/nos/source/.circleci/bochs.sh bochs64 1 sp-acpi
+                no_output_timeout: 60s
+            - run:
+                name: Bochs (64 bit, 1 CPU; SP, no ACPI)
+                command: ~/nos/source/.circleci/bochs.sh bochs64 1 sp-noacpi
+                no_output_timeout: 60s
+            - run:
+                name: Bochs (64 bit, 4 CPUs; MP, ACPI)
+                command: ~/nos/source/.circleci/bochs.sh bochs64mp 4 mp-acpi
+                no_output_timeout: 60s
+            - run:
+                name: Bochs (64 bit, 4 CPUs; MP, no ACPI)
+                command: ~/nos/source/.circleci/bochs.sh bochs64mp 4 mp-noacpi
+                no_output_timeout: 60s
+            - run:
+                name: Bochs (64 bit, 4 CPUs; SP, ACPI)
+                command: ~/nos/source/.circleci/bochs.sh bochs64mp 4 sp-acpi
+                no_output_timeout: 60s
+            - run:
+                name: Bochs (64 bit, 4 CPUs; SP, no ACPI)
+                command: ~/nos/source/.circleci/bochs.sh bochs64mp 4 sp-noacpi
+                no_output_timeout: 60s
+            - persist_to_workspace:
+                root: ~/nos
+                paths:
+                    - x86_64-pc-elf/mp-acpi/bochs*
+                    - x86_64-pc-elf/mp-noacpi/bochs*
+                    - x86_64-pc-elf/sp-acpi/bochs*
+                    - x86_64-pc-elf/sp-noacpi/bochs*
+            - run:
+                name: IRC notify
+                command: ~/nos/source/.circleci/irc.sh FAILED
+                when: on_fail
+
     qemu_i686:
         docker:
             - image: xenos1984/test-qemu:latest

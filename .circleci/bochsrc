@@ -1,0 +1,22 @@
+#Bochs environment for NOS
+
+memory: guest=256, host=64
+romimage: file="$BXSHARE/BIOS-bochs-latest", address=0xfffe0000
+vgaromimage: file="$BXSHARE/VGABIOS-elpin-2.40"
+
+boot: cdrom
+
+keyboard: type=mf, user_shortcut=ctrl-alt-del
+clock: sync=realtime, time0=utc
+
+logprefix: %e %t: %i %d
+
+debug: action=ignore
+info: action=report
+error: action=report
+panic: action=report
+
+plugin_ctrl: unmapped=1
+port_e9_hack: enabled=1
+
+display_library: nogui
