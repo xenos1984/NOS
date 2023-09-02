@@ -2,29 +2,28 @@
 
 #include <cstddef>
 #include INC_VENDOR(PIC.h)
+#include <Console.h>
 
 using namespace Kernel;
 
-PIC::PIC(uint16_t addr) : control(addr), mask(addr + 1)
-{
-}
-
 void PIC::SetMaster(uint8_t base)
 {
-	control.WriteU8(0x11);
+	Console::WriteMessage(Console::Style::OK, "Master PIC:", "mapped to 0x%2x", base);
+	control.WriteU8(CTRL_ICW1 | ICW1_ICW4 | ICW1_CASCADE | ICW1_EDGE);
 	mask.WriteU8(base);
-	mask.WriteU8(0x04);
-	mask.WriteU8(0x01);
+	mask.WriteU8(0x01 << 0x02);
+	mask.WriteU8(ICW4_8086 | ICW4_EOI_NORMAL | ICW4_NONBUF);
 	mask.WriteU8(0xff);
 	master = nullptr;
 }
 
 void PIC::SetSlave(uint8_t base, PIC* m)
 {
-	control.WriteU8(0x11);
+	Console::WriteMessage(Console::Style::OK, "Slave PIC:", "mapped to 0x%2x", base);
+	control.WriteU8(CTRL_ICW1 | ICW1_ICW4 | ICW1_CASCADE | ICW1_EDGE);
 	mask.WriteU8(base);
 	mask.WriteU8(0x02);
-	mask.WriteU8(0x01);
+	mask.WriteU8(ICW4_8086 | ICW4_EOI_NORMAL | ICW4_NONBUF);
 	mask.WriteU8(0xff);
 	master = m;
 }
@@ -41,7 +40,10 @@ void PIC::UnmaskIRQ(uint8_t irq)
 
 void PIC::Notify(void)
 {
-	control.WriteU8(0x20);
+	control.WriteU8(CTRL_OCW2 | OCW2_EOI_GEN);
 	if(master != nullptr)
 		master->Notify();
 }
+
+PIC PIC::Master{0x20};
+PIC PIC::Slave{0xa0};

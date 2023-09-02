@@ -14,8 +14,7 @@ namespace Kernel
 		const uint16_t port; /**< Port number. */
 
 	public:
-		inline Port(uint16_t n) : port(n) {}
-		inline ~Port(void) {}
+		inline constexpr Port(uint16_t n) : port(n) {}
 
 		inline uint8_t ReadU8(void)
 		{

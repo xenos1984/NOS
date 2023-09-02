@@ -19,6 +19,7 @@
 #include INC_BITS(PMode.h)
 #include INC_VENDOR(Cmos.h)
 #include INC_VENDOR(PIT.h)
+#include INC_VENDOR(PIC.h)
 #include INC_VENDOR(ACPI.h)
 #include INC_VENDOR(SMP.h)
 #include INC_VENDOR(PICManager.h)
@@ -56,6 +57,9 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, uint32_t mbiph
 	// Init further hardware components.
 	Cmos::Init();
 	PIT::Init();
+	PIC::Master.SetMaster(0x20);
+	PIC::Slave.SetSlave(0x28, &PIC::Master);
+	PIC::Master.UnmaskIRQ(2);
 
 #ifdef ELF32
 	if(bspcpu().HasLongMode())
