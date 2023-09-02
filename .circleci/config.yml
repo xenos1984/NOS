@@ -592,6 +592,12 @@ workflows:
             - build_raspi3:
                 requires:
                     - autogen
+            - bochs_i686:
+                requires:
+                    - build_i686
+            - bochs_x86_64:
+                requires:
+                    - build_x86_64
             - qemu_i686:
                 requires:
                     - build_i686
@@ -614,6 +620,8 @@ workflows:
             - collect:
                 requires:
                     - images
+                    - bochs_i686
+                    - bochs_x86_64
                     - qemu_i686
                     - qemu_x86_64
                     - qemu_raspi1
