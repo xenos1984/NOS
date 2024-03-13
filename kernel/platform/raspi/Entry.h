@@ -1,0 +1,31 @@
+// Entry.h - Some definitions used in the boot process.
+
+#ifndef __PLATFORM_RASPI_ENTRY_H__
+#define __PLATFORM_RASPI_ENTRY_H__
+
+#define TABLE_SPLIT_BITS 1
+
+#ifdef ELF64
+#define USER_OFFSET 0xFFFFFFFF80000000
+#define KERNEL_OFFSET 0xFFFFFFFFC0000000
+#define PERI_OFFSET 0xFFFFFFFFCF000000
+#else
+#define USER_OFFSET 0x80000000
+#define KERNEL_OFFSET 0xC0000000
+#define PERI_OFFSET 0xCF000000
+#endif
+
+#ifdef ARCH_ARM_1176JZFS
+#define PERI_PHYS 0x20000000
+#endif
+#ifdef ARCH_ARM_CORTEX_A7
+#define PERI_PHYS 0x3F000000
+#endif
+#ifdef ARCH_ARM_CORTEX_A53
+#define PERI_PHYS 0x3F000000
+#endif
+#ifdef ARCH_ARM_CORTEX_A72
+#define PERI_PHYS 0xFE000000
+#endif
+
+#endif

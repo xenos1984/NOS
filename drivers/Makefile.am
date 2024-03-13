@@ -1,3 +1,3 @@
 # Process this file with automake to produce a Makefile.in
 
-SUBDIRS = arch ${vendor_subdir}
+SUBDIRS = arch ${platform_subdir}

@@ -13,12 +13,12 @@
 #include <Pager.h>
 #include INC_BITS(Entry.h)
 #include INC_ARCH(DescriptorTable.h)
-#include INC_VENDOR(Cmos.h)
-#include INC_VENDOR(PIT.h)
-#include INC_VENDOR(PITClock.h)
-#include INC_VENDOR(Multiboot.h)
-#include INC_VENDOR(ACPI.h)
-#include INC_VENDOR(SMP.h)
+#include INC_PLATFORM(Cmos.h)
+#include INC_PLATFORM(PIT.h)
+#include INC_PLATFORM(PITClock.h)
+#include INC_PLATFORM(Multiboot.h)
+#include INC_PLATFORM(ACPI.h)
+#include INC_PLATFORM(SMP.h)
 #include INC_BITS(X86_64TaskManager.h)
 #include INC_BITS(PMode.h)
 #include INC_ARCH(Apic.h)
@@ -26,8 +26,8 @@
 #include INC_ARCH(MSR.h)
 #include INC_ARCH(Processor.h)
 #include INC_ARCH(CPU.h)
-#include INC_VENDOR(PICManager.h)
-#include INC_VENDOR(IOApicManager.h)
+#include INC_PLATFORM(PICManager.h)
+#include INC_PLATFORM(IOApicManager.h)
 
 using namespace Kernel;
 

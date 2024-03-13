@@ -4,7 +4,7 @@
 #define __ARCH_ARM_A32_PAGETABLE_H__
 
 #include INC_BITS(PageTableEntry.h)
-#include INC_VENDOR(Entry.h)
+#include INC_PLATFORM(Entry.h)
 #include <Symbol.h>
 #include <Memory.h>
 

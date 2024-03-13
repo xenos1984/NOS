@@ -3,8 +3,8 @@
 #include <Console.h>
 #include <Symbol.h>
 #include <Processor.h>
-#include INC_VENDOR(Cmos.h)
-#include INC_VENDOR(PIT.h)
+#include INC_PLATFORM(Cmos.h)
+#include INC_PLATFORM(PIT.h)
 #include INC_ARCH(Apic.h)
 
 using namespace Kernel;

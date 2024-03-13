@@ -2,4 +2,4 @@
 
 SUBDIRS = ${platform_subdir}
 
-DIST_SUBDIRS = pc
+DIST_SUBDIRS = pc raspi

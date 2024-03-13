@@ -19,11 +19,11 @@ AC_DEFUN([NOS_SET_HOST], [
 		AC_DEFINE([ARCH_X86_X32], [1], [Define to 1 for IA32 targets.])
 		case "${host_vendor}" in
 		pc)
-			vendor_subdir=pc
+			platform_subdir=pc
 			AC_DEFINE([CPU_COUNT], [0])
 			;;
 		*)
-			AC_MSG_ERROR([unsupported host vendor])
+			AC_MSG_ERROR([unsupported host platform])
 			;;
 		esac
 		;;
@@ -42,11 +42,11 @@ AC_DEFUN([NOS_SET_HOST], [
 		AC_DEFINE([ARCH_X86_X64], [1], [Define to 1 for AMD64 targets.])
 		case "${host_vendor}" in
 		pc)
-			vendor_subdir=pc
+			platform_subdir=pc
 			AC_DEFINE([CPU_COUNT], [0])
 			;;
 		*)
-			AC_MSG_ERROR([unsupported host vendor])
+			AC_MSG_ERROR([unsupported host platform])
 			;;
 		esac
 		;;
@@ -63,7 +63,7 @@ AC_DEFUN([NOS_SET_HOST], [
 		raspiz|raspizw|raspi1ap|raspi1bp|raspi1)
 			CFLAGS="${CFLAGS} -mcpu=arm1176jzf-s"
 			subarch_subdir=v6
-			vendor_subdir=raspi
+			platform_subdir=raspi
 			ac_tool_prefix="arm-eabi-"
 			AC_DEFINE([ARCH_ARM_V6], [1], [Define to 1 for ARMv6 targets.])
 			AC_DEFINE([ARCH_ARM_1176JZFS], [1], [Define to 1 for ARM 1176JZF-S targets.])
@@ -72,14 +72,14 @@ AC_DEFUN([NOS_SET_HOST], [
 		raspi2b|raspi2)
 			CFLAGS="${CFLAGS} -mcpu=cortex-a7"
 			subarch_subdir=v7
-			vendor_subdir=raspi
+			platform_subdir=raspi
 			ac_tool_prefix="arm-eabihf-"
 			AC_DEFINE([ARCH_ARM_V7], [1], [Define to 1 for ARMv7 targets.])
 			AC_DEFINE([ARCH_ARM_CORTEX_A7], [1], [Define to 1 for ARM Cortex-A7 targets.])
 			AC_DEFINE([CPU_COUNT], [4])
 			;;
 		*)
-			AC_MSG_ERROR([unsupported host vendor])
+			AC_MSG_ERROR([unsupported host platform])
 			;;
 		esac
 		AC_DEFINE_UNQUOTED([SUBARCH], [${subarch_subdir}], [NOS target subarchitecture.])
@@ -100,7 +100,7 @@ AC_DEFUN([NOS_SET_HOST], [
 		raspi3ap|raspi3b|raspi3bp|raspiz2w|raspi3)
 			CFLAGS="${CFLAGS} -mcpu=cortex-a53 -mgeneral-regs-only"
 			subarch_subdir=v8
-			vendor_subdir=raspi
+			platform_subdir=raspi
 			AC_DEFINE([ARCH_ARM_V8], [1], [Define to 1 for ARMv8 targets.])
 			AC_DEFINE([ARCH_ARM_CORTEX_A53], [1], [Define to 1 for ARM Cortex-A53 targets.])
 			AC_DEFINE([CPU_COUNT], [4])
@@ -108,13 +108,13 @@ AC_DEFUN([NOS_SET_HOST], [
 		raspi4b|raspi4)
 			CFLAGS="${CFLAGS} -mcpu=cortex-a72 -mgeneral-regs-only"
 			subarch_subdir=v8
-			vendor_subdir=raspi
+			platform_subdir=raspi
 			AC_DEFINE([ARCH_ARM_V8], [1], [Define to 1 for ARMv8 targets.])
 			AC_DEFINE([ARCH_ARM_CORTEX_A72], [1], [Define to 1 for ARM Cortex-A72 targets.])
 			AC_DEFINE([CPU_COUNT], [4])
 			;;
 		*)
-			AC_MSG_ERROR([unsupported host vendor])
+			AC_MSG_ERROR([unsupported host platform])
 			;;
 		esac
 		AC_DEFINE_UNQUOTED([SUBARCH], [${subarch_subdir}], [NOS target subarchitecture.])
@@ -143,7 +143,7 @@ AC_DEFUN([NOS_SET_HOST], [
 			AC_DEFINE([CPU_COUNT], [1])
 			;;
 		*)
-			AC_MSG_ERROR([unsupported host vendor])
+			AC_MSG_ERROR([unsupported host platform])
 			;;
 		esac
 		;;
@@ -155,11 +155,11 @@ AC_DEFUN([NOS_SET_HOST], [
 	AC_DEFINE_UNQUOTED([INC_ARCH(x)], [<arch/${arch_subdir}/x>], [NOS target architecture.])
 	AC_DEFINE_UNQUOTED([BITS], [${bits_subdir}], [NOS target bit subtype.])
 	AC_DEFINE_UNQUOTED([INC_BITS(x)], [<arch/${arch_subdir}/${bits_subdir}/x>], [NOS target bit subtype.])
-	AC_DEFINE_UNQUOTED([VENDOR], [${vendor_subdir}], [NOS target vendor.])
-	AC_DEFINE_UNQUOTED([INC_VENDOR(x)], [<vendor/${vendor_subdir}/x>], [NOS target vendor.])
+	AC_DEFINE_UNQUOTED([PLATFORM], [${platform_subdir}], [NOS target platform.])
+	AC_DEFINE_UNQUOTED([INC_PLATFORM(x)], [<platform/${platform_subdir}/x>], [NOS target platform.])
 	AC_SUBST(arch_subdir)
 	AC_SUBST(bits_subdir)
-	AC_SUBST(vendor_subdir)
+	AC_SUBST(platform_subdir)
 	AC_SUBST(host_bfd)
 	AC_SUBST(copy_flags)
 	AC_SUBST(ac_tool_prefix)

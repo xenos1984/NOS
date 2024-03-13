@@ -15,9 +15,9 @@ mkdir -p $folder
 cp config.log $folder/
 cp build.log $folder/
 cp build.html $folder/
-cp kernel/vendor/raspi/Kernel.elf $folder/
-cp kernel/vendor/raspi/Kernel.map $folder/
-cp kernel/vendor/raspi/kernel.img $folder/
+cp kernel/platform/raspi/Kernel.elf $folder/
+cp kernel/platform/raspi/Kernel.map $folder/
+cp kernel/platform/raspi/kernel.img $folder/
 #cp images/raspi/NOS.img $folder/
 $prefix-objdump -x -s -d -C -g -S --visualize-jumps=extended-color --disassembler-color=extended $folder/Kernel.elf | ansifilter -H -d "Dump $target $@" > $folder/Kernel.dump.html
 

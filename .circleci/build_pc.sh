@@ -15,8 +15,8 @@ mkdir -p $folder
 cp config.log $folder/
 cp build.log $folder/
 cp build.html $folder/
-cp kernel/vendor/pc/Kernel.elf $folder/
-cp kernel/vendor/pc/Kernel.map $folder/
+cp kernel/platform/pc/Kernel.elf $folder/
+cp kernel/platform/pc/Kernel.map $folder/
 #cp drivers/pc/floppy/Floppy.elf $folder/
 cp images/pc/NOS.iso $folder/
 $prefix-objdump -x -s -d -C -g -S --visualize-jumps=extended-color --disassembler-color=extended $folder/Kernel.elf | ansifilter -H -d "Dump $target $@" > $folder/Kernel.dump.html

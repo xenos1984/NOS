@@ -17,9 +17,9 @@
 #include INC_BITS(Entry.h)
 #include INC_ARCH(Interrupt.h)
 //#include INC_ARCH(X86Pager.h)
-#include INC_VENDOR(IOApic.h)
-#include INC_VENDOR(ACPI.h)
-#include INC_VENDOR(SMP.h)
+#include INC_PLATFORM(IOApic.h)
+#include INC_PLATFORM(ACPI.h)
+#include INC_PLATFORM(SMP.h)
 #include INC_ARCH(DescriptorTable.h)
 #include <Symbol.h>
 #include <TaskScheduler.h>

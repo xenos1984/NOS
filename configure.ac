@@ -98,9 +98,9 @@ AC_CONFIG_FILES([
 	kernel/arch/x86/Makefile
 	kernel/arch/x86/x32/Makefile
 	kernel/arch/x86/x64/Makefile
-	kernel/vendor/Makefile
-	kernel/vendor/pc/Makefile
-	kernel/vendor/raspi/Makefile
+	kernel/platform/Makefile
+	kernel/platform/pc/Makefile
+	kernel/platform/raspi/Makefile
 	include/Makefile
 	include/arch/Makefile
 	include/arch/x86/Makefile

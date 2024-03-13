@@ -5,7 +5,7 @@
 
 #include INC_BITS(Pager.h)
 #include INC_BITS(PageTableEntry.h)
-#include INC_VENDOR(Entry.h)
+#include INC_PLATFORM(Entry.h)
 #include <Symbol.h>
 #include <Memory.h>
 #include <Console.h>
