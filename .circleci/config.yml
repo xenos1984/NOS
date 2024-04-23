@@ -537,11 +537,11 @@ jobs:
                 at: ~/nos
             - run:
                 name: QEMU raspi4b MP
-                command: ~/nos/source/.circleci/qemu_raspi.sh aarch64 raspi4b cortex-a72 1024 mp
+                command: ~/nos/source/.circleci/qemu_raspi.sh aarch64 raspi4b cortex-a72 2048 mp
                 no_output_timeout: 60s
             - run:
                 name: QEMU raspi4b SP
-                command: ~/nos/source/.circleci/qemu_raspi.sh aarch64 raspi4b cortex-a72 1024 sp
+                command: ~/nos/source/.circleci/qemu_raspi.sh aarch64 raspi4b cortex-a72 2048 sp
                 no_output_timeout: 60s
             - persist_to_workspace:
                 root: ~/nos
