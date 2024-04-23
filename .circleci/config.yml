@@ -119,6 +119,25 @@ jobs:
                 command: ~/nos/source/.circleci/irc.sh FAILED
                 when: on_fail
 
+    build_raspi4:
+        docker:
+            - image: xenos1984/cross-aarch64-elf:latest
+        resource_class: small
+        working_directory: ~/nos/source
+        steps:
+            - attach_workspace:
+                at: ~/nos
+            - run: .circleci/build_raspi.sh aarch64-raspi4-elf mp
+            - run: .circleci/build_raspi.sh aarch64-raspi4-elf sp --disable-smp
+            - persist_to_workspace:
+                root: ~/nos
+                paths:
+                    - aarch64-raspi4-elf
+            - run:
+                name: IRC notify
+                command: ~/nos/source/.circleci/irc.sh FAILED
+                when: on_fail
+
     bochs_i686:
         docker:
             - image: xenos1984/test-bochs:latest
@@ -508,6 +527,32 @@ jobs:
                 command: ~/nos/source/.circleci/irc.sh FAILED
                 when: on_fail
 
+    qemu_raspi4:
+        docker:
+            - image: xenos1984/test-qemu:latest
+        resource_class: small
+        working_directory: ~/nos/aarch64-raspi4-elf
+        steps:
+            - attach_workspace:
+                at: ~/nos
+            - run:
+                name: QEMU raspi4b MP
+                command: ~/nos/source/.circleci/qemu_raspi.sh aarch64 raspi4b cortex-a72 1024 mp
+                no_output_timeout: 60s
+            - run:
+                name: QEMU raspi4b SP
+                command: ~/nos/source/.circleci/qemu_raspi.sh aarch64 raspi4b cortex-a72 1024 sp
+                no_output_timeout: 60s
+            - persist_to_workspace:
+                root: ~/nos
+                paths:
+                    - aarch64-raspi4-elf/mp/qemu*
+                    - aarch64-raspi4-elf/sp/qemu*
+            - run:
+                name: IRC notify
+                command: ~/nos/source/.circleci/irc.sh FAILED
+                when: on_fail
+
     images:
         machine:
           image: ubuntu-2004:202101-01
@@ -556,6 +601,9 @@ jobs:
             - store_artifacts:
                 path: ~/nos/aarch64-raspi3-elf
                 destination: aarch64-raspi3-elf
+            - store_artifacts:
+                path: ~/nos/aarch64-raspi4-elf
+                destination: aarch64-raspi4-elf
             - run: ~/nos/source/.circleci/release.sh
             - store_artifacts:
                 path: ~/nos/output.html
@@ -592,6 +640,9 @@ workflows:
             - build_raspi3:
                 requires:
                     - autogen
+            - build_raspi4:
+                requires:
+                    - autogen
             - bochs_i686:
                 requires:
                     - build_i686
@@ -613,6 +664,9 @@ workflows:
             - qemu_raspi3:
                 requires:
                     - build_raspi3
+            - qemu_raspi4:
+                requires:
+                    - build_raspi4
             - images:
                 requires:
                     - build_i686
@@ -627,3 +681,4 @@ workflows:
                     - qemu_raspi1
                     - qemu_raspi2
                     - qemu_raspi3
+                    - qemu_raspi4
