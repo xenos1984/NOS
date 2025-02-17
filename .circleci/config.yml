@@ -555,7 +555,7 @@ jobs:
 
     images:
         machine:
-          image: ubuntu-2004:202101-01
+          image: ubuntu-2204:current
         resource_class: medium
         working_directory: ~/nos
         steps:
