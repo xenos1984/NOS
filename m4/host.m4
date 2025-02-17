@@ -61,7 +61,7 @@ AC_DEFUN([NOS_SET_HOST], [
 		AC_DEFINE([ARCH_ARM], [1], [Define to 1 for ARM targets.])
 		case "${host_vendor}" in
 		raspiz|raspizw|raspi1ap|raspi1bp|raspi1)
-			CFLAGS="${CFLAGS} -mcpu=arm1176jzf-s"
+			CFLAGS="${CFLAGS} -mcpu=arm1176jzf-s -mgeneral-regs-only"
 			subarch_subdir=v6
 			platform_subdir=raspi
 			ac_tool_prefix="arm-eabi-"
@@ -70,7 +70,7 @@ AC_DEFUN([NOS_SET_HOST], [
 			AC_DEFINE([CPU_COUNT], [1])
 			;;
 		raspi2b|raspi2)
-			CFLAGS="${CFLAGS} -mcpu=cortex-a7"
+			CFLAGS="${CFLAGS} -mcpu=cortex-a7 -mgeneral-regs-only"
 			subarch_subdir=v7
 			platform_subdir=raspi
 			ac_tool_prefix="arm-eabihf-"
