@@ -72,11 +72,10 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, uint32_t mbiph
 	if(bspcpu().HasFXSR())
 		cr4 |= CR4::OS_FXSR_SUPPORT;
 	if(bspcpu().HasXSR())
-	{
 		cr4 |= CR4::OS_XSR_SUPPORT;
-		asm volatile ( "xsetbv" : : "a" (0x7), "d" (0x0), "c" (0x0) );
-	}
 	CR4::Write(cr4);
+	if(bspcpu().HasXSR())
+		asm volatile ( "xsetbv" : : "a" (0x7), "d" (0x0), "c" (0x0) );
 
 #if defined CONFIG_SMP || defined CONFIG_ACPI
 	// Figure out where to look for SMP / ACPI information.
