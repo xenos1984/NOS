@@ -36,7 +36,7 @@ SECTION(".init.text") void DescriptorTable::Clear(int sel)
 #ifdef ELF64
 	if((raw & 0x0000800000000000) && !(raw & 0x0000100000000000))
 	{
-		uint64_t raw2 = Raw(sel + 1);
+		uint64_t& raw2 = Raw(sel + 1);
 		raw2 = 0;
 	}
 #endif
