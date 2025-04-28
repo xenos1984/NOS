@@ -44,22 +44,22 @@ void operator delete[](void* pointer, std::align_val_t align __attribute__((unus
 	Kernel::Heap::Free(pointer);
 }
 
-void operator delete(void* pointer, size_t size __attribute__((unused)))
+void operator delete(void* pointer, size_t size __attribute__((unused))) noexcept
 {
 	Kernel::Heap::Free(pointer);
 }
 
-void operator delete(void* pointer, size_t size __attribute__((unused)), std::align_val_t align __attribute__((unused)))
+void operator delete(void* pointer, size_t size __attribute__((unused)), std::align_val_t align __attribute__((unused))) noexcept
 {
 	Kernel::Heap::Free(pointer);
 }
 
-void operator delete[](void* pointer, size_t size __attribute__((unused)))
+void operator delete[](void* pointer, size_t size __attribute__((unused))) noexcept
 {
 	Kernel::Heap::Free(pointer);
 }
 
-void operator delete[](void* pointer, size_t size __attribute__((unused)), std::align_val_t align __attribute__((unused)))
+void operator delete[](void* pointer, size_t size __attribute__((unused)), std::align_val_t align __attribute__((unused))) noexcept
 {
 	Kernel::Heap::Free(pointer);
 }
