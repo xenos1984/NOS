@@ -38,34 +38,34 @@ namespace Kernel
 
 #ifdef ARCH_X86_X32
 #ifdef CONFIG_PAE
-		template<> constexpr unsigned int PageSizeLevel<Memory::PGB_4K> = 2;
-		template<> constexpr unsigned int PageSizeLevel<Memory::PGB_2M> = 1;
+		template<> inline constexpr unsigned int PageSizeLevel<Memory::PGB_4K> = 2;
+		template<> inline constexpr unsigned int PageSizeLevel<Memory::PGB_2M> = 1;
 #else
-		template<> constexpr unsigned int PageSizeLevel<Memory::PGB_4K> = 1;
-		template<> constexpr unsigned int PageSizeLevel<Memory::PGB_4M> = 0;
+		template<> inline constexpr unsigned int PageSizeLevel<Memory::PGB_4K> = 1;
+		template<> inline constexpr unsigned int PageSizeLevel<Memory::PGB_4M> = 0;
 #endif
 #endif
 #ifdef ARCH_X86_X64
-		template<> constexpr unsigned int PageSizeLevel<Memory::PGB_4K> = 3;
-		template<> constexpr unsigned int PageSizeLevel<Memory::PGB_2M> = 2;
-		template<> constexpr unsigned int PageSizeLevel<Memory::PGB_1G> = 1;
+		template<> inline constexpr unsigned int PageSizeLevel<Memory::PGB_4K> = 3;
+		template<> inline constexpr unsigned int PageSizeLevel<Memory::PGB_2M> = 2;
+		template<> inline constexpr unsigned int PageSizeLevel<Memory::PGB_1G> = 1;
 #endif
 
 		template<unsigned int> constexpr Memory::PageBits PageLevelSize = Memory::PGB_INV;
 
 #ifdef ARCH_X86_X32
 #ifdef CONFIG_PAE
-		template<> constexpr Memory::PageBits PageLevelSize<2> = Memory::PGB_4K;
-		template<> constexpr Memory::PageBits PageLevelSize<1> = Memory::PGB_2M;
+		template<> inline constexpr Memory::PageBits PageLevelSize<2> = Memory::PGB_4K;
+		template<> inline constexpr Memory::PageBits PageLevelSize<1> = Memory::PGB_2M;
 #else
-		template<> constexpr Memory::PageBits PageLevelSize<1> = Memory::PGB_4K;
-		template<> constexpr Memory::PageBits PageLevelSize<0> = Memory::PGB_4M;
+		template<> inline constexpr Memory::PageBits PageLevelSize<1> = Memory::PGB_4K;
+		template<> inline constexpr Memory::PageBits PageLevelSize<0> = Memory::PGB_4M;
 #endif
 #endif
 #ifdef ARCH_X86_X64
-		template<> constexpr Memory::PageBits PageLevelSize<3> = Memory::PGB_4K;
-		template<> constexpr Memory::PageBits PageLevelSize<2> = Memory::PGB_2M;
-		template<> constexpr Memory::PageBits PageLevelSize<1> = Memory::PGB_1G;
+		template<> inline constexpr Memory::PageBits PageLevelSize<3> = Memory::PGB_4K;
+		template<> inline constexpr Memory::PageBits PageLevelSize<2> = Memory::PGB_2M;
+		template<> inline constexpr Memory::PageBits PageLevelSize<1> = Memory::PGB_1G;
 #endif
 
 		/** Page table with a fixed number of entries. */

@@ -223,7 +223,7 @@ namespace Kernel
 			return 0;
 		}
 
-		template<> constexpr std::underlying_type<PageTableEntryL1::Flags>::type PageTableEntryL1::TypeFlags<Memory::PGB_1M>(Memory::MemType type)
+		template<> inline constexpr std::underlying_type<PageTableEntryL1::Flags>::type PageTableEntryL1::TypeFlags<Memory::PGB_1M>(Memory::MemType type)
 		{
 			switch(type)
 			{
@@ -252,7 +252,7 @@ namespace Kernel
 			}
 		}
 
-		template<> constexpr std::underlying_type<PageTableEntryL1::Flags>::type PageTableEntryL1::TypeFlags<Memory::PGB_16M>(Memory::MemType type)
+		template<> inline constexpr std::underlying_type<PageTableEntryL1::Flags>::type PageTableEntryL1::TypeFlags<Memory::PGB_16M>(Memory::MemType type)
 		{
 			switch(type)
 			{
@@ -306,7 +306,7 @@ namespace Kernel
 			return 0;
 		}
 
-		template<> constexpr std::underlying_type<PageTableEntryL2::Flags>::type PageTableEntryL2::TypeFlags<Memory::PGB_4K>(Memory::MemType type)
+		template<> inline constexpr std::underlying_type<PageTableEntryL2::Flags>::type PageTableEntryL2::TypeFlags<Memory::PGB_4K>(Memory::MemType type)
 		{
 			switch(type)
 			{
@@ -335,7 +335,7 @@ namespace Kernel
 			}
 		}
 
-		template<> constexpr std::underlying_type<PageTableEntryL2::Flags>::type PageTableEntryL2::TypeFlags<Memory::PGB_64K>(Memory::MemType type)
+		template<> inline constexpr std::underlying_type<PageTableEntryL2::Flags>::type PageTableEntryL2::TypeFlags<Memory::PGB_64K>(Memory::MemType type)
 		{
 			switch(type)
 			{

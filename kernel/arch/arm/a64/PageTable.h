@@ -26,8 +26,8 @@ namespace Kernel
 		template<unsigned int> constexpr uintptr_t PageTableAddrKernel = ~0;
 		template<unsigned int> constexpr uintptr_t PageTableAddrUser = ~0;
 
-		template<> constexpr uintptr_t PageTableAddrKernel<3> = MinKernelVirt + (PageRecursiveKernel << (67 - PageSizeOffset - GranuleSize));
-		template<> constexpr uintptr_t PageTableAddrUser<3> = MinKernelVirt + (PageRecursiveUser << (67 - PageSizeOffset - GranuleSize));
+		template<> inline constexpr uintptr_t PageTableAddrKernel<3> = MinKernelVirt + (PageRecursiveKernel << (67 - PageSizeOffset - GranuleSize));
+		template<> inline constexpr uintptr_t PageTableAddrUser<3> = MinKernelVirt + (PageRecursiveUser << (67 - PageSizeOffset - GranuleSize));
 */
 		constexpr uintptr_t PageTableAddr(unsigned int level, unsigned long rec)
 		{
