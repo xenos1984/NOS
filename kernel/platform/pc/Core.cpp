@@ -1,7 +1,6 @@
 // Core.cpp - Core kernel implementation
 
 #include <cstdint>
-#include <new>
 #include <Core.h>
 #include <Symbol.h>
 #include <Chunker.h>
