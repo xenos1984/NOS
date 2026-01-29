@@ -127,6 +127,10 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t magic, uint32_t mbiph
 	{
 		// TODO: Perform IRQ, tasker, clock initialization in single CPU mode.
 
+		Processor::proc = new Processor;
+		Processor::proc[0].state = Processor::State::Online;
+		Processor::proc[0].data.physID = Apic::GetPhysID();
+
 		PICManager::Init();
 	}
 
