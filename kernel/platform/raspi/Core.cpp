@@ -65,9 +65,8 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t r0, uint32_t r1, uint
 
 #if CPU_COUNT > 1
 	Processor::proc[0].state = Processor::State::Online;
-	Processor::proc[1].state = Processor::State::Booting;
-	Processor::proc[2].state = Processor::State::Booting;
-	Processor::proc[3].state = Processor::State::Booting;
+	for(int i = 1; i < CPU_COUNT; i++)
+		Processor::proc[i].state = Processor::State::Booting;
 
 	apflag = 1;
 
@@ -79,10 +78,24 @@ extern "C" void SECTION(".init.text") KernelEntry(uint32_t r0, uint32_t r1, uint
 
 	unsigned int time = Timer::CounterLow();
 
-	while((Timer::CounterLow() - time < 0x100000) && (Processor::proc[1].state == Processor::State::Booting || Processor::proc[2].state == Processor::State::Booting || Processor::proc[3].state == Processor::State::Booting))
-		;
+	while((Timer::CounterLow() - time < 0x100000))
+	{
+		bool done = true;
 
-	for(int i = 0; i < 4; i++)
+		for(int i = 0; i < CPU_COUNT; i++)
+		{
+			if(Processor::proc[i].state == Processor::State::Booting)
+			{
+				done = false;
+				break;
+			}
+		}
+
+		if(done)
+			break;
+	}
+
+	for(int i = 0; i < CPU_COUNT; i++)
 	{
 		if(Processor::proc[i].state == Processor::State::Online)
 		{
